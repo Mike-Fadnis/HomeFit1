@@ -1337,6 +1337,7 @@
 				PRODUCT_NAME = NativebaseKitchenSink;
 				PROVISIONING_PROFILE = "17465765-f044-4800-a115-87a557777ec2";
 				PROVISIONING_PROFILE_SPECIFIER = HomeFit_InHouse_Distribution_ProvisionProfile;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1364,6 +1365,7 @@
 				PRODUCT_NAME = NativebaseKitchenSink;
 				PROVISIONING_PROFILE = "17465765-f044-4800-a115-87a557777ec2";
 				PROVISIONING_PROFILE_SPECIFIER = HomeFit_InHouse_Distribution_ProvisionProfile;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

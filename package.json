@@ -42,6 +42,7 @@
     "react-native-vector-icons": "4.5.0",
     "react-navigation": "^1.5.0",
     "react-redux": "^5.0.7",
+    "redux-saga": "^0.16.0",
     "redux": "^4.0.0"
   }
 }

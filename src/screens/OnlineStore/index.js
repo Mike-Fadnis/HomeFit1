@@ -20,13 +20,77 @@ import {
 } from "native-base";
 import { SearchBar } from 'react-native-elements';
 import { Col, Grid } from "react-native-easy-grid";
+import {
+  connect
+} from 'react-redux';
 
 import styles from "./styles";
+import API from '@utils/ApiUtils';
+import {IMAGE_PATH} from '@common/global'
 
 const avatar = 'http://ajaypalsidhu.com//demo/HomeFit/Admin/uploads/punch.jpg';
 
 class OnlineStore extends Component {
+  constructor(props){
+    super(props);
+    this.state= {
+      allProducts: []
+    }
+  }
+  async componentWillMount(){
+    API.getProducts().then(async (response) => { 
+      // alert('page response: '+ JSON.stringify(response))    
+      // console.log('page response: ' + JSON.stringify(response))
+      if(response){
+        this.setState({
+          allProducts: response.data
+        })
+      }
+    }).catch((error)=> {
+      console.log(error)
+    });
+  }
   render() {
+    var designProduct = []    
+       {this.state.allProducts.map((obj, key) => {
+         designProduct.push(
+          <View>
+            <TouchableOpacity  style={styles.storeProducts}
+                  onPress={() => this.props.navigation.navigate("ProductDetails")}>
+                    <View style={styles.productsHeader}>
+                        <View style={styles.productCount}>  
+                            <Text 
+                              style={{color: "#FFFFFF", 
+                                    fontFamily: "Arial",
+                                    }}>
+                              {obj.id}
+                            </Text>
+                        </View>
+                    </View>
+                    <View style={styles.cardImage}>
+                        < Image source = {
+                          {uri: IMAGE_PATH + obj.image}
+                        }
+                        style = {
+                          {
+                            width: 100,
+                            height: 100
+                          }
+                        }
+                        />
+                    </View>
+                    <View style={styles.cardContent}>
+                        <Text numberOfLines={1} style={styles.type}>{obj.cat_name}</Text>
+                        <Text numberOfLines={1} style={styles.name}>{obj.name}</Text>
+                        <Text numberOfLines={3} style={styles.description}>
+                          {obj.description}
+                        </Text>
+                    </View>
+                </TouchableOpacity> 
+          </View>)
+         })
+      }
+    
     return (
       <Container style={styles.container}>
          <Header style={styles.headerStyle}>
@@ -83,92 +147,10 @@ class OnlineStore extends Component {
                       </Col>
                     </Grid>
               </View>
-              <View style={styles.storeItems}>
-
-                <TouchableOpacity  style={styles.storeProducts}
-                  onPress={() => this.props.navigation.navigate("ProductDetails")}>
-                    <View style={styles.productsHeader}>
-                        <View style={styles.productCount}>  
-                            <Text 
-                              style={{color: "#FFFFFF", 
-                                    fontFamily: "Arial",
-                                    }}>
-                              1
-                            </Text>
-                        </View>
-                    </View>
-                    <View style={styles.cardImage}>
-                        <Image source={{uri: "https://www.muscleessentials.in/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/m/e/me_pre.jpg"}} style={{ width: 100, height: 100 }}  />
-                    </View>
-                    <View style={styles.cardContent}>
-                        <Text numberOfLines={1} style={styles.type}>Category 1</Text>
-                        <Text numberOfLines={1} style={styles.name}>Product 1</Text>
-                        <Text numberOfLines={3} style={styles.description}>
-                          Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
-                          Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity  style={styles.storeProducts}
-                  onPress={() => this.props.navigation.navigate("ProductDetails")}>
-                    <View style={styles.productsHeader}>
-                        <View style={styles.productCount}>  
-                            <Text style={{color: "#FFFFFF", fontFamily: "Arial"}}>2</Text>
-                        </View>
-                    </View>
-                    <View style={styles.cardImage}>
-                        <Image source={{uri: "https://www.muscleessentials.in/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/m/e/me_pre.jpg"}} style={{ width: 100, height: 100 }}  />
-                    </View>
-                    <View style={styles.cardContent}>
-                        <Text numberOfLines={1} style={styles.type}>Category 2</Text>
-                        <Text numberOfLines={1} style={styles.name}>Product 2</Text>
-                        <Text numberOfLines={3} style={styles.description}>
-                          Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
-                          Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity  style={styles.storeProducts}
-                  onPress={() => this.props.navigation.navigate("ProductDetails")}>
-                    <View style={styles.productsHeader}>
-                        <View style={styles.productCount}>  
-                            <Text style={{color: "#FFFFFF", fontFamily: "Arial"}}>3</Text>
-                        </View>
-                    </View>
-                    <View style={styles.cardImage}>
-                        <Image source={{uri: "https://www.muscleessentials.in/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/m/e/me_pre.jpg"}} style={{ width: 100, height: 100 }}  />
-                    </View>
-                    <View style={styles.cardContent}>
-                        <Text numberOfLines={1} style={styles.type}>Category 3</Text>
-                        <Text numberOfLines={1} style={styles.name}>Product 3</Text>
-                        <Text numberOfLines={3} style={styles.description}>
-                          Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
-                          Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity  style={styles.storeProducts}
-                  onPress={() => this.props.navigation.navigate("ProductDetails")}>
-                    <View style={styles.productsHeader}>
-                        <View style={styles.productCount}>  
-                            <Text style={{color: "#FFFFFF", fontFamily: "Arial"}}>4</Text>
-                        </View>
-                    </View>
-                    <View style={styles.cardImage}>
-                        <Image source={{uri: "https://www.muscleessentials.in/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/m/e/me_pre.jpg"}} style={{ width: 100, height: 100 }}  />
-                    </View>
-                    <View style={styles.cardContent}>
-                        <Text numberOfLines={1} style={styles.type}>Category 4</Text>
-                        <Text numberOfLines={1} style={styles.name}>Product 4</Text>
-                        <Text numberOfLines={3} style={styles.description}>
-                          Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
-                          Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
-                        </Text>
-                    </View>
-                </TouchableOpacity>
+              <View style={styles.storeItems}>                  
+                {
+                  designProduct
+                }
 
               </View>          
         </Content>
@@ -178,4 +160,16 @@ class OnlineStore extends Component {
   }
 }
 
-export default OnlineStore;
+const mapStateToProps = (state) => {
+  return {
+    
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(OnlineStore);
