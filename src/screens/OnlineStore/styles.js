@@ -1,3 +1,8 @@
+import {
+  Dimensions
+} from 'react-native';
+const window = Dimensions.get('window');
+
 export default {
   container: {
     backgroundColor: "#fff"
@@ -74,26 +79,24 @@ export default {
 storeItems: {
   //flex : 1,
   //position: "relative",
-  //top: "-11%",
-  backgroundColor : '#dae2ef',
-  display: "flex",
+  //top: "-11%",  
+  //display: "flex",
+  // flexDirection: "row",
+  // flexWrap: "wrap",
+  // left: 0,
+  // right: 0,
+  backgroundColor: '#dce2ef',
+  alignItems:'center',
   borderWidth : 1,
-  borderColor : '#ccc',
-  flexDirection: "row",
-  flexWrap: "wrap",
-  left: 0,
-  right: 0,
-  padding: 10,
+  borderColor : '#ccc'   
 },
-storeProducts: {
-  backgroundColor: "#FFFFFF",
-  height: 290,
-  width: 170, 
+storeProducts: {  
+  backgroundColor: "#FFFFFF",    
+  height: 290,  
+  margin:5,
+  width: window.width / 2.15, 
   borderWidth : 1,
-  borderColor : '#ccc',
-  marginRight: 3,
-  marginLeft: 3,
-  marginTop: 5
+  borderColor : '#ccc'
 },
 productsHeader: {
   display: "flex",

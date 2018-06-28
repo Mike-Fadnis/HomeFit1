@@ -1,5 +1,10 @@
 import React, { Component } from "react";
-import { Image, View, TouchableOpacity } from 'react-native';
+import {
+  Image,
+  View,
+  TouchableOpacity,
+  FlatList
+} from 'react-native';
 import {
   Container,
   Header,
@@ -18,11 +23,8 @@ import {
   Right,
   Body
 } from "native-base";
-import { SearchBar } from 'react-native-elements';
+import { SearchBar, List } from 'react-native-elements';
 import { Col, Grid } from "react-native-easy-grid";
-import {
-  connect
-} from 'react-redux';
 
 import styles from "./styles";
 import API from '@utils/ApiUtils';
@@ -38,9 +40,7 @@ class OnlineStore extends Component {
     }
   }
   async componentWillMount(){
-    API.getProducts().then(async (response) => { 
-      // alert('page response: '+ JSON.stringify(response))    
-      // console.log('page response: ' + JSON.stringify(response))
+    API.getProducts().then(async (response) => {       
       if(response){
         this.setState({
           allProducts: response.data
@@ -50,46 +50,87 @@ class OnlineStore extends Component {
       console.log(error)
     });
   }
+
+  renderData = ({item, index}) => {
+      return (
+          <TouchableOpacity  style={styles.storeProducts}
+            onPress={() => this.props.navigation.navigate("ProductDetails")}>
+              <View style={styles.productsHeader}>
+                  <View style={styles.productCount}>  
+                      <Text 
+                        style={{color: "#FFFFFF", 
+                              fontFamily: "Arial",
+                              }}>
+                         {
+                           `${item.id}`
+                         }
+                      </Text>
+                  </View>
+              </View>
+              <View style={styles.cardImage}>
+                  < Image source = {
+                    {uri: IMAGE_PATH + item.image}
+                  }
+                  style = {
+                    {
+                      width: 100,
+                      height: 100
+                    }
+                  }
+                  />
+              </View>
+              <View style={styles.cardContent}>
+                  <Text numberOfLines={1} style={styles.type}>{item.cat_name}</Text>
+                  <Text numberOfLines={1} style={styles.name}>{item.name}</Text>
+                  <Text numberOfLines={3} style={styles.description}>
+                    {item.description}
+                  </Text>
+              </View>
+                </TouchableOpacity>
+
+      );
+  }
+
   render() {
-    var designProduct = []    
-       {this.state.allProducts.map((obj, key) => {
-         designProduct.push(
-          <View>
-            <TouchableOpacity  style={styles.storeProducts}
-                  onPress={() => this.props.navigation.navigate("ProductDetails")}>
-                    <View style={styles.productsHeader}>
-                        <View style={styles.productCount}>  
-                            <Text 
-                              style={{color: "#FFFFFF", 
-                                    fontFamily: "Arial",
-                                    }}>
-                              {obj.id}
-                            </Text>
-                        </View>
-                    </View>
-                    <View style={styles.cardImage}>
-                        < Image source = {
-                          {uri: IMAGE_PATH + obj.image}
-                        }
-                        style = {
-                          {
-                            width: 100,
-                            height: 100
-                          }
-                        }
-                        />
-                    </View>
-                    <View style={styles.cardContent}>
-                        <Text numberOfLines={1} style={styles.type}>{obj.cat_name}</Text>
-                        <Text numberOfLines={1} style={styles.name}>{obj.name}</Text>
-                        <Text numberOfLines={3} style={styles.description}>
-                          {obj.description}
-                        </Text>
-                    </View>
-                </TouchableOpacity> 
-          </View>)
-         })
-      }
+    // var designProduct = []    
+    //    {this.state.allProducts.map((obj, key) => {
+    //      designProduct.push(
+    //       <View>
+    //         <TouchableOpacity  style={styles.storeProducts}
+    //               onPress={() => this.props.navigation.navigate("ProductDetails")}>
+    //                 <View style={styles.productsHeader}>
+    //                     <View style={styles.productCount}>  
+    //                         <Text 
+    //                           style={{color: "#FFFFFF", 
+    //                                 fontFamily: "Arial",
+    //                                 }}>
+    //                           {obj.id}
+    //                         </Text>
+    //                     </View>
+    //                 </View>
+    //                 <View style={styles.cardImage}>
+    //                     < Image source = {
+    //                       {uri: IMAGE_PATH + obj.image}
+    //                     }
+    //                     style = {
+    //                       {
+    //                         width: 100,
+    //                         height: 100
+    //                       }
+    //                     }
+    //                     />
+    //                 </View>
+    //                 <View style={styles.cardContent}>
+    //                     <Text numberOfLines={1} style={styles.type}>{obj.cat_name}</Text>
+    //                     <Text numberOfLines={1} style={styles.name}>{obj.name}</Text>
+    //                     <Text numberOfLines={3} style={styles.description}>
+    //                       {obj.description}
+    //                     </Text>
+    //                 </View>
+    //             </TouchableOpacity> 
+    //       </View>)
+    //      })
+    //   }
     
     return (
       <Container style={styles.container}>
@@ -122,7 +163,7 @@ class OnlineStore extends Component {
                   <Text style={styles.textContent}>
                       Only the elite earns a position in our top 50 best-sellers list. These proven supplements can help you het the results you are working for.
                   </Text>
-    </View> */}
+                </View> */}
               <Card style={styles.card}>
                 <CardItem>
                   <Body>
@@ -147,11 +188,16 @@ class OnlineStore extends Component {
                       </Col>
                     </Grid>
               </View>
-              <View style={styles.storeItems}>                  
-                {
-                  designProduct
-                }
-
+              <View style={styles.storeItems}>   
+              <List>
+                  <FlatList                                       
+                    data={this.state.allProducts}
+                    keyExtractor={(x, i) => x.id}
+                    renderItem={this.renderData.bind(this)}
+                    numColumns={2} 
+                    style={{backgroundColor:'#dce2ef'}}                   
+                    />                
+              </List>
               </View>          
         </Content>
 
@@ -160,16 +206,4 @@ class OnlineStore extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    
-  }
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(OnlineStore);
+export default OnlineStore
