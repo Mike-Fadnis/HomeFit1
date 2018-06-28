@@ -20,15 +20,18 @@ import styles from "./styles";
 
 class ClientHome extends Component {
   render(){
+      const {goBack} = this.props.navigation;
       return(
         <Container style={styles.container}>
             <Header style={styles.headerStyle}>
           <Left style={styles.ham}>
             <Button style={styles.ham}
               transparent
-              onPress={() => this.props.navigation.navigate("DrawerOpen")}
+              onPress = {
+                  () => this.props.navigation.navigate("DrawerOpen")
+              }
             >
-              <Icon name="ios-menu" />
+              < Icon name = "ios-menu" / >
             </Button>
           </Left>
           <Body>

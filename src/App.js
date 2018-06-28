@@ -159,7 +159,7 @@ const Drawer = DrawerNavigator(
     TrainerFinancialDetails : { screen : TrainerFinancialDetails },
     TrainerPersonalPage : { screen : TrainerPersonalPage },
     OnlineStore : { screen : OnlineStore },
-    ProductDetails : { screen : ProductDetails},
+    ProductDetails : { screen : ProductDetails },
     TrainerChooseDates : { screen : TrainerChooseDates}
   },
   {

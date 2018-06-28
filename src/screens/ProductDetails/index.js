@@ -22,6 +22,10 @@ import {
 
 import { Col, Grid, Row } from "react-native-easy-grid";
 
+import API from '@utils/ApiUtils';
+import {
+    IMAGE_PATH
+} from '@common/global'
 
 import styles from "./styles";
 
@@ -34,9 +38,44 @@ class ProductDetails extends React.Component<Props, State> {
     constructor(props) {
         super(props);
         this.state = {
-            selected3: undefined
+            selected3: undefined,
+            productDetails:"",
+            productId: this.props.navigation.state.params.productId,            
+            name: "",
+            description: "",
+            price: "",
+            category: "",
+            quantity: "",
+            sub_heading: "",
+            image: "", 
+            status: ""            
         };
     }
+    async componentWillMount(){       
+        var getProductId = this.state.productId;     
+        API.getProductDetails(getProductId).then(async (response) => {            
+            if (response){
+                this.setState({
+                    productDetails: response.data
+                },()=>{
+                    //alert('if alert: '+JSON.stringify(this.state.productDetails))
+                    this.setState({                        
+                        name: this.state.productDetails.name,
+                        description: this.state.productDetails.description,
+                        price: this.state.productDetails.price,
+                        category: this.state.productDetails.category,
+                        quantity: this.state.productDetails.quantity,
+                        sub_heading: this.state.productDetails.sub_heading,
+                        image: 'http://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/' + this.state.productDetails.image,
+                        status: this.state.productDetails.status                   
+                    })
+                })
+            }            
+        }).catch((error)=>{
+            console.log(error)
+        });
+    }
+
     onValueChange3(value: string) {
         this.setState({
             selected3: value
@@ -52,8 +91,7 @@ class ProductDetails extends React.Component<Props, State> {
                 description: "ME PRE has been formulated to give you explosive energy, heightened focus and an overwhelming urge to tackle any challenge",
                 ratings: "9.2",
                 sale: "10k"
-            };
-
+            };            
         return (
             <Container style={styles.container}>
                 <Header style={styles.header}>
@@ -61,7 +99,7 @@ class ProductDetails extends React.Component<Props, State> {
                     <Button style={styles.ham}
                     transparent
                     onPress={() => this.props.navigation.navigate("DrawerOpen")}
-                    >
+                    >                    
                     <Icon name="ios-menu" />
                     </Button>
                 </Left>
@@ -72,7 +110,6 @@ class ProductDetails extends React.Component<Props, State> {
                 </Header>
                 <Content>
                     <View style={styles.content}>
-
                         {/* search block 
                         <Item style={styles.search}>
                             <Icon active name="search" style={styles.inputIcon}/>
@@ -82,13 +119,13 @@ class ProductDetails extends React.Component<Props, State> {
                         {/* product image and description block */}
                         <View style={styles.productBlock}>
                             <View size={1}>
-                                <Image source={{uri: product.image}} style={{ width: 135, height: 150 }}  />
+                                <Image source={{uri: this.state.image}} style={{ width: 135, height: 150 }}  />
                             </View>
                             <View size={1.5} style={styles.productDescription}>
-                                <Text style={styles.type}>{product.type.toUpperCase()}</Text>
-                                <Text style={styles.name}>{product.name}</Text>
-                                <Text style={styles.description}>{product.description.toUpperCase()}</Text>
-                                <Text style={styles.subtitle}>{product.subtitle}</Text>
+                                <Text style={styles.type}>Category{this.state.category}</Text>
+                                <Text style={styles.name}>{this.state.name}</Text>
+                                <Text style={styles.description}>{this.state.description.toUpperCase()}</Text>
+                                <Text style={styles.subtitle}>empty subtitle{this.state.subtitle}</Text>
                                 <Text />
                             </View>
                             <View style={{display: "flex", alignItems: "flex-end", 
@@ -143,7 +180,7 @@ class ProductDetails extends React.Component<Props, State> {
                         </View>
 
                         <View style={styles.priceBlock}>
-                            <Text style={styles.price}>$16.99</Text>
+                            <Text style={styles.price}>${this.state.price}</Text>
                         </View>
 
                         <View style={styles.freeShipping}>

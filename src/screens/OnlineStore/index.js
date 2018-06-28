@@ -40,11 +40,11 @@ class OnlineStore extends Component {
     }
   }
   async componentWillMount(){
-    API.getProducts().then(async (response) => {       
-      if(response){
+    API.getProducts().then(async (response) => {             
+      if (response){
         this.setState({
           allProducts: response.data
-        })
+        });   
       }
     }).catch((error)=> {
       console.log(error)
@@ -54,16 +54,18 @@ class OnlineStore extends Component {
   renderData = ({item, index}) => {
       return (
           <TouchableOpacity  style={styles.storeProducts}
-            onPress={() => this.props.navigation.navigate("ProductDetails")}>
+            onPress={() => this.props.navigation.navigate("ProductDetails",
+            (user = {
+              productId: item.id              
+            })
+            )}>
               <View style={styles.productsHeader}>
                   <View style={styles.productCount}>  
                       <Text 
                         style={{color: "#FFFFFF", 
                               fontFamily: "Arial",
                               }}>
-                         {
-                           `${item.id}`
-                         }
+                         {index + 1}
                       </Text>
                   </View>
               </View>
@@ -91,56 +93,18 @@ class OnlineStore extends Component {
       );
   }
 
-  render() {
-    // var designProduct = []    
-    //    {this.state.allProducts.map((obj, key) => {
-    //      designProduct.push(
-    //       <View>
-    //         <TouchableOpacity  style={styles.storeProducts}
-    //               onPress={() => this.props.navigation.navigate("ProductDetails")}>
-    //                 <View style={styles.productsHeader}>
-    //                     <View style={styles.productCount}>  
-    //                         <Text 
-    //                           style={{color: "#FFFFFF", 
-    //                                 fontFamily: "Arial",
-    //                                 }}>
-    //                           {obj.id}
-    //                         </Text>
-    //                     </View>
-    //                 </View>
-    //                 <View style={styles.cardImage}>
-    //                     < Image source = {
-    //                       {uri: IMAGE_PATH + obj.image}
-    //                     }
-    //                     style = {
-    //                       {
-    //                         width: 100,
-    //                         height: 100
-    //                       }
-    //                     }
-    //                     />
-    //                 </View>
-    //                 <View style={styles.cardContent}>
-    //                     <Text numberOfLines={1} style={styles.type}>{obj.cat_name}</Text>
-    //                     <Text numberOfLines={1} style={styles.name}>{obj.name}</Text>
-    //                     <Text numberOfLines={3} style={styles.description}>
-    //                       {obj.description}
-    //                     </Text>
-    //                 </View>
-    //             </TouchableOpacity> 
-    //       </View>)
-    //      })
-    //   }
-    
+  render() {    
     return (
       <Container style={styles.container}>
          <Header style={styles.headerStyle}>
           <Left style={styles.ham}>
             <Button style={styles.ham}
               transparent
-              onPress={() => this.props.navigation.navigate("DrawerOpen")}
+               onPress = {
+                 () => this.props.navigation.navigate("DrawerOpen")
+               }
             >
-              <Icon name="ios-menu" />
+              < Icon name = "ios-menu" / >
             </Button>
           </Left>
           <Body>
