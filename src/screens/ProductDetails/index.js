@@ -19,15 +19,13 @@ import {
   ListItem,
   Thumbnail,
 } from "native-base";
-
 import { Col, Grid, Row } from "react-native-easy-grid";
 
 import API from '@utils/ApiUtils';
-import {
-    IMAGE_PATH
-} from '@common/global'
-
+import {IMAGE_PATH} from '@common/global'
 import styles from "./styles";
+
+var pushedProducts: []
 
 export interface Props {
 	navigation: any;
@@ -35,6 +33,10 @@ export interface Props {
 export interface State {}
 
 class ProductDetails extends React.Component<Props, State> {
+    static navigationOptions = {
+        title: 'OnlineStore',
+        title: 'AddToCart',
+    };
     constructor(props) {
         super(props);
         this.state = {
@@ -48,15 +50,19 @@ class ProductDetails extends React.Component<Props, State> {
             quantity: "",
             sub_heading: "",
             image: "", 
-            status: ""            
+            status: "",
+            productResponse:{},
+            allProducts: []         
         };
+        this.props.navigation.state.key = 'ProductDetails';
     }
-    async componentWillMount(){       
+    async componentWillMount(){ 
         var getProductId = this.state.productId;     
         API.getProductDetails(getProductId).then(async (response) => {            
             if (response){
                 this.setState({
-                    productDetails: response.data
+                    productDetails: response.data,
+                    productResponse: response                
                 },()=>{
                     //alert('if alert: '+JSON.stringify(this.state.productDetails))
                     this.setState({                        
@@ -66,7 +72,7 @@ class ProductDetails extends React.Component<Props, State> {
                         category: this.state.productDetails.category,
                         quantity: this.state.productDetails.quantity,
                         sub_heading: this.state.productDetails.sub_heading,
-                        image: 'http://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/' + this.state.productDetails.image,
+                        image: IMAGE_PATH+ this.state.productDetails.image,
                         status: this.state.productDetails.status                   
                     })
                 })
@@ -80,6 +86,17 @@ class ProductDetails extends React.Component<Props, State> {
         this.setState({
             selected3: value
         });
+    }
+    onAddToCardPressed(){ 
+        //this.state.allProducts.push(this.state.productResponse)
+            this.state.allProducts.push({"name": this.state.name})            
+            this.props.navigation.navigate("AddToCart",
+                (allproductss = {
+                    products: this.state.allProducts,
+                })
+            )           
+
+        
     }
     render() {
         const product =
@@ -98,13 +115,12 @@ class ProductDetails extends React.Component<Props, State> {
                 <Left style={styles.ham}>
                     <Button style={styles.ham}
                     transparent
-                    onPress={() => this.props.navigation.navigate("DrawerOpen")}
-                    >                    
-                    <Icon name="ios-menu" />
+                    onPress={() => this.props.navigation.navigate("OnlineStore")}>                    
+                    <Icon name="ios-arrow-back" style={{color: "white"}}/>
                     </Button>
                 </Left>
                 <Body>
-                    <Title style={styles.title}>Store</Title>
+                    <Title style={styles.title}>Product Details</Title>
                 </Body>
                 <Right />
                 </Header>
@@ -197,7 +213,8 @@ class ProductDetails extends React.Component<Props, State> {
                                     </Item>
                                 </Col>
                                 <Col size={2}>
-                                    <Button full style={{backgroundColor: "#34ace0"}}>
+                                    <Button full style={{backgroundColor: "#34ace0"}}
+                                    onPress={this.onAddToCardPressed.bind(this)}>
                                         <Text style={styles.addCartButton}>{"Add to Cart".toUpperCase()}</Text>
                                     </Button>
                                 </Col>

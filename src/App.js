@@ -144,6 +144,7 @@ import TrainerSignUp from './screens/TrainerSignUp';
 import TrainerFinancialDetails from './screens/TrainerFinancialDetails';
 import TrainerPersonalPage from './screens/TrainerPersonalPage';
 import OnlineStore from './screens/OnlineStore';
+import AddToCart from './screens/AddToCart';
 import ProductDetails from './screens/ProductDetails';
 import TrainerChooseDates from './screens/TrainerChooseDates';
 
@@ -159,6 +160,7 @@ const Drawer = DrawerNavigator(
     TrainerFinancialDetails : { screen : TrainerFinancialDetails },
     TrainerPersonalPage : { screen : TrainerPersonalPage },
     OnlineStore : { screen : OnlineStore },
+    AddToCart : { screen : AddToCart },
     ProductDetails : { screen : ProductDetails },
     TrainerChooseDates : { screen : TrainerChooseDates}
   },

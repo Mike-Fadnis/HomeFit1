@@ -19,8 +19,7 @@ import {
 import styles from "./styles";
 
 class ClientHome extends Component {
-  render(){
-      const {goBack} = this.props.navigation;
+  render(){      
       return(
         <Container style={styles.container}>
             <Header style={styles.headerStyle}>
@@ -31,7 +30,7 @@ class ClientHome extends Component {
                   () => this.props.navigation.navigate("DrawerOpen")
               }
             >
-              < Icon name = "ios-menu" / >
+              < Icon name = "ios-menu" style={{color: "white"}}/ >
             </Button>
           </Left>
           <Body>

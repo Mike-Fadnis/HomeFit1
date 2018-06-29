@@ -33,6 +33,9 @@ import {IMAGE_PATH} from '@common/global'
 const avatar = 'http://ajaypalsidhu.com//demo/HomeFit/Admin/uploads/punch.jpg';
 
 class OnlineStore extends Component {
+   static navigationOptions = {
+     title: 'ClientHome',
+   };
   constructor(props){
     super(props);
     this.state= {
@@ -50,6 +53,17 @@ class OnlineStore extends Component {
       console.log(error)
     });
   }
+
+  onBackPressed(){
+        this.props.navigation.dispatch({
+            type: 'Navigation/NAVIGATE',
+            routeName: 'ClientHome',
+            action: {
+                type: 'Navigation/NAVIGATE',
+                routeName: 'ClientHome',
+            }
+        });
+    }
 
   renderData = ({item, index}) => {
       return (
@@ -100,11 +114,9 @@ class OnlineStore extends Component {
           <Left style={styles.ham}>
             <Button style={styles.ham}
               transparent
-               onPress = {
-                 () => this.props.navigation.navigate("DrawerOpen")
-               }
+               onPress = {this.onBackPressed.bind(this)}
             >
-              < Icon name = "ios-menu" / >
+              <Icon name = "ios-arrow-back" style={{color: "white"}} />
             </Button>
           </Left>
           <Body>
