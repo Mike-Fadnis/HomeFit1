@@ -9,6 +9,7 @@ import {
   Icon,
   Left,
   Body,
+  Badge,
   Right,
   Text,
   Item,
@@ -20,13 +21,15 @@ import {
   Thumbnail,
 } from "native-base";
 import { Col, Grid, Row } from "react-native-easy-grid";
+import { connect } from 'react-redux';
+import {addToCartItem} from '@actions';
+
 
 import API from '@utils/ApiUtils';
 import {IMAGE_PATH} from '@common/global'
 import styles from "./styles";
 
-var pushedProducts: []
-
+var pushedProducts: [];
 export interface Props {
 	navigation: any;
 }
@@ -42,30 +45,35 @@ class ProductDetails extends React.Component<Props, State> {
         this.state = {
             selected3: undefined,
             productDetails:"",
-            productId: this.props.navigation.state.params.productId,            
+            productId: this.props.navigation.state.params.productId,
             name: "",
             description: "",
             price: "",
             category: "",
             quantity: "",
             sub_heading: "",
-            image: "", 
+            image: "",
             status: "",
             productResponse:{},
-            allProducts: []         
+            allProducts: [] ,
+            badgeTotal: 0,
+            qty:'1'
         };
-        this.props.navigation.state.key = 'ProductDetails';
     }
-    async componentWillMount(){ 
-        var getProductId = this.state.productId;     
-        API.getProductDetails(getProductId).then(async (response) => {            
+    async componentWillMount(){
+       // alert(this.props.cartTotal.addToCartItem.total);
+        this.setState({
+            badgeTotal: this.props.cartTotal.addToCartItem.total
+        })
+        var getProductId = this.state.productId;
+        API.getProductDetails(getProductId).then(async (response) => {
             if (response){
                 this.setState({
                     productDetails: response.data,
-                    productResponse: response                
+                    productResponse: response
                 },()=>{
                     //alert('if alert: '+JSON.stringify(this.state.productDetails))
-                    this.setState({                        
+                    this.setState({
                         name: this.state.productDetails.name,
                         description: this.state.productDetails.description,
                         price: this.state.productDetails.price,
@@ -73,13 +81,19 @@ class ProductDetails extends React.Component<Props, State> {
                         quantity: this.state.productDetails.quantity,
                         sub_heading: this.state.productDetails.sub_heading,
                         image: IMAGE_PATH+ this.state.productDetails.image,
-                        status: this.state.productDetails.status                   
+                        status: this.state.productDetails.status
                     })
                 })
-            }            
+            }
         }).catch((error)=>{
             console.log(error)
         });
+    }
+    componentWillReceiveProps(nextProps){
+       // alert('received props: ' + JSON.stringify(nextProps.cartTotal))
+       this.setState({
+           badgeTotal: nextProps.cartTotal.addToCartItem.total
+       })
     }
 
     onValueChange3(value: string) {
@@ -87,17 +101,41 @@ class ProductDetails extends React.Component<Props, State> {
             selected3: value
         });
     }
-    onAddToCardPressed(){ 
-        //this.state.allProducts.push(this.state.productResponse)
-            this.state.allProducts.push({"name": this.state.name})            
-            this.props.navigation.navigate("AddToCart",
-                (allproductss = {
-                    products: this.state.allProducts,
-                })
-            )           
+    onAddToCardPressed(){
 
-        
+        var quantity = this.state.qty
+        // if(quantity == ''){
+        // quantity = 1
+        // }else{
+        // quantity = quantity
+        // }
+        var item = {
+            id: this.state.productId,
+            totalQuantity:1,//quantity== ""?1:parseInt(quantity),
+            name: this.state.productDetails.name,
+            description: this.state.productDetails.description,
+            price: this.state.productDetails.price,
+            category: this.state.productDetails.category,
+            quantity: this.state.productDetails.quantity,
+            sub_heading: this.state.productDetails.sub_heading,
+            image: IMAGE_PATH+ this.state.productDetails.image,
+            status: this.state.productDetails.status
+        };
+        this.props.dispatchAddCart(item);
+     // alert("PRODEUCT: "+JSON.stringify(item))
     }
+
+    onBack(){
+       this.props.navigation.navigate("OnlineStore")
+    }
+    onCartIcon() {
+        this.props.navigation.navigate("AddToCart")
+    }
+      onChangeText(text){
+        this.setState({
+          qty:text
+        })
+      }
     render() {
         const product =
             {
@@ -108,25 +146,38 @@ class ProductDetails extends React.Component<Props, State> {
                 description: "ME PRE has been formulated to give you explosive energy, heightened focus and an overwhelming urge to tackle any challenge",
                 ratings: "9.2",
                 sale: "10k"
-            };            
+            };
+    // alert("DFDFfdf: "+this.state.qty)
         return (
             <Container style={styles.container}>
                 <Header style={styles.header}>
                 <Left style={styles.ham}>
                     <Button style={styles.ham}
                     transparent
-                    onPress={() => this.props.navigation.navigate("OnlineStore")}>                    
+                    onPress={this.onBack.bind(this)}>
                     <Icon name="ios-arrow-back" style={{color: "white"}}/>
                     </Button>
                 </Left>
                 <Body>
-                    <Title style={styles.title}>Product Details</Title>
+                    <Title style={styles.title}> Store</Title>
                 </Body>
-                <Right />
+                <Right style={styles.ham}>
+                    <Button style={styles.ham}
+                    transparent
+                    onPress={this.onCartIcon.bind(this)}>
+                        <Icon name = "ios-cart" style={{color: "white",marginRight:18}}/>
+                    {this.state.badgeTotal == 0 ?(null)
+                      : <Badge style={{ position: 'absolute', right: 12, top: 0, paddingTop: 0, paddingBottom: 0, borderRadius: 50}}>
+                          <Text style={{ fontSize: 12,fontWeight:'bold' }}>{this.state.badgeTotal}</Text>
+                        </Badge>}
+
+                    </Button>
+                </Right>
+
                 </Header>
                 <Content>
                     <View style={styles.content}>
-                        {/* search block 
+                        {/* search block
                         <Item style={styles.search}>
                             <Icon active name="search" style={styles.inputIcon}/>
                             <Input placeholder="Search" />
@@ -144,7 +195,7 @@ class ProductDetails extends React.Component<Props, State> {
                                 <Text style={styles.subtitle}>empty subtitle{this.state.subtitle}</Text>
                                 <Text />
                             </View>
-                            <View style={{display: "flex", alignItems: "flex-end", 
+                            <View style={{display: "flex", alignItems: "flex-end",
                                         paddingRight : 10}}>
                                 <View style={styles.productRating}>
                                     <Text style={{color: "#9a9b9c", fontSize: 12, fontWeight: "bold"}}>9.2</Text><Text style={{color: "#9a9b9c", fontSize: 7,  fontFamily: "Arial", fontWeight: "bold"}}>RATING</Text>
@@ -183,7 +234,7 @@ class ProductDetails extends React.Component<Props, State> {
                                             style={{ width:  120 }}
                                             selectedValue={this.state.selected3}
                                             onValueChange={this.onValueChange3.bind(this)}
-                                        >                                        
+                                        >
                                         <Picker.Item label="Apple" value="key0" />
                                         <Picker.Item label="Mango" value="key1" />
                                         <Picker.Item label="Choclate" value="key2" />
@@ -209,7 +260,8 @@ class ProductDetails extends React.Component<Props, State> {
                                 <Col size={1} style={styles.qty}>
                                     <Text style={styles.freeShippingAdditionalText}>Qty:</Text>
                                     <Item regular style={{width: "40%", maxHeight: 46, marginLeft: 25}}>
-                                        <Input  />
+                                        <Input onChangeText={this.onChangeText.bind(this)}
+                                          value={this.state.qty} />
                                     </Item>
                                 </Col>
                                 <Col size={2}>
@@ -270,4 +322,18 @@ class ProductDetails extends React.Component<Props, State> {
     }
 }
 
-export default ProductDetails;
+function mapStateToProps(state) {
+  // alert('123' + JSON.stringify(state))
+  console.log("stateeeeee: ", state)
+  return {
+    cartTotal: state
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatchAddCart: item => dispatch(addToCartItem(item))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProductDetails)

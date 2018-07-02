@@ -13,7 +13,9 @@ const styles: any = StyleSheet.create({
 		backgroundColor: "#34ace0"
     },
     ham : {
-        backgroundColor :  "#009FDB",
+        //backgroundColor :  "#009FDB",
+        backgroundColor :  "transparent"        
+
         },
 	title: {
 		fontFamily: "Arial",

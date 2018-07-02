@@ -1,7 +1,10 @@
 import * as React from "react";
-import { Image, View, FlatList } from "react-native";
-import { NavigationActions } from 'react-navigation';
-
+import {
+  Image,
+  View,
+  FlatList,
+  Alert
+} from "react-native";
 import {
   Container,
   Header,
@@ -12,105 +15,241 @@ import {
   Left,
   Body,
   Right,
+  SwipeRow,
   Text,
   Item,
   Input,
   Picker,
-  Form,  
+  Form,
   ListItem,
   Thumbnail,
 } from "native-base";
-
-import { Col, Grid, Row } from "react-native-easy-grid";
-import { List } from 'react-native-elements';
-
-
+import {
+  connect
+} from 'react-redux';
+import {
+  Col,
+  Grid,
+  Row
+} from "react-native-easy-grid";
+import {
+  List
+} from 'react-native-elements';
 import styles from "./styles";
-
+import {
+  IMAGE_PATH
+} from '@common/global'
 export interface Props {
-	navigation: any;
+  navigation: any;
 }
+import {
+  removeCartItem
+} from '@actions';
 export interface State {}
-
-class ProductDetails extends React.Component<Props, State> {
-//     static navigationOptions = ({ navigation }) => {
-//     const { params } = navigation.state
-//     return {
-//       title: 'Product Details',
-//       headerTintColor: 'red',
-//       headerStyle: styles.headerStyleMain,
-//       headerTitleStyle: {
-//         color: 'pink',
-//         alignSelf:'center'
-//       },
-//       headerRight:null
-//     }
-//   }
+var quantityList = []
+class Cart extends React.Component < Props, State > {
     constructor(props) {
-        super(props);
-        this.state = {
-            selected3: undefined,
-            pushedProducts: this.props.navigation.state.params.products,
-        };
-        
+      super(props);
+      this.state = {
+        selected3: undefined,
+        cartItems: [],
+        totalPrice: [],
+        onEditing: false,
+        onRowOpenValue: ''
+      };
     }
-    componentWillMount(){        
-        //alert(JSON.stringify(this.props.navigation.state.params.products))
-        // console.log('add to card pressed: ', this.props.navigation.state.params.products)
+    componentWillMount() {
+
+      var totalPrice = parseFloat(this.props.cartItems.addToCartItem.totalPrice)
+      this.setState({
+        cartItems: this.props.cartItems.addToCartItem.cartItems,
+        totalPrice: this.props.cartItems.addToCartItem.totalPrice
+      })
+      for (i = 0; i <= 100; i++) {
+        quantityList.push({
+          label: i.toString(),
+          value: i.toString()
+        })
+      }
+    }
+    componentWillReceiveProps(nextProps) {
+      //alert(JSON.stringify(nextProps.cartItems.addToCartItem.cartItems))
+      this.setState({
+        cartItems: nextProps.cartItems.addToCartItem.cartItems
+      })
+
     }
     onValueChange3(value: string) {
-        this.setState({
-            selected3: value
-        });
+      this.setState({
+        selected3: value
+      });
     }
-    // renderData = ({item, index}) => {
-    //     return (
-    //         <View style={{backgroundColor:'orange',height:150,width:250}}>
-    //             <Text style={{color:'red',fontSize:30}}>
-    //                 {item.description}
-    //             </Text>
-    //         </View>
-    //     )
-    // }
-    onBackPressed(){
-        // this.props.navigation.dispatch({
-        //     type: 'Navigation/NAVIGATE',
-        //     routeName: 'ProductDetails',
-        //     action: {
-        //         type: 'Navigation/NAVIGATE',
-        //         routeName: 'ProductDetails',
-        //     }
-        // });           
-        this.props.navigation.navigate("ProductDetails")
+    onBackPressed() {
+      this.props.navigation.navigate("ProductDetails")
+    }
+    onEdit() {
+      this.setState({
+        onEditing: !this.state.onEditing
+      })
+    }
+    deletedItem(index) {
+      // alert(JSON.stringify(index))
+      var item = {
+        id: index.id,
+        totalQuantity: 1, //quantity== ""?1:parseInt(quantity),
+        name: index.name,
+        description: index.description,
+        price: index.price,
+        category: index.category,
+        quantity: index.quantity,
+        sub_heading: index.sub_heading,
+        image: IMAGE_PATH + index.image,
+        status: index.status
+      };
+      this.props.dispatchDeleteCart(item);
+      //   this.state.cartItems.splice(index, 1)// This will remove the element at index, and update this.items with new array
+      //   this.setState({
+      //     cartItems: this.state.cartItems
+      //   });
+      // alert("Item deleted successfully")
+    }
+    deleteRow(index) {
+      Alert.alert(
+        'Delete',
+        'Are you sure you want to delete?', [
 
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed')
+          },
+          {
+            text: 'OK',
+            onPress: () => this.deletedItem(index)
+          },
+        ], {
+          cancelable: false
+        }
+      )
     }
 
-    render() { 
-        const product =
-            {
-                image: "https://www.muscleessentials.in/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/m/e/me_pre.jpg",
-                name: "Product 1",
-                price:"121",
-                stock:"In Stock",
-                subtitle: "Muscle Building Powder"                
-            };            
+    onSwipeRight(index) {
+  this.setState({
+    onRowOpenValue: index.id
+  })
+}
+onOpenRow(secId, rowId, rowMap) {
+  rowMap[`${secId}${rowId}`].props.manuallySwipeRow(20);
+}
+renderData = ({
+    item,
+    index
+  }) => {
+  if (this.state.onEditing === true) {
+  return (
+          <View style={styles.productBlockView}>
+              <View style={styles.productBlock}>
+                {this.state.onRowOpenValue != item.id?
+                  (<View style={{alignItems:'center', justifyContent:'center'}}>
+                    <Button transparent onPress={this.onSwipeRight.bind(this, item)} style={{marginLeft:10,backgroundColor:'red', width:35, height:35,borderRadius:17,alignItems:'center', justifyContent:'center'}}>
+                      <Icon name="ios-remove-outline" style={{color:'white'}}/>
+                    </Button>
+                  </View>):(null)}
+
+                  <View size={1} style={{alignItems:'flex-end',paddingLeft:10}}>
+                      <Image source={{uri: item.image}} style={{ width: 150, height: 150 }}  />
+                  </View>
+                  <View size={1.5} style={styles.productDescription}>
+                      <Text style={styles.name}>{item.name}</Text>
+                      <Text style={styles.type}>4,4</Text>
+                      <Text style={styles.price}>${item.price}</Text>
+                      <Text style={styles.stock}>In Stock</Text>
+                  </View>
+                  <View style={styles.allCenter}>
+                      <Text style={styles.totalQuantityTextStyle}>x {item.totalQuantity}</Text>
+                  </View>
+              {this.state.onRowOpenValue === item.id?
+                (<View style={{ height:200, width:150, backgroundColor:'red', alignItems:'center', justifyContent:'center'}}>
+                  <Button onPress={this.deleteRow.bind(this, item)} style={{backgroundColor:'transparent'}}>
+                    <Icon active name="trash" />
+                  </Button>
+                </View>):(null)}
+              </View>
+          </View>
+
+
+                )
+            }
+          else{
+            return(
+                <SwipeRow
+                    leftOpenValue={75}
+                    rightOpenValue={-75}
+                    disableRightSwipe={true}
+
+                    body={
+                        <View style={styles.productBlockView}>
+                            <View style={styles.productBlock}>
+                                <View size={1} style={{alignItems:'flex-end',paddingLeft:10}}>
+                                    <Image source={{uri: item.image}} style={{ width: 150, height: 150 }}  />
+                                </View>
+                                <View size={1.5} style={styles.productDescription}>
+                                    <Text style={styles.name}>{item.name}</Text>
+                                    <Text style={styles.type}>4,4</Text>
+                                    <Text style={styles.price}>${item.price}</Text>
+                                    <Text style={styles.stock}>In Stock</Text>
+                                </View>
+                                <View style={styles.allCenter}>
+                                    <Text style={styles.totalQuantityTextStyle}>x {item.totalQuantity}</Text>
+                                </View>
+                            </View>
+                        </View>
+                        }
+                    right={
+                    <Button danger onPress={this.deleteRow.bind(this, item)}>
+                        <Icon active name="trash" />
+                    </Button>
+                    }
+                />
+
+
+            )
+          }
+    }
+    render() {
+        // const product =
+        //     {
+        //         image: "https://www.muscleessentials.in/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/m/e/me_pre.jpg",
+        //         name: "Product 1",
+        //         price:"121",
+        //         stock:"In Stock",
+        //         subtitle: "Muscle Building Powder"
+        //   };
         return (
-            <Container style={styles.container}>   
+            <Container style={styles.container}>
              <Header style={styles.header}>
                 <Left>
                     <Button transparent onPress={this.onBackPressed.bind(this)}>
                         <Icon style={{color: "white"}} name="ios-arrow-back" />
                     </Button>
-				</Left>
+				        </Left>
                 <Body>
                     <Title style={styles.title}>Cart</Title>
                 </Body>
-                <Right />
+                <Right>
+                    <Button transparent onPress={this.onEdit.bind(this)}>
+                      { this.state.onEditing ==false?(<Text style={styles.headerRightTextStyle}>
+                            Edit
+                        </Text>):(<Text style={styles.headerRightTextStyle}>
+                            Done
+                        </Text>)
+                        }
+                    </Button>
+                </Right>
                 </Header>
 
                 <Content>
                     <View style={styles.content}>
-                        {/* search block 
+                        {/* search block
                         <Item style={styles.search}>
                             <Icon active name="search" style={styles.inputIcon}/>
                             <Input placeholder="Search" />
@@ -124,7 +263,7 @@ class ProductDetails extends React.Component<Props, State> {
                                     <Text style={styles.discountedTextStyle}> Discounted SubTotal(1 item):</Text>
                                 </View>
                                 <View style={styles.discountedPriceView}>
-                                    <Text style={styles.discountedPriceTextStyle}>$121</Text>
+                                    <Text style={styles.discountedPriceTextStyle}>$ {this.state.totalPrice}</Text>
                                 </View>
                             </View>
                             <View style={styles.secureCheckOutView}>
@@ -133,32 +272,18 @@ class ProductDetails extends React.Component<Props, State> {
                                 </View>
                             </View>
                         </View>
-
-
-                        <View style={styles.productBlockView}>
-                            <View style={styles.productBlock}>                            
-                                <View size={1} style={{alignItems:'flex-end',}}>
-                                    <Image source={{uri: product.image}} style={{ width: 150, height: 150 }}  />
-                                </View>
-                                <View size={1.5} style={styles.productDescription}>
-                                    <Text style={styles.name}>{product.name}</Text>
-                                    <Text style={styles.type}>4,4</Text>                                
-                                    <Text style={styles.price}>${product.price}</Text>                                
-                                    <Text style={styles.stock}>{product.stock}</Text>                                
-                                </View>                            
-                            </View>
-                        </View>
-
-                        {/* <List>
+                        <List>
                             <FlatList
-                                data={this.state.pushedProducts}
+                                data={this.state.cartItems}
                                 keyExtractor={(x, i) => x.id}
-                                renderItem={this.renderData.bind(this)}/>
-                        </List>*/}
-                                  
+                                extraData={this.state}
+                                renderItem={this.renderData.bind(this)}
+                                style={{backgroundColor:'#FFFFFF'}}
+                            />
+                        </List>
 
                         <View style={styles.cartButtons}>
-                            <View style={styles.promocodeView}> 
+                            <View style={styles.promocodeView}>
                                 <View style={styles.promocodeTextView}>
                                     <Input
                                     placeholder = 'Have a promo code?'
@@ -168,7 +293,7 @@ class ProductDetails extends React.Component<Props, State> {
                                     <Button full style={{backgroundColor: "#34ace0"}}>
                                         <Text style={styles.applyTextStyle}>Apply</Text>
                                     </Button>
-                                </View>                            
+                                </View>
                             </View>
                             <View style={styles.promocodeConidtionView}>
                                 <Text style={styles.promocodeConditionTextStyle}>Only One Coupon Can Be Applied Per Order</Text>
@@ -178,15 +303,15 @@ class ProductDetails extends React.Component<Props, State> {
                          <View style={styles.footerContainer}>
                             <View style={styles.discountedView}>
                                 <View style={styles.discountedTextView}>
-                                    <Text style={styles.discountedTextStyle}> Discounted SubTotal(1 item):</Text>                                    
+                                    <Text style={styles.discountedTextStyle}> Discounted SubTotal(1 item):</Text>
                                 </View>
                                 <View style={styles.discountedPriceView}>
-                                    <Text style={styles.discountedPriceTextStyle}>$121</Text>
+                                    <Text style={styles.discountedPriceTextStyle}>${this.state.totalPrice}</Text>
                                 </View>
-                            </View>                            
+                            </View>
                             <View style={styles.discountedView}>
                                 <View style={styles.discountedTextView}>
-                                    <Text style={styles.discountedTextStyle}> Shipping Estimation: </Text>                                    
+                                    <Text style={styles.discountedTextStyle}> Shipping Estimation: </Text>
                                 </View>
                                 <View style={styles.discountedPriceView}>
                                     <Text style={styles.discountedPriceTextStyle}>$80</Text>
@@ -196,10 +321,10 @@ class ProductDetails extends React.Component<Props, State> {
                                 <View style={styles.secureCheckOutButton}>
                                     <Text style={styles.secureCheckOutTextStyle}>SECURE CHECKOUT</Text>
                                 </View>
-                            </View>  
+                            </View>
                             <View style={styles.continueShoppingView}>
                                 <Text style={styles.continueShoppingTextStyle}>CONTINUE SHOPPING</Text>
-                            </View>                          
+                            </View>
                         </View>
                     </View>
                 </Content>
@@ -208,4 +333,17 @@ class ProductDetails extends React.Component<Props, State> {
     }
 }
 
-export default ProductDetails;
+function mapStateToProps(state) {
+// alert("MAIN: "+JSON.stringify(state))
+    return {
+        cartItems: state
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatchDeleteCart: item => dispatch(removeCartItem(item))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Cart);

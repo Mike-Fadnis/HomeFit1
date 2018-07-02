@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
-// import your reducers here
+import addToCartItem from './addToCartItem';
 
 const allReducers = combineReducers({
-    //combine all of your reducers here
+   addToCartItem
 });
 
 export default allReducers;

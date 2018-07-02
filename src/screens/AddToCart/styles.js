@@ -7,7 +7,11 @@ const window = Dimensions.get('window');
 const styles: any = StyleSheet.create({
     container: {
 		backgroundColor: "#FFFFFF",
-	},
+    },
+    allCenter:{
+        justifyContent:'center',
+        alignItems:'center'
+    },
     content: {
         position: "relative",
         flex: 1,
@@ -15,7 +19,12 @@ const styles: any = StyleSheet.create({
     },
 	header: {
 		backgroundColor: "#34ace0"
-	},
+    },
+    headerRightTextStyle:{
+        color:'white',
+        fontSize:16,
+        marginRight:2
+    },
 	title: {
 		fontFamily: "Arial",
 		color: "#FFFFFF",
@@ -91,34 +100,31 @@ const styles: any = StyleSheet.create({
     continueShoppingTextStyle:{
         color:'blue'
     },
-
-
-
-
-    inputIcon: {
-        padding: 16
-    },
+    // inputIcon: {
+    //     padding: 16
+    // },
     productBlockView:{
         // shadowColor: 'red',        
         // shadowOffset: { width: 0, height: 2 },
         // shadowOpacity: 0.5,
         // shadowRadius: 2,                
         //height: window.height * 0.28,
-        borderBottomWidth:0.7,
-        borderBottomColor:'grey',
+        // borderBottomWidth:0.7,
+        // borderBottomColor:'grey',
         justifyContent:'center',        
     },
     productBlock: {
         marginTop: 5,
         display: "flex",
-        flexDirection: "row"
+        flexDirection: "row",
     },
     productDescription: {
         display: "flex",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        paddingTop: 16,        
-        width: "51%"
+        paddingTop: 16, 
+        paddingLeft:20,              
+        width: "35%"
     },
     type: {
         color: "#4286f4",
@@ -148,6 +154,10 @@ const styles: any = StyleSheet.create({
         height: window.height * 0.18,        
         justifyContent:'center',
         alignItems:'center'        
+    },
+    totalQuantityTextStyle: {
+        fontSize: 18,
+        fontWeight: 'bold'
     },
     promocodeView: {
         height: window.height * 0.06,

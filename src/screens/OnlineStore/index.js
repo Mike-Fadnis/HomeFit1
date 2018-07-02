@@ -17,6 +17,7 @@ import {
   Icon,
   Item,
   Input,
+  Spinner,
   Footer,
   FooterTab,
   Left,
@@ -39,14 +40,15 @@ class OnlineStore extends Component {
   constructor(props){
     super(props);
     this.state= {
-      allProducts: []
+      allProducts: [],
+      onlineProductsArray: []      
     }
   }
-  async componentWillMount(){
+  async componentWillMount(){    
     API.getProducts().then(async (response) => {             
       if (response){
         this.setState({
-          allProducts: response.data
+          allProducts: response.data          
         });   
       }
     }).catch((error)=> {
@@ -64,36 +66,25 @@ class OnlineStore extends Component {
             }
         });
     }
-
   renderData = ({item, index}) => {
       return (
           <TouchableOpacity  style={styles.storeProducts}
-            onPress={() => this.props.navigation.navigate("ProductDetails",
-            (user = {
-              productId: item.id              
-            })
-            )}>
+            onPress = {() => {this.props.navigation.navigate("ProductDetails",
+                (user = {
+                  productId: item.id
+                })
+              )
+            }}>
               <View style={styles.productsHeader}>
                   <View style={styles.productCount}>  
-                      <Text 
-                        style={{color: "#FFFFFF", 
-                              fontFamily: "Arial",
-                              }}>
+                      <Text style={{color: "#FFFFFF", fontFamily: "Arial",}}>
                          {index + 1}
                       </Text>
                   </View>
               </View>
               <View style={styles.cardImage}>
-                  < Image source = {
-                    {uri: IMAGE_PATH + item.image}
-                  }
-                  style = {
-                    {
-                      width: 100,
-                      height: 100
-                    }
-                  }
-                  />
+                  <Image source = {{uri: IMAGE_PATH + item.image}}
+                  style = {{width: 100,height: 100}}/>
               </View>
               <View style={styles.cardContent}>
                   <Text numberOfLines={1} style={styles.type}>{item.cat_name}</Text>
@@ -102,36 +93,35 @@ class OnlineStore extends Component {
                     {item.description}
                   </Text>
               </View>
-                </TouchableOpacity>
-
+          </TouchableOpacity>
       );
   }
-
-  render() {    
+  render() {       
     return (
       <Container style={styles.container}>
          <Header style={styles.headerStyle}>
           <Left style={styles.ham}>
             <Button style={styles.ham}
               transparent
-               onPress = {this.onBackPressed.bind(this)}
-            >
+               onPress = {this.onBackPressed.bind(this)}>
               <Icon name = "ios-arrow-back" style={{color: "white"}} />
             </Button>
           </Left>
+
           <Body>
             <Title style={styles.title}>Store</Title>
           </Body>
+
           <Right />
         </Header>
                     
         <Content>  
               <Item style={styles.search}>
-                  <Icon active name="search" style={styles.inputIcon}/>
-                  <Input placeholder="Search" />
-              </Item>
-              
+                <Icon active name="search" style={styles.inputIcon}/>
+                <Input placeholder="Search" />
+              </Item>              
               <Image source={{uri: "https://www.t-nation.com/system/publishing/articles/10003259/original/The-Single-Best-Muscle-Building-Method.jpg?1451932310"}} style={{ width: "100%", height: 200 }}  />
+
               {/*<View style={styles.subContent} >
                   <Text style={styles.heading}>
                       BROWSE OUR PRODUCTS
@@ -140,6 +130,7 @@ class OnlineStore extends Component {
                       Only the elite earns a position in our top 50 best-sellers list. These proven supplements can help you het the results you are working for.
                   </Text>
                 </View> */}
+
               <Card style={styles.card}>
                 <CardItem>
                   <Body>
@@ -157,10 +148,10 @@ class OnlineStore extends Component {
               <View style={styles.storeHeader}>
                   <Grid>
                       <Col size={4} style={{ backgroundColor: "#FFFFFF", height: 50, display: "flex", justifyContent: "center", alignItems: "flex-start", paddingLeft: 16 }}>
-                          <Text>Products</Text>
+                         <Text>Products</Text>
                       </Col>
                       <Col size={1} style={{ backgroundColor: "#FFFFFF", height: 50, borderLeftColor: "#C8C8C8", borderLeftWidth: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                          <Text><Icon name="menu" style={{fontSize: 35}}/></Text>
+                        <Text><Icon name="menu" style={{fontSize: 35}}/></Text>
                       </Col>
                     </Grid>
               </View>
@@ -182,4 +173,4 @@ class OnlineStore extends Component {
   }
 }
 
-export default OnlineStore
+export default OnlineStore;

@@ -1,19 +1,22 @@
-import {    
-    LOADER_SET
-} from './ActionTypes'
+import { ADD_CART_ITEM, REMOVE_CART_ITEM } from './ActionTypes' ;
 
+export const addToCartItem = (product) => {
+//alert(JSON.stringify(product))
+    return {
+        type: ADD_CART_ITEM,
+        product: product
+    }
 
+}
 
+export const removeCartItem = (product) => {
+//alert(JSON.stringify(product))
+    return {
+        type: REMOVE_CART_ITEM,
+        product: product
+    }
 
-export const loaderSet = state => ({
-    type: LOADER_SET,
-    state
-})
-
-
-
-
-
+}
 
 
 

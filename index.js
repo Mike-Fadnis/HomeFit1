@@ -12,7 +12,7 @@ import allReducers from '@reducers/index';
 import MainApp from "./App";
 
 const sagaMiddleware = createSagaMiddleware();
-let store = createStore(applyMiddleware(sagaMiddleware));
+let store = createStore(allReducers, applyMiddleware(sagaMiddleware));
 
 AppRegistry.registerComponent("NativebaseKitchenSink", () => App);
 
