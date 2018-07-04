@@ -1,52 +1,55 @@
 import * as React from "react";
 import {
-  Image,
-  View,
-  FlatList,
-  Alert
+    Image,
+    View,
+    FlatList,
+    Alert
 } from "react-native";
 import {
-  Container,
-  Header,
-  Title,
-  Content,
-  Button,
-  Icon,
-  Left,
-  Body,
-  Right,
-  SwipeRow,
-  Text,
-  Item,
-  Input,
-  Picker,
-  Form,
-  ListItem,
-  Thumbnail,
+    Container,
+    Header,
+    Title,
+    Content,
+    Button,
+    Icon,
+    Spinner,
+    Left,
+    Body,
+    Right,
+    SwipeRow,
+    Text,
+    Item,
+    Input,
+    Picker,
+    Form,
+    ListItem,
+    Thumbnail,
 } from "native-base";
 import {
-  connect
+    connect
 } from 'react-redux';
 import {
-  Col,
-  Grid,
-  Row
+    Col,
+    Grid,
+    Row
 } from "react-native-easy-grid";
 import {
-  List
+    List
 } from 'react-native-elements';
 import styles from "./styles";
 import {
-  IMAGE_PATH
-} from '@common/global'
+    IMAGE_PATH
+} from '@common/global';
+import Images from '@theme/images/images';
 export interface Props {
-  navigation: any;
+    navigation: any;
 }
 import {
-  removeCartItem
+    removeCartItem
 } from '@actions';
 export interface State {}
 var quantityList = []
+
 class Cart extends React.Component < Props, State > {
     constructor(props) {
       super(props);
@@ -55,7 +58,9 @@ class Cart extends React.Component < Props, State > {
         cartItems: [],
         totalPrice: [],
         onEditing: false,
-        onRowOpenValue: ''
+        onRowOpenValue: '',
+        spinner: false
+        
       };
     }
     componentWillMount() {
@@ -63,7 +68,8 @@ class Cart extends React.Component < Props, State > {
       var totalPrice = parseFloat(this.props.cartItems.addToCartItem.totalPrice)
       this.setState({
         cartItems: this.props.cartItems.addToCartItem.cartItems,
-        totalPrice: this.props.cartItems.addToCartItem.totalPrice
+        totalPrice: this.props.cartItems.addToCartItem.totalPrice,
+        spinner: false
       })
       for (i = 0; i <= 100; i++) {
         quantityList.push({
@@ -75,7 +81,8 @@ class Cart extends React.Component < Props, State > {
     componentWillReceiveProps(nextProps) {
       //alert(JSON.stringify(nextProps.cartItems.addToCartItem.cartItems))
       this.setState({
-        cartItems: nextProps.cartItems.addToCartItem.cartItems
+        cartItems: nextProps.cartItems.addToCartItem.cartItems,
+        spinner: false
       })
 
     }
@@ -94,6 +101,9 @@ class Cart extends React.Component < Props, State > {
     }
     deletedItem(index) {
       // alert(JSON.stringify(index))
+      this.setState({
+          spinner: true
+      })
       var item = {
         id: index.id,
         totalQuantity: 1, //quantity== ""?1:parseInt(quantity),
@@ -106,7 +116,7 @@ class Cart extends React.Component < Props, State > {
         image: IMAGE_PATH + index.image,
         status: index.status
       };
-      this.props.dispatchDeleteCart(item);
+      this.props.dispatchDeleteCart(item);      
       //   this.state.cartItems.splice(index, 1)// This will remove the element at index, and update this.items with new array
       //   this.setState({
       //     cartItems: this.state.cartItems
@@ -133,88 +143,110 @@ class Cart extends React.Component < Props, State > {
     }
 
     onSwipeRight(index) {
-  this.setState({
-    onRowOpenValue: index.id
-  })
-}
-onOpenRow(secId, rowId, rowMap) {
-  rowMap[`${secId}${rowId}`].props.manuallySwipeRow(20);
-}
-renderData = ({
-    item,
-    index
-  }) => {
-  if (this.state.onEditing === true) {
-  return (
-          <View style={styles.productBlockView}>
-              <View style={styles.productBlock}>
-                {this.state.onRowOpenValue != item.id?
-                  (<View style={{alignItems:'center', justifyContent:'center'}}>
-                    <Button transparent onPress={this.onSwipeRight.bind(this, item)} style={{marginLeft:10,backgroundColor:'red', width:35, height:35,borderRadius:17,alignItems:'center', justifyContent:'center'}}>
-                      <Icon name="ios-remove-outline" style={{color:'white'}}/>
+        this.setState({
+            onRowOpenValue: index.id
+        })
+    }
+
+    onOpenRow(secId, rowId, rowMap) {
+    rowMap[`${secId}${rowId}`].props.manuallySwipeRow(20);
+    }
+
+    renderData = ({
+        item,
+        index
+    }) => {
+    if (this.state.onEditing === true) {
+    return (
+            <View style={[styles.productBlockView,{borderBottomColor:"lightgrey",borderBottomWidth: 1}]}>
+                    {this.state.onRowOpenValue != item.id?
+                    (<View style={{alignItems:'center', justifyContent:'center'}}>
+                    <Button transparent onPress={this.onSwipeRight.bind(this, item)} style={{marginLeft:10,alignItems:'center', justifyContent:'center'}}>
+                        <Image source={Images.deleteIcon} style={styles.deleteIcon} />
                     </Button>
-                  </View>):(null)}
+                    </View>):(null)}
+                <View style={styles.productBlock}>
+                    <View size={1} style={{alignItems:'flex-end',padding:5}}>
+                        <Image source={{uri: item.image}} style={{ width: 150, height: 150 }}  />                     
+                    </View>
+                    <View style={styles.productDescription}>
+                        <Text style={styles.name}>{item.name}</Text>
+                        <Text style={styles.type}>4,4</Text>
+                        <Text style={styles.price}>${item.price}</Text>
+                        <Text style={styles.stock}>In Stock</Text> 
+                        <Button transparent>
+                            <View style={styles.quantityView}>
+                                <View style={styles.quantityTextView}>  
+                                    <Text>{item.totalQuantity}</Text>
+                                </View>
+                                <View style={styles.quantityPickerView}> 
+                                    <Image source={Images.dropdownIcon} style={{width:20,height:20}}/>                          
+                                </View>
+                            </View>   
+                        </Button>                       
+                    </View>
+                    {/* <View style={styles.allCenter}>
+                        <Text style={styles.totalQuantityTextStyle}>x {item.totalQuantity}</Text>
+                    </View> */}                
+                </View>
 
-                  <View size={1} style={{alignItems:'flex-end',paddingLeft:10}}>
-                      <Image source={{uri: item.image}} style={{ width: 150, height: 150 }}  />
-                  </View>
-                  <View size={1.5} style={styles.productDescription}>
-                      <Text style={styles.name}>{item.name}</Text>
-                      <Text style={styles.type}>4,4</Text>
-                      <Text style={styles.price}>${item.price}</Text>
-                      <Text style={styles.stock}>In Stock</Text>
-                  </View>
-                  <View style={styles.allCenter}>
-                      <Text style={styles.totalQuantityTextStyle}>x {item.totalQuantity}</Text>
-                  </View>
-              {this.state.onRowOpenValue === item.id?
-                (<View style={{ height:200, width:150, backgroundColor:'red', alignItems:'center', justifyContent:'center'}}>
-                  <Button onPress={this.deleteRow.bind(this, item)} style={{backgroundColor:'transparent'}}>
-                    <Icon active name="trash" />
-                  </Button>
-                </View>):(null)}
-              </View>
-          </View>
-
-
+                {this.state.onRowOpenValue === item.id?
+                    (<View style={{backgroundColor:'#ea290e',justifyContent:'center'}}>
+                    <Button transparent onPress={this.deleteRow.bind(this, item)}>
+                        <Text style={styles.deleteTextStyle}>Delete</Text>
+                    </Button>
+                    </View>):(null)}
+            </View>
+                    )
+                }
+            else{
+                return(
+                    <SwipeRow
+                        leftOpenValue={0}
+                        rightOpenValue={-90}
+                        disableRightSwipe={true}
+                        style={{ paddingRight: 0 ,borderBottomWidth:1, borderBottomColor:"lightgrey"}}
+                        body={
+                            <View style={styles.productBlockView}>                
+                                <View style={styles.productBlock}>
+                                    <View size={1} style={{alignItems:'flex-end',padding:5}}>
+                                        <Image source={{uri: item.image}} style={{ width: 150, height: 150 }}  />                     
+                                    </View>
+                                    <View style={styles.productDescription}>
+                                        <View style={{flex:1,alignItems:'flex-start'}}> 
+                                            <Text style={styles.name}>{item.name}</Text>  
+                                        </View>
+                                        <View style={{flex:1,alignItems:'flex-start'}}> 
+                                            <Text style={styles.type}>4,4</Text>
+                                        </View>
+                                        <View style={{flex:1,alignItems:'flex-start'}}> 
+                                            <Text style={styles.price}>${item.price}</Text>
+                                        </View>
+                                        <View style={{flex:1,alignItems:'flex-start'}}> 
+                                            <Text style={styles.stock}>In Stock</Text> 
+                                        </View>                                    
+                                        <Button transparent>
+                                            <View style={styles.quantityView}>
+                                                <View style={styles.quantityTextView}>  
+                                                    <Text>{item.totalQuantity}</Text>
+                                                </View>
+                                                <View style={styles.quantityPickerView}> 
+                                                    <Image source={Images.dropdownIcon} style={{width:20,height:20}}/>                          
+                                                </View>
+                                            </View>   
+                                        </Button>                       
+                                    </View>                                
+                                </View>              
+                            </View>
+                        }
+                        right={
+                            <Button style={{ backgroundColor: 'red' }} onPress={this.deleteRow.bind(this, item)}>
+                                <Text style={{fontWeight:'900'}}>Delete</Text>
+                            </Button>
+                        }/>
                 )
             }
-          else{
-            return(
-                <SwipeRow
-                    leftOpenValue={75}
-                    rightOpenValue={-75}
-                    disableRightSwipe={true}
-
-                    body={
-                        <View style={styles.productBlockView}>
-                            <View style={styles.productBlock}>
-                                <View size={1} style={{alignItems:'flex-end',paddingLeft:10}}>
-                                    <Image source={{uri: item.image}} style={{ width: 150, height: 150 }}  />
-                                </View>
-                                <View size={1.5} style={styles.productDescription}>
-                                    <Text style={styles.name}>{item.name}</Text>
-                                    <Text style={styles.type}>4,4</Text>
-                                    <Text style={styles.price}>${item.price}</Text>
-                                    <Text style={styles.stock}>In Stock</Text>
-                                </View>
-                                <View style={styles.allCenter}>
-                                    <Text style={styles.totalQuantityTextStyle}>x {item.totalQuantity}</Text>
-                                </View>
-                            </View>
-                        </View>
-                        }
-                    right={
-                    <Button danger onPress={this.deleteRow.bind(this, item)}>
-                        <Icon active name="trash" />
-                    </Button>
-                    }
-                />
-
-
-            )
-          }
-    }
+        }
     render() {
         // const product =
         //     {
@@ -224,6 +256,16 @@ renderData = ({
         //         stock:"In Stock",
         //         subtitle: "Muscle Building Powder"
         //   };
+        var duplicateArray = []
+        var myTotal = 0
+        this.state.cartItems.map((res, key)=>{
+            duplicateArray.push(res.totalQuantity * res.price)
+        //  alert(duplicateArray)
+
+        })
+        for(var i = 0;  i < duplicateArray.length; i++) {
+                myTotal  = parseInt(myTotal) + parseInt(duplicateArray[i])
+                }
         return (
             <Container style={styles.container}>
              <Header style={styles.header}>
@@ -263,7 +305,7 @@ renderData = ({
                                     <Text style={styles.discountedTextStyle}> Discounted SubTotal(1 item):</Text>
                                 </View>
                                 <View style={styles.discountedPriceView}>
-                                    <Text style={styles.discountedPriceTextStyle}>$ {this.state.totalPrice}</Text>
+                                    <Text style={styles.discountedPriceTextStyle}>$ {myTotal}</Text>
                                 </View>
                             </View>
                             <View style={styles.secureCheckOutView}>
@@ -306,7 +348,7 @@ renderData = ({
                                     <Text style={styles.discountedTextStyle}> Discounted SubTotal(1 item):</Text>
                                 </View>
                                 <View style={styles.discountedPriceView}>
-                                    <Text style={styles.discountedPriceTextStyle}>${this.state.totalPrice}</Text>
+                                    <Text style={styles.discountedPriceTextStyle}>${myTotal}</Text>
                                 </View>
                             </View>
                             <View style={styles.discountedView}>
@@ -328,6 +370,11 @@ renderData = ({
                         </View>
                     </View>
                 </Content>
+                {this.state.spinner === true ? (
+                    <View style={styles.spinnerView}>
+                        <Spinner color={"black"} style={styles.spinnerPosition} />
+                    </View>
+                ) : null}
             </Container>
         );
     }

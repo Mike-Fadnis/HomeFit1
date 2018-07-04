@@ -6,7 +6,9 @@ import {
 const window = Dimensions.get('window');
 const styles: any = StyleSheet.create({
     container: {
-		backgroundColor: "#FFFFFF",
+        //backgroundColor: "#FFFFFF",
+        backgroundColor: "#edeeef",
+        flex:1
     },
     allCenter:{
         justifyContent:'center',
@@ -103,28 +105,30 @@ const styles: any = StyleSheet.create({
     // inputIcon: {
     //     padding: 16
     // },
-    productBlockView:{
-        // shadowColor: 'red',        
-        // shadowOffset: { width: 0, height: 2 },
-        // shadowOpacity: 0.5,
-        // shadowRadius: 2,                
+    productBlockView:{                   
+        //justifyContent: 'center',
+        flexDirection: 'row',
+        flex: 1, 
+        //alignItems:'center'       
         //height: window.height * 0.28,
         // borderBottomWidth:0.7,
-        // borderBottomColor:'grey',
-        justifyContent:'center',        
+        // borderBottomColor:'lightgrey',        
+        //backgroundColor:'orange'
     },
     productBlock: {
-        marginTop: 5,
-        display: "flex",
-        flexDirection: "row",
+        //marginTop: 5,               
+        flex:1,      
+        flexDirection: "row",        
+        margin: 5,        
+        //display: "flex"
     },
-    productDescription: {
-        display: "flex",
-        justifyContent: "flex-start",
-        alignItems: "flex-start",
-        paddingTop: 16, 
-        paddingLeft:20,              
-        width: "35%"
+    productDescription: {                 
+        flex:1, 
+        flexWrap: 'wrap',        
+        margin: 5, 
+        alignItems:'flex-start',
+        //display: "flex",         
+        //alignItems:'flex-start'
     },
     type: {
         color: "#4286f4",
@@ -151,6 +155,7 @@ const styles: any = StyleSheet.create({
         fontSize: 14,
     },    
     cartButtons: {        
+        backgroundColor:'#FFFFFF',
         height: window.height * 0.18,        
         justifyContent:'center',
         alignItems:'center'        
@@ -158,6 +163,27 @@ const styles: any = StyleSheet.create({
     totalQuantityTextStyle: {
         fontSize: 18,
         fontWeight: 'bold'
+    },
+    quantityView: {
+        marginTop: 5,
+        width: window.width * 0.18,
+        height: window.height * 0.05,
+        flexDirection: 'row',
+        borderColor:"black",
+        borderWidth: 1
+    },
+    quantityTextView: {
+        width: "60%",
+        alignItems:'center',
+        justifyContent:'center'        
+    },
+    quantityPickerView:{
+        width: "40%",
+        backgroundColor:'lightgrey',
+        borderLeftColor:"black",
+        borderLeftWidth:1,
+        alignItems:'center',
+        justifyContent:'center'
     },
     promocodeView: {
         height: window.height * 0.06,
@@ -188,6 +214,25 @@ const styles: any = StyleSheet.create({
     promocodeConditionTextStyle:{
         color:'grey',
         fontSize:13        
+    },
+    deleteTextStyle: {
+        color:"white",
+        fontWeight:"900",
+        fontSize:15
+    },
+    spinnerView: {
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    spinnerPosition: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.2)',
+        justifyContent: 'center'
     }
 
 });

@@ -71,8 +71,7 @@ class ProductDetails extends React.Component<Props, State> {
                 this.setState({
                     productDetails: response.data,
                     productResponse: response
-                },()=>{
-                    //alert('if alert: '+JSON.stringify(this.state.productDetails))
+                },()=>{                    
                     this.setState({
                         name: this.state.productDetails.name,
                         description: this.state.productDetails.description,
@@ -90,7 +89,6 @@ class ProductDetails extends React.Component<Props, State> {
         });
     }
     componentWillReceiveProps(nextProps){
-       // alert('received props: ' + JSON.stringify(nextProps.cartTotal))
        this.setState({
            badgeTotal: nextProps.cartTotal.addToCartItem.total
        })
@@ -102,16 +100,11 @@ class ProductDetails extends React.Component<Props, State> {
         });
     }
     onAddToCardPressed(){
-
-        var quantity = this.state.qty
-        // if(quantity == ''){
-        // quantity = 1
-        // }else{
-        // quantity = quantity
-        // }
+        var quantity = this.state.qty        
         var item = {
             id: this.state.productId,
-            totalQuantity:1,//quantity== ""?1:parseInt(quantity),
+            // totalQuantity:1,//quantity== ""?1:parseInt(quantity),
+            totalQuantity: quantity == "1" ? 1 : quantity == "" ? 1 : quantity,
             name: this.state.productDetails.name,
             description: this.state.productDetails.description,
             price: this.state.productDetails.price,
@@ -121,8 +114,7 @@ class ProductDetails extends React.Component<Props, State> {
             image: IMAGE_PATH+ this.state.productDetails.image,
             status: this.state.productDetails.status
         };
-        this.props.dispatchAddCart(item);
-     // alert("PRODEUCT: "+JSON.stringify(item))
+        this.props.dispatchAddCart(item);     
     }
 
     onBack(){
@@ -146,8 +138,7 @@ class ProductDetails extends React.Component<Props, State> {
                 description: "ME PRE has been formulated to give you explosive energy, heightened focus and an overwhelming urge to tackle any challenge",
                 ratings: "9.2",
                 sale: "10k"
-            };
-    // alert("DFDFfdf: "+this.state.qty)
+            };    
         return (
             <Container style={styles.container}>
                 <Header style={styles.header}>
@@ -162,15 +153,11 @@ class ProductDetails extends React.Component<Props, State> {
                     <Title style={styles.title}> Store</Title>
                 </Body>
                 <Right style={styles.ham}>
-                    <Button style={styles.ham}
-                    transparent
-                    onPress={this.onCartIcon.bind(this)}>
+                    <Button style={styles.ham} transparent onPress={this.onCartIcon.bind(this)}>
                         <Icon name = "ios-cart" style={{color: "white",marginRight:18}}/>
-                    {this.state.badgeTotal == 0 ?(null)
-                      : <Badge style={{ position: 'absolute', right: 12, top: 0, paddingTop: 0, paddingBottom: 0, borderRadius: 50}}>
-                          <Text style={{ fontSize: 12,fontWeight:'bold' }}>{this.state.badgeTotal}</Text>
-                        </Badge>}
-
+                            {this.state.badgeTotal == 0 ?(null) : <Badge danger style={{position:"absolute",marginRight:5}}>
+                            <Text style={{fontWeight:'bold' }}>{this.state.badgeTotal}</Text>
+                            </Badge>}
                     </Button>
                 </Right>
 
@@ -260,7 +247,9 @@ class ProductDetails extends React.Component<Props, State> {
                                 <Col size={1} style={styles.qty}>
                                     <Text style={styles.freeShippingAdditionalText}>Qty:</Text>
                                     <Item regular style={{width: "40%", maxHeight: 46, marginLeft: 25}}>
-                                        <Input onChangeText={this.onChangeText.bind(this)}
+                                        <Input keyboardType={"numeric"} onChangeText = {
+                                            this.onChangeText.bind(this)
+                                        }
                                           value={this.state.qty} />
                                     </Item>
                                 </Col>
@@ -322,9 +311,7 @@ class ProductDetails extends React.Component<Props, State> {
     }
 }
 
-function mapStateToProps(state) {
-  // alert('123' + JSON.stringify(state))
-  console.log("stateeeeee: ", state)
+function mapStateToProps(state) {    
   return {
     cartTotal: state
   }
