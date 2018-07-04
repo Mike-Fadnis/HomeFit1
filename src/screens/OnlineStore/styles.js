@@ -146,4 +146,18 @@ cardContent: {
   paddingLeft: 10,
   paddingRight: 10
 },
+spinnerView: {
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  spinnerPosition: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    justifyContent: 'center',
+  }
 };

@@ -28,7 +28,8 @@ export default function addTocart(state = cart, action) {
             tot_Qty = total_Qty
             newcartItems: state.cartItems
             }else{
-                newcartItems: newcartItems.push(action.product);
+                newcartItems = [...newcartItems, action.product];
+                //newcartItems: newcartItems.push(action.product);
                 tot_Qty = parseInt(state.total) + parseInt(action.product.totalQuantity)
             }
             return Object.assign({}, state,  {
@@ -43,7 +44,6 @@ export default function addTocart(state = cart, action) {
                 const isExistedDeleted = state.cartItems.some(cartItem => compareCartItem(cartItem, action))                
                 if (isExistedDeleted){
                     {state.cartItems.map((item,key) => {
-
                         if(item.id === action.product.id){
                             // alert(JSON.stringify(item.totalQuantity))
                             var price = parseFloat(item.price)

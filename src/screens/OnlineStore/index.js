@@ -41,14 +41,16 @@ class OnlineStore extends Component {
     super(props);
     this.state= {
       allProducts: [],
-      onlineProductsArray: []      
+      onlineProductsArray: [],
+      spinner: true    
     }
   }
   async componentWillMount(){    
     API.getProducts().then(async (response) => {             
       if (response){
         this.setState({
-          allProducts: response.data          
+          allProducts: response.data,
+          spinner: false         
         });   
       }
     }).catch((error)=> {
@@ -115,7 +117,7 @@ class OnlineStore extends Component {
           <Right />
         </Header>
                     
-        <Content>  
+        <Content>
               <Item style={styles.search}>
                 <Icon active name="search" style={styles.inputIcon}/>
                 <Input placeholder="Search" />
@@ -157,17 +159,22 @@ class OnlineStore extends Component {
               </View>
               <View style={styles.storeItems}>   
               <List>
+                  {this.state.spinner === true ? (
+                  <View style={styles.spinnerView}>
+                    <Spinner color={"black"} style={styles.spinnerPosition} />
+                  </View>
+                ) : 
                   <FlatList                                       
                     data={this.state.allProducts}
                     keyExtractor={(x, i) => x.id}
                     renderItem={this.renderData.bind(this)}
                     numColumns={2} 
                     style={{backgroundColor:'#dce2ef'}}                   
-                    />                
+                    />
+              }               
               </List>
               </View>          
-        </Content>
-
+        </Content>        
       </Container>
     );
   }

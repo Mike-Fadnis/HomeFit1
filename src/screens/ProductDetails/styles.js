@@ -32,8 +32,9 @@ const styles: any = StyleSheet.create({
     productBlock: {
         marginTop: 5,
         display: "flex",
-        flexDirection: "row",
-       // marginLeft : 5,
+        flexDirection: "row",        
+        padding:10
+        // marginLeft : 5,
         //marginRight : 5
     },
     productDescription: {
@@ -41,6 +42,7 @@ const styles: any = StyleSheet.create({
         justifyContent: "flex-start",
         alignItems: "flex-start",
         paddingTop: 16,
+        padding:5,
         borderBottomColor: "#9a9b9c",
         borderBottomWidth: 0.8,
         width: "51%"

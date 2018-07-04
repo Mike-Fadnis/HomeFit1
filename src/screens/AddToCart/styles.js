@@ -166,20 +166,21 @@ const styles: any = StyleSheet.create({
     },
     quantityView: {
         marginTop: 5,
-        width: window.width * 0.18,
+        width: window.width * 0.20,
         height: window.height * 0.05,
-        flexDirection: 'row',
+        flexDirection: "row",
         borderColor:"black",
         borderWidth: 1
     },
     quantityTextView: {
-        width: "60%",
+        width: "70%",
+        backgroundColor:'#FFF',
         alignItems:'center',
         justifyContent:'center'        
     },
     quantityPickerView:{
-        width: "40%",
-        backgroundColor:'lightgrey',
+        width: "30%",
+        backgroundColor: '#f2efef',
         borderLeftColor:"black",
         borderLeftWidth:1,
         alignItems:'center',
@@ -200,6 +201,7 @@ const styles: any = StyleSheet.create({
     },
     applyTextView:{
         width: window.width / 3.5,
+        height: window.height * 0.06,
         backgroundColor:'white',
         alignItems: 'flex-start',
         justifyContent: 'center',

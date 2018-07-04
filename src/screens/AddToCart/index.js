@@ -16,7 +16,7 @@ import {
     Left,
     Body,
     Right,
-    SwipeRow,
+    SwipeRow,    
     Text,
     Item,
     Input,
@@ -59,17 +59,14 @@ class Cart extends React.Component < Props, State > {
         totalPrice: [],
         onEditing: false,
         onRowOpenValue: '',
-        spinner: false
-        
+        spinner: true        
       };
     }
     componentWillMount() {
-
       var totalPrice = parseFloat(this.props.cartItems.addToCartItem.totalPrice)
       this.setState({
         cartItems: this.props.cartItems.addToCartItem.cartItems,
-        totalPrice: this.props.cartItems.addToCartItem.totalPrice,
-        spinner: false
+        totalPrice: this.props.cartItems.addToCartItem.totalPrice        
       })
       for (i = 0; i <= 100; i++) {
         quantityList.push({
@@ -81,8 +78,7 @@ class Cart extends React.Component < Props, State > {
     componentWillReceiveProps(nextProps) {
       //alert(JSON.stringify(nextProps.cartItems.addToCartItem.cartItems))
       this.setState({
-        cartItems: nextProps.cartItems.addToCartItem.cartItems,
-        spinner: false
+        cartItems: nextProps.cartItems.addToCartItem.cartItems        
       })
 
     }
@@ -100,10 +96,7 @@ class Cart extends React.Component < Props, State > {
       })
     }
     deletedItem(index) {
-      // alert(JSON.stringify(index))
-      this.setState({
-          spinner: true
-      })
+      // alert(JSON.stringify(index))    
       var item = {
         id: index.id,
         totalQuantity: 1, //quantity== ""?1:parseInt(quantity),
@@ -183,7 +176,7 @@ class Cart extends React.Component < Props, State > {
                                     <Image source={Images.dropdownIcon} style={{width:20,height:20}}/>                          
                                 </View>
                             </View>   
-                        </Button>                       
+                        </Button>
                     </View>
                     {/* <View style={styles.allCenter}>
                         <Text style={styles.totalQuantityTextStyle}>x {item.totalQuantity}</Text>
@@ -289,7 +282,7 @@ class Cart extends React.Component < Props, State > {
                 </Right>
                 </Header>
 
-                <Content>
+                <Content>                    
                     <View style={styles.content}>
                         {/* search block
                         <Item style={styles.search}>
@@ -314,14 +307,14 @@ class Cart extends React.Component < Props, State > {
                                 </View>
                             </View>
                         </View>
-                        <List>
+                        <List>                            
                             <FlatList
                                 data={this.state.cartItems}
                                 keyExtractor={(x, i) => x.id}
                                 extraData={this.state}
                                 renderItem={this.renderData.bind(this)}
                                 style={{backgroundColor:'#FFFFFF'}}
-                            />
+                            />                        
                         </List>
 
                         <View style={styles.cartButtons}>
@@ -368,13 +361,8 @@ class Cart extends React.Component < Props, State > {
                                 <Text style={styles.continueShoppingTextStyle}>CONTINUE SHOPPING</Text>
                             </View>
                         </View>
-                    </View>
-                </Content>
-                {this.state.spinner === true ? (
-                    <View style={styles.spinnerView}>
-                        <Spinner color={"black"} style={styles.spinnerPosition} />
-                    </View>
-                ) : null}
+                    </View>                    
+                </Content>                
             </Container>
         );
     }

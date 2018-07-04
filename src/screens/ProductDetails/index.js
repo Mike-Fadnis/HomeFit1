@@ -154,10 +154,16 @@ class ProductDetails extends React.Component<Props, State> {
                 </Body>
                 <Right style={styles.ham}>
                     <Button style={styles.ham} transparent onPress={this.onCartIcon.bind(this)}>
-                        <Icon name = "ios-cart" style={{color: "white",marginRight:18}}/>
-                            {this.state.badgeTotal == 0 ?(null) : <Badge danger style={{position:"absolute",marginRight:5}}>
-                            <Text style={{fontWeight:'bold' }}>{this.state.badgeTotal}</Text>
-                            </Badge>}
+                        
+                        {this.state.badgeTotal > 9 && this.state.badgeTotal <= 99 ? 
+                            (<Icon name = "ios-cart" style={{color: "white",marginRight:30}}/>) : 
+                                this.state.badgeTotal >= 100 ? (<Icon name = "ios-cart" style={{color: "white",marginRight:40}}/>) : 
+                                    (<Icon name = "ios-cart" style={{color: "white",marginRight:15}}/>)}
+                        {this.state.badgeTotal == 0 ?(null) : <Badge danger style={{position:"absolute",marginRight:5}}>
+                        <Text style={{fontWeight:'bold' }}>{this.state.badgeTotal}</Text>
+                        </Badge>}
+
+
                     </Button>
                 </Right>
 
@@ -172,7 +178,7 @@ class ProductDetails extends React.Component<Props, State> {
 
                         {/* product image and description block */}
                         <View style={styles.productBlock}>
-                            <View size={1}>
+                            <View size={1} style={{alignItems:'center', justifyContent:'center'}}>
                                 <Image source={{uri: this.state.image}} style={{ width: 135, height: 150 }}  />
                             </View>
                             <View size={1.5} style={styles.productDescription}>
