@@ -1,5 +1,5 @@
-import { combineReducers } from 'redux';
-import addToCartItem from './addToCartItem';
+import { combineReducers } from "redux";
+import addToCartItem from "./addToCartItem";
 
 const allReducers = combineReducers({
    addToCartItem

@@ -1,12 +1,12 @@
 import React from "react";
 import { Root } from "native-base";
 import { StackNavigator, DrawerNavigator } from "react-navigation";
-import Landing from './screens/Landing';
-import ClientHome from './screens/ClientHome';
-import BrowseTrainers from './screens/BrowseTrainers';
-import ViewTrainer from './screens/ViewTrainer';
-import TrainerLogin from './screens/TrainerLogin';
-import TrainerHome from './screens/TrainerHome';
+import Landing from "./screens/Landing";
+import ClientHome from "./screens/ClientHome";
+import BrowseTrainers from "./screens/BrowseTrainers";
+import ViewTrainer from "./screens/ViewTrainer";
+import TrainerLogin from "./screens/TrainerLogin";
+import TrainerHome from "./screens/TrainerHome";
 
 import Header from "./screens/Header/";
 import Header1 from "./screens/Header/1";
@@ -140,13 +140,13 @@ import Actionsheet from "./screens/actionsheet";
 import NHAccordion from "./screens/accordion/";
 import NHDatePicker from "./screens/datepicker/";
 
-import TrainerSignUp from './screens/TrainerSignUp';
-import TrainerFinancialDetails from './screens/TrainerFinancialDetails';
-import TrainerPersonalPage from './screens/TrainerPersonalPage';
-import OnlineStore from './screens/OnlineStore';
-import AddToCart from './screens/AddToCart';
-import ProductDetails from './screens/ProductDetails';
-import TrainerChooseDates from './screens/TrainerChooseDates';
+import TrainerSignUp from "./screens/TrainerSignUp";
+import TrainerFinancialDetails from "./screens/TrainerFinancialDetails";
+import TrainerPersonalPage from "./screens/TrainerPersonalPage";
+import OnlineStore from "./screens/OnlineStore";
+import AddToCart from "./screens/AddToCart";
+import ProductDetails from "./screens/ProductDetails";
+import TrainerChooseDates from "./screens/TrainerChooseDates";
 
 const Drawer = DrawerNavigator(
   {
@@ -176,9 +176,7 @@ const Drawer = DrawerNavigator(
 const AppNavigator = StackNavigator(
   {
     Drawer: { screen: Drawer },
-
-    Header1: { screen: Header1 },
-    
+    Header1: { screen: Header1 }
   },
   {
     initialRouteName: "Drawer",
