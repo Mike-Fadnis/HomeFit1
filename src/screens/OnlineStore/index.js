@@ -74,11 +74,17 @@ class OnlineStore extends Component {
       <Container style={styles.container}>
 
          <Header style={styles.headerStyle}>
-          <Left style={styles.ham}>
+          <Left style={[styles.ham,{flexDirection:"row"}]}>
             <Button style={styles.ham}
               transparent
                onPress = {this.onBackPressed.bind(this)}>
               <Icon name = "ios-arrow-back" style={{color: "white"}} />
+            </Button>
+            <Button style={[styles.ham,{marginLeft:10}]}
+              transparent
+              onPress = {() => this.props.navigation.navigate("DrawerOpen")}
+              >
+                < Icon name = "ios-menu" style={{color: "white"}}/ >
             </Button>
           </Left>
           <Body>
@@ -127,24 +133,23 @@ class OnlineStore extends Component {
                     </Grid>
               </View>
               <View style={styles.storeItems}>
-              <List>
-                  {this.state.spinner === true ? (
-                  <View style={styles.spinnerView}>
-                    <Spinner color={"black"} style={styles.spinnerPosition} />
-                  </View>
-                ) :
-                  <FlatList
-                    data={this.state.allProducts}
-                    keyExtractor={(x, i) => x.id}
-                    renderItem={this.renderData.bind(this)}
-                    numColumns={2}
-                    style={{backgroundColor:'#dce2ef'}}
-                    />
-              }
-              </List>
+                <List>
+                    {this.state.spinner === true ? (
+                      <View style={styles.spinnerView}>
+                        <Spinner color={"black"} style={styles.spinnerPosition} />
+                      </View>
+                  ) :
+                    <FlatList
+                      data={this.state.allProducts}
+                      keyExtractor={(x, i) => x.id}
+                      renderItem={this.renderData.bind(this)}
+                      numColumns={2}
+                      style={{backgroundColor:'#dce2ef'}}
+                      />
+                }
+                </List>
               </View>
         </Content>
-
       </Container>
     );
   }

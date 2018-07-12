@@ -24,7 +24,7 @@ export default {
   image : {
     width : '100%',
     height : 150
-  }, 
+  },
  cardTitle : {
   fontSize : 16,
   fontWeight : 'bold',
@@ -32,7 +32,7 @@ export default {
  },
   card : {
     marginLeft : 10,
-    marginRight : 10, 
+    marginRight : 10,
     marginTop : 10,
     shadowColor : '#000',
     borderBottomWidth : 1,
@@ -43,7 +43,7 @@ export default {
     shadowOffset : { width : 0, height :2 },
     shadowOpacity : 0.1,
     shadowRadius : 2,
-    elevation : 1,        
+    elevation : 1,
   },
   cardDescription : {
     fontSize : 15,
@@ -79,7 +79,7 @@ export default {
 storeItems: {
   //flex : 1,
   //position: "relative",
-  //top: "-11%",  
+  //top: "-11%",
   //display: "flex",
   // flexDirection: "row",
   // flexWrap: "wrap",
@@ -90,11 +90,11 @@ storeItems: {
   borderWidth : 1,
   borderColor : '#ccc'   
 },
-storeProducts: {  
-  backgroundColor: "#FFFFFF",    
-  height: 290,  
+storeProducts: {
+  backgroundColor: "#FFFFFF",
+  height: 290,
   margin:5,
-  width: window.width / 2.15, 
+  width: window.width / 2.15,
   borderWidth : 1,
   borderColor : '#ccc'
 },
@@ -108,7 +108,7 @@ productCount: {
   marginLeft: 10,
   padding: 5,
   backgroundColor : '#009FDB',
-  width: 30, 
+  width: 30,
   display: "flex",
   justifyContent: "center",
   alignItems: "center"

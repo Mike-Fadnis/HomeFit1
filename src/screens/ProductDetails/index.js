@@ -11,6 +11,7 @@ import styles from "./styles";
 import moment from 'moment';
 import ModalSizeDesignComponent from "./modalSizeDesignComponent";
 import ModalFlavourDesignComponent from "./modalFlavourDesignComponent";
+import ModalAddtoCart from "./modalAddtoCart";
 const window = Dimensions.get('window');
 export interface Props {
 	navigation: any;
@@ -20,6 +21,7 @@ export interface State {}
 var responseDuplicateArray =[];
 
 class ProductDetails extends React.Component<Props, State> {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -34,6 +36,7 @@ class ProductDetails extends React.Component<Props, State> {
             sub_heading: "",
             image: "",
             status: "",
+            // productResponse:{},
             allProducts: [] ,
             badgeTotal: 0,
             qty:"1",
@@ -44,9 +47,13 @@ class ProductDetails extends React.Component<Props, State> {
 						selectedSize: "",
 						selectedFlavour:"",
 						finalResponseArray:[],
-						flavoursArray: []
+						flavoursArray: [],
+						flavour_id:'',
+						size_id:'',
+						modalAddtoCart: false
         };
     }
+
 	async	getCustomerReviews(){
 		var getProductId = this.state.productId;
 		API.getCustomerReviews(getProductId).then(async (response) => {
@@ -67,12 +74,12 @@ async getSizesFlavours(){
 		API.getSizesFlavours(getProductId).then(async (response) => {
 						if (response){
 								this.setState({
-										productDetails: response.data,
+										productDetails: response.data
 								},()=>{
 										this.setState({
 												name: this.state.productDetails.name,
 												description: this.state.productDetails.description,
-												price: this.state.productDetails.price,
+												price: response.data[0].price,//this.state.productDetails.price,
 												category: this.state.productDetails.category,
 												quantity: this.state.productDetails.quantity,
 												sub_heading: this.state.productDetails.sub_heading,
@@ -82,7 +89,7 @@ async getSizesFlavours(){
 										this.getNewResponse();
 								});
 						} else {
-								alert("Error getting product details || Check Network");
+								alert("error getting product details || Check Network");
 						}
 				}).catch((error)=>{
 						console.log("Console Error",error);
@@ -90,6 +97,7 @@ async getSizesFlavours(){
 
 }
 componentWillMount(){
+	responseDuplicateArray= []
 	this.getCustomerReviews();
 	this.getSizesFlavours();
 	this.setState({
@@ -108,25 +116,36 @@ onValueChange3(value: string) {
     });
 }
 onAddToCardPressed(){
+
 		if(this.state.selectedSize === ""){
 			alert("Please select Size")
 		} else if(this.state.selectedFlavour === ""){
 				alert("Please select Flavour")
 			} else {
-					var quantity = this.state.qty;
-			    var item = {
-			        id: this.state.productId,
-			        totalQuantity: quantity === "1" ? 1 : quantity === "" ? 1 : quantity,
-			        name: this.state.productDetails.name,
-			        description: this.state.productDetails.description,
-			        price: this.state.productDetails.price,
-			        category: this.state.productDetails.category,
-			        quantity: this.state.productDetails.quantity,
-			        sub_heading: this.state.productDetails.sub_heading,
-			        image: IMAGE_PATH + this.state.productDetails.image,
-			        status: this.state.productDetails.status
-			    };
-			    this.props.dispatchAddCart(item);
+					this.setState({
+							modalAddtoCart: true
+						},()=>{
+							var quantity = this.state.qty;
+							var item = {
+									id: this.state.productId,
+									totalQuantity: quantity === "1" ? 1 : quantity === "" ? 1 : quantity,
+									name: this.state.productDetails.name,
+									description: this.state.productDetails.description,
+									price: this.state.price,//this.state.productDetails.price,
+									category: this.state.productDetails.category,
+									quantity: this.state.productDetails.quantity,
+									sub_heading: this.state.productDetails.sub_heading,
+									image: IMAGE_PATH + this.state.productDetails.image,
+									status: this.state.productDetails.status,
+									size_id:this.state.size_id,
+									flavour_id:this.state.flavour_id,
+									size_name:this.state.selectedSize,
+									flavour_name:this.state.selectedFlavour
+							};
+							this.props.dispatchAddCart(item);
+						})
+
+
 				}
 }
 onBack(){
@@ -145,12 +164,14 @@ setModalVisible(visible) {
   this.setState({modalSizeVisible: visible});
 }
 onModalSizeBack(){
-
 	this.setState({
 		modalSizeVisible: false
-	},()=> {
-			responseDuplicateArray =[];
-		});
+	},()=>{
+		responseDuplicateArray = []
+	});
+}
+onModalAddtoCartClosed(){
+	this.setState({modalAddtoCart: false});
 }
 onModalSizeClose(item){
 	this.state.finalResponseArray.map((obj,index) => {
@@ -162,9 +183,10 @@ onModalSizeClose(item){
 					this.setState({
 						modalSizeVisible: false,
 						modalFlavourVisible: true
-					},()=> {
-							responseDuplicateArray =[];
-						});
+					},()=>{
+
+						responseDuplicateArray = []
+					});
 				})
 		}
 	})
@@ -186,59 +208,64 @@ onModalFlavourClose(){
 
 
 getItem(item){
+    console.log("selectedSize:  ",JSON.stringify(item))
     this.setState({
-        selectedSize: item.size
+        selectedSize: item.size,
+				size_id:item.id
     })
 }
-
 getFlavourItem(item){
-    console.log("456456:  ",JSON.stringify(item))
+    console.log("selectedFlavour:  ",JSON.stringify(item))
      this.setState({
-        selectedFlavour: item.flavour_name
+        selectedFlavour: item.flavour_name,
+				flavour_id:item.flavour_id,
+				price:item.price
     })
 }
 
 getNewResponse(){
 		var typeofCheck = this.state.productDetails;
 		Object.keys(this.state.productDetails).map((res, index) =>{
-			var objectType = this.state.productDetails[res]
-				if(objectType){
-					if(typeof objectType === 'object') {
-	             responseDuplicateArray.push(this.state.productDetails[res])
-				  }
+		var objectType = this.state.productDetails[res]
+			if(objectType){
+				if(typeof objectType === 'object') {
+             responseDuplicateArray.push(this.state.productDetails[res])
+			  }
 			}
 		});
-
 		let count = 0
     let responseArray = responseDuplicateArray
-    finalResponseArray = []
+    let finalResponseArray = []
     responseArray.map((res, key) => {
+
         let size = res.size_name
         if (finalResponseArray.length === 0) {
             let listArray = []
-            listArray.push({flavour_name:res.flavor_name, price:res.price})
+            listArray.push({flavour_id:res.flavor,flavour_name:res.flavor_name, price:res.price})
             var record = { id: res.id,size: size, flavoursList: listArray }
             finalResponseArray.push(record)
         } else {
             finalResponseArray.map((finalres, index) => {
                 if (finalres.size === size) {
-                    finalres.flavoursList.push({flavour_name:res.flavor_name, price:res.price})
+                    finalres.flavoursList.push({flavour_id:res.flavor,flavour_name:res.flavor_name, price:res.price})
                     count++
                 } else{
-										count = 0
+									count = 0
 									}
             })
             if (count === 0) {
                 let listArray = []
-                listArray.push({flavour_name:res.flavor_name, price:res.price})
+                listArray.push({flavour_id:res.flavor,flavour_name:res.flavor_name, price:res.price})
                 let record = { id: res.id,size: size, flavoursList: listArray }
                 finalResponseArray.push(record)
             }
+						console.log("length!=0: ", JSON.stringify(finalResponseArray))
         }
     })
-	    this.setState({
-	        finalResponseArray: finalResponseArray
-	    })
+    this.setState({
+        finalResponseArray: finalResponseArray
+    })
+
 }
 
 renderItem(item){
@@ -247,13 +274,13 @@ renderItem(item){
 	var res =  item.user_name.split(" ");
 	var firstname = ''
 	var lastname = ''
-		if(res[1] === undefined){
-			 firstname = res[0].charAt(0);
-			 lastname = ''
-		}else{
+	if(res[1] === undefined){
 		 firstname = res[0].charAt(0);
-		 lastname = res[1].charAt(0);
-		}
+		 lastname = ''
+	}else{
+	 firstname = res[0].charAt(0);
+	 lastname = res[1].charAt(0);
+	}
 
 	return(
 		<ListItem style={styles.reviewItem}>
@@ -269,23 +296,23 @@ renderItem(item){
 render() {
   const product =
       {
-          // image: "https://www.muscleessentials.in/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/m/e/me_pre.jpg",
-          // type: "INTERMEDIATE PRE WORKOUT",
-          // name: "Me Pre 60 Servings",
-          // subtitle: "Muscle Building Powder",
-          // description: "ME PRE has been formulated to give you explosive energy, heightened focus and an overwhelming urge to tackle any challenge",
-          ratings: "9.2",
-          // sale: "10k"
+        ratings: "9.2"
       };
   return (
       <Container style={styles.container}>
+
           <Header style={styles.header}>
-              <Left style={styles.ham}>
+                <Left style={[styles.ham,{flexDirection:"row"}]}>
                   <Button style={styles.ham}
                   transparent
                   onPress={this.onBack.bind(this)}>
                   <Icon name="ios-arrow-back" style={{color: "white"}}/>
                   </Button>
+									<Button style={[styles.ham,{marginLeft:10}]}
+									 transparent
+									 onPress = {() => this.props.navigation.navigate("DrawerOpen")}>
+									 <Icon name = "ios-menu" style={{color: "white"}}/ >
+								 </Button>
               </Left>
               <Body>
                   <Title style={styles.title}> Store</Title>
@@ -332,48 +359,58 @@ render() {
                       </View>
                   </View>
 									<View style={{display: "flex", alignItems: "flex-start", flex: 1, marginTop: 16, flexDirection:"row", margin:10}}>
-										 <View style={{flex:0.5}}>
-												 <TouchableOpacity
-													 style={{margin:5,padding:10,backgroundColor:'#EDEEF0',alignItems:'flex-start',justifyContent:'center',height:50}}
-													 onPress={() => {
-														 this.setModalVisible(true);
-													 }}>
-															 {this.state.selectedSize === "" ? (
-																		 <Text>Size</Text>
-																 ):(
-																		 <Text>{this.state.selectedSize}</Text>
-																 )}
-												 </TouchableOpacity>
-										 </View>
-										 <View style={{flex:0.5,}}>
-												 <TouchableOpacity
-													 style={{margin:5,padding:10,backgroundColor:'#EDEEF0',alignItems:'flex-start',justifyContent:'center',height:50}}
-													 onPress={() => {
-														 this.setModalVisibleFlavour(true);
-													 }}>
-
-														 {this.state.selectedFlavour === "" ? (
-																		 <Text>Flavour</Text>
-																 ):(
-																		 <Text>{this.state.selectedFlavour}</Text>
-																 )}
-												 </TouchableOpacity>
-										 </View>
-
+									<View style={{flex:0.5,flexDirection:"row"}}>
+	 												 <TouchableOpacity
+	 													 style={{flex:1,flexDirection:"row",margin:5,backgroundColor:'#EDEEF0',height:50,borderWidth:1.2,borderColor:"lightgrey"}}
+	 													 onPress={() => {
+	 														 this.setModalVisible(true);
+	 													 }}>
+	 														<View style={{flex:0.7,justifyContent:"center",padding:10}}>
+	 															{this.state.selectedSize === "" ? (
+	 																		<Text>Size</Text>
+	 																):(
+	 																		<Text>{this.state.selectedSize}</Text>
+	 																)}
+	 														</View>
+	 														<View style={{flex:0.3,justifyContent:"center",alignItems:"center",borderLeftWidth:1.2,borderColor:"lightgrey"}}>
+	 															<Icon name = "ios-arrow-forward" style={{color: "grey"}}/>
+	 														</View>
+	 												 </TouchableOpacity>
+	 										 </View>
+	 										 <View style={{flex:0.5,}}>
+	 												 <TouchableOpacity
+	 													 style={{flex:1,flexDirection:"row",margin:5,backgroundColor:'#EDEEF0',height:50,borderWidth:1.2,borderColor:"lightgrey"}}
+	 													 onPress={() => {
+	 														 this.setModalVisibleFlavour(true);
+	 													 }}>
+	 															<View style={{flex:0.7,justifyContent:"center",padding:10}}>
+	 															 {this.state.selectedFlavour === "" ? (
+	 																			 <Text>Flavour</Text>
+	 																	 ):(
+	 																			 <Text>{this.state.selectedFlavour}</Text>
+	 																	 )}
+	 															</View>
+	 															<View style={{flex:0.3,justifyContent:"center",alignItems:"center",borderLeftWidth:1.2,borderColor:"lightgrey"}}>
+	 																<Icon name = "ios-arrow-forward" style={{color: "grey"}}/>
+	 															</View>
+	 												 </TouchableOpacity>
+	 										 </View>
 										 <Modal
 												 animationType="slide"
 												 transparent={false}
 												 visible={this.state.modalSizeVisible}
 												 onRequestClose={() => {
 												 alert('Modal has been closed.');
-										 		}}>
+										 }}>
 												 <ModalSizeDesignComponent
 													 onClose={this.onModalSizeClose.bind(this)}
 													 onSelect={this.setModalVisibleFlavour.bind(this)}
 													 sendItem={this.getItem.bind(this)}
 													 responseDuplicateArray={this.state.finalResponseArray}
 													 onModalBack={this.onModalSizeBack.bind(this)}
+
 												 />
+
 										 </Modal>
 
 										 <Modal
@@ -382,21 +419,26 @@ render() {
 												 visible={this.state.modalFlavourVisible}
 												 onRequestClose={() => {
 												 alert('Modal has been closed.');
-										 		}}>
+										 }}>
 												 <ModalFlavourDesignComponent
 														 onClose={this.onModalFlavourClose.bind(this)}
 														 sendFlavourItem={this.getFlavourItem.bind(this)}
 														 flavoursArray={this.state.flavoursArray}
+
 												 />
 										 </Modal>
 								 </View>
+
+
                   <View style={styles.priceBlock}>
                       <Text style={styles.price}>${this.state.price}</Text>
                   </View>
+
                   <View style={styles.freeShipping}>
                       <Text style={styles.freeShippingText}>Free Shipping</Text>
                       <Text style={styles.freeShippingAdditionalText}>on orders over $49</Text>
                   </View>
+
                   <View style={styles.cartButtons}>
                       <Grid>
                           <Col size={1} style={styles.qty}>
@@ -413,20 +455,39 @@ render() {
                               onPress={this.onAddToCardPressed.bind(this)}>
                                   <Text style={styles.addCartButton}>{"Add to Cart".toUpperCase()}</Text>
                               </Button>
+															{/* Modal open after Add to cart Pressed*/}
+															<Modal
+																 animationType="fade"
+																 transparent={true}
+																 visible={this.state.modalAddtoCart}
+																 onRequestClose={() => {
+																 alert('Modal has been closed.');
+																}}>
+																 <ModalAddtoCart
+																	onClose={this.onModalAddtoCartClosed.bind(this)}
+																	productDetailsData={this.state.productDetails}
+																	productQtyData={this.state.qty}
+																	viewCart={this.onCartIcon.bind(this)}
+																	/>
+														 </Modal>
                           </Col>
+
                       </Grid>
                   </View>
+
                   <View style={styles.reviewsHeadingBlock}>
                       <Text style={styles.reviewsHeading}>{"Reviews".toUpperCase()}</Text>
                   </View>
+
                   <View style={styles.userReviewsBlock}>
-										{this.state.spinner == true ?
-											(<Spinner color='black' />)
-											:(<List dataArray={this.state.customerReviews}
-											 renderRow={this.renderItem.bind(this)}/>)}
+									{this.state.spinner == true ?
+										(<Spinner color='black' />)
+										:(<List dataArray={this.state.customerReviews}
+										 renderRow={this.renderItem.bind(this)}/>)}
                   </View>
               </View>
           </Content>
+
       </Container>
   );
 }

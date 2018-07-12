@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Image,View,FlatList,Alert} from "react-native";
+import {Image,View,FlatList,Alert,Dimensions} from "react-native";
 import {Container,Header,Title,Content,Button,Icon,Left,Body,Right,SwipeRow,Text,Input} from "native-base";
 import {connect} from "react-redux";
 import {List} from "react-native-elements";
@@ -12,7 +12,7 @@ import {removeCartItem} from "@actions";
 
 export interface Props {navigation: any;}
 export interface State {}
-
+const window = Dimensions.get('window');
 var quantityList = [];
 class Cart extends React.Component < Props, State > {
     constructor(props) {
@@ -23,21 +23,18 @@ class Cart extends React.Component < Props, State > {
         totalPrice: [],
         onEditing: false,
         onRowOpenValue: "",
-        spinner:true
+        spinner:true,
+        size_id:'',
+        flavour_id:''
+
       };
     }
     componentWillMount() {
-    
+      // alert(JSON.stringify(this.props.cartItems.addToCartItem.cartItems))
       this.setState({
         cartItems: this.props.cartItems.addToCartItem.cartItems,
         totalPrice: this.props.cartItems.addToCartItem.totalPrice
       });
-      for (i = 0; i <= 100; i++) {
-        quantityList.push({
-          label: i.toString(),
-          value: i.toString()
-        });
-      }
     }
     componentWillReceiveProps(nextProps) {
       this.setState({
@@ -57,6 +54,9 @@ class Cart extends React.Component < Props, State > {
         onEditing: !this.state.onEditing
       });
     }
+    updateUser(user){
+      this.setState({ user: user })
+   }
     deletedItem(index) {
       var item = {
         id: index.id,
@@ -68,7 +68,11 @@ class Cart extends React.Component < Props, State > {
         quantity: index.quantity,
         sub_heading: index.sub_heading,
         image: IMAGE_PATH + index.image,
-        status: index.status
+        status: index.status,
+        size_id:index.size_id,
+        flavour_id:index.flavour_id,
+        size_name:index.selectedSize,
+        flavour_name:this.state.selectedFlavour
       };
       this.props.dispatchDeleteCart(item);
     }
@@ -91,14 +95,13 @@ class Cart extends React.Component < Props, State > {
     }
     onSwipeRight(index) {
         this.setState({
-            onRowOpenValue: index.id
+            onRowOpenValue: index.id,
+            size_id:index.size_id,
+            flavour_id:index.flavour_id
         });
     }
 
-    renderData = ({
-        item,
-        index
-    }) => {
+    renderData = ({item,index}) => {
     if (this.state.onEditing === true) {
     return (
             <View style={[styles.productBlockView,{borderBottomColor:"lightgrey",borderBottomWidth: 1}]}>
@@ -113,8 +116,8 @@ class Cart extends React.Component < Props, State > {
                         <Image source={{uri: item.image}} style={{ width: 150, height: 150 }} />
                     </View>
                     <View style={styles.productDescription}>
-                        <Text style={styles.name}>{item.name}</Text>
-                        <Text style={styles.type}>4,4</Text>
+                        <Text style={styles.name}>{item.size_name}</Text>
+                          <Text style={styles.type}>{item.flavour_name}</Text>
                         <Text style={styles.price}>${item.price}</Text>
                         <Text style={styles.stock}>In Stock</Text>
                         <Button transparent>
@@ -129,7 +132,7 @@ class Cart extends React.Component < Props, State > {
                         </Button>
                     </View>
                 </View>
-                    {this.state.onRowOpenValue === item.id?
+                    {this.state.onRowOpenValue === item.id && this.state.size_id === item.size_id && this.state.flavour_id === item.flavour_id ?
                     (<View style={{backgroundColor:'#ea290e',justifyContent:'center'}}>
                     <Button transparent onPress={this.deleteRow.bind(this, item)}>
                         <Text style={styles.deleteTextStyle}>Delete</Text>
@@ -151,10 +154,10 @@ class Cart extends React.Component < Props, State > {
                                     </View>
                                     <View style={styles.productDescription}>
                                         <View style={{flex:1,alignItems:"flex-start"}}>
-                                            <Text style={styles.name}>{item.name}</Text>
+                                        <Text style={styles.name}>{item.size_name}</Text>
                                         </View>
                                         <View style={{flex:1,alignItems:"flex-start"}}>
-                                            <Text style={styles.type}>4,4</Text>
+                                            <Text style={styles.type}>{item.flavour_name}</Text>
                                         </View>
                                         <View style={{flex:1,alignItems:"flex-start"}}>
                                             <Text style={styles.price}>${item.price}</Text>
@@ -162,10 +165,10 @@ class Cart extends React.Component < Props, State > {
                                         <View style={{flex:1,alignItems:"flex-start"}}>
                                             <Text style={styles.stock}>In Stock</Text>
                                         </View>
-                                        <Button transparent>
+                                        <Button transparent >
                                             <View style={styles.quantityView}>
                                                 <View style={styles.quantityTextView}>
-                                                    <Text>{item.totalQuantity}</Text>
+                                                  <Text>{item.totalQuantity}</Text>
                                                 </View>
                                                 <View style={styles.quantityPickerView}>
                                                     <Image source={Images.dropdownIcon} style={{width:20,height:20}}/>
@@ -205,10 +208,15 @@ class Cart extends React.Component < Props, State > {
         return (
             <Container style={styles.container}>
              <Header style={styles.header}>
-                <Left>
+                <Left style={{flexDirection:"row"}}>
                     <Button transparent onPress={this.onBackPressed.bind(this)}>
                         <Icon style={{color: "white"}} name="ios-arrow-back" />
                     </Button>
+                    <Button style={[styles.ham,{marginLeft:10}]}
+                     transparent
+                     onPress = {() => this.props.navigation.navigate("DrawerOpen")}>
+                     <Icon name = "ios-menu" style={{color: "white"}}/ >
+                   </Button>
                 </Left>
                 <Body>
                     <Title style={styles.title}>Cart</Title>
@@ -238,7 +246,7 @@ class Cart extends React.Component < Props, State > {
                     <View style={styles.subContainer}>
                         <View style={styles.discountedView}>
                             <View style={styles.discountedTextView}>
-                                <Text style={styles.discountedTextStyle}> Discounted SubTotal(1 item):</Text>
+                                <Text style={styles.discountedTextStyle}>Discounted SubTotal(1 item):</Text>
                             </View>
                             <View style={styles.discountedPriceView}>
                                 <Text style={styles.discountedPriceTextStyle}>$ {myTotal}</Text>
@@ -259,29 +267,10 @@ class Cart extends React.Component < Props, State > {
                             style={{backgroundColor:'#FFFFFF'}}
                         />
                     </List>
-
-                    <View style={styles.cartButtons}>
-                        <View style={styles.promocodeView}>
-                            <View style={styles.promocodeTextView}>
-                                <Input
-                                placeholder = "Have a promo code ?"
-                                placeholderTextColor = "grey" />
-                            </View>
-                            <View style={styles.applyTextView}>
-                                <Button full style={{backgroundColor: "#34ace0"}}>
-                                    <Text style={styles.applyTextStyle}>Apply</Text>
-                                </Button>
-                            </View>
-                        </View>
-                        <View style={styles.promocodeConidtionView}>
-                            <Text style={styles.promocodeConditionTextStyle}>Only One Coupon Can Be Applied Per Order</Text>
-                        </View>
-                    </View>
-
                         <View style={styles.footerContainer}>
                         <View style={styles.discountedView}>
                             <View style={styles.discountedTextView}>
-                                <Text style={styles.discountedTextStyle}> Discounted SubTotal(1 item):</Text>
+                                <Text style={styles.discountedTextStyle}>Discounted SubTotal(1 item):</Text>
                             </View>
                             <View style={styles.discountedPriceView}>
                                 <Text style={styles.discountedPriceTextStyle}>${myTotal}</Text>
@@ -304,7 +293,9 @@ class Cart extends React.Component < Props, State > {
                             <Text style={styles.continueShoppingTextStyle}>CONTINUE SHOPPING</Text>
                         </View>
                     </View>
+
                 </View>
+
             </Content>
         </Container>
         );

@@ -7,7 +7,8 @@ const cart = {
     totalPrice: 0
 };
 const compareCartItem = (cartItem, action) => {
-    return cartItem.id === action.product.id;
+
+    return cartItem.id === action.product.id && cartItem.size_id === action.product.size_id && cartItem.flavour_id === action.product.flavour_id ;
 };
 export default function addTocart(state = cart, action) {
     switch (action.type) {
@@ -18,11 +19,11 @@ export default function addTocart(state = cart, action) {
         let total_Qty = state.total;
             if (isExisted){
                 {state.cartItems.map(item => {
-                    if(item.id === action.product.id){
+                    if(item.id === action.product.id && item.size_id === action.product.size_id && item.flavour_id === action.product.flavour_id){
                     var qty =action.product.totalQuantity
-                    item.totalQuantity = parseInt(item.totalQuantity) + parseInt(action.product.totalQuantity)                    
+                    item.totalQuantity = parseInt(item.totalQuantity) + parseInt(action.product.totalQuantity)
                     tot_Qty = item.totalQuantity
-                    total_Qty = parseInt(qty) + parseInt(state.total)                      
+                    total_Qty = parseInt(qty) + parseInt(state.total)
                     }
                 }) }
                 tot_Qty = total_Qty;
@@ -33,7 +34,7 @@ export default function addTocart(state = cart, action) {
                 }
                 return Object.assign({}, state,  {
                     cartItems: newcartItems,
-                    total: tot_Qty,//state.total+1,     
+                    total: tot_Qty,//state.total+1,
                 });
 
         case REMOVE_CART_ITEM:
@@ -43,7 +44,7 @@ export default function addTocart(state = cart, action) {
             const isExistedDeleted = state.cartItems.some(cartItem => compareCartItem(cartItem, action));
                 if (isExistedDeleted){
                     {state.cartItems.map((item,key) => {
-                        if(item.id === action.product.id){                           
+                        if(item.id === action.product.id && item.size_id === action.product.size_id && item.flavour_id === action.product.flavour_id){
                             var price = parseFloat(item.price);
                             var totPrice = parseFloat(totalCost);
                             var totQty = parseFloat(totalQty);
