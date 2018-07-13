@@ -19,7 +19,7 @@ export interface Props {
 export interface State {}
 
 var responseDuplicateArray =[];
-
+var dataToModal = {};
 class ProductDetails extends React.Component<Props, State> {
 
     constructor(props) {
@@ -36,7 +36,6 @@ class ProductDetails extends React.Component<Props, State> {
             sub_heading: "",
             image: "",
             status: "",
-            // productResponse:{},
             allProducts: [] ,
             badgeTotal: 0,
             qty:"1",
@@ -50,7 +49,8 @@ class ProductDetails extends React.Component<Props, State> {
 						flavoursArray: [],
 						flavour_id:'',
 						size_id:'',
-						modalAddtoCart: false
+						modalAddtoCart: false,
+
         };
     }
 
@@ -116,36 +116,34 @@ onValueChange3(value: string) {
     });
 }
 onAddToCardPressed(){
-
 		if(this.state.selectedSize === ""){
 			alert("Please select Size")
 		} else if(this.state.selectedFlavour === ""){
 				alert("Please select Flavour")
 			} else {
+					dataToModal={};
 					this.setState({
 							modalAddtoCart: true
-						},()=>{
-							var quantity = this.state.qty;
-							var item = {
-									id: this.state.productId,
-									totalQuantity: quantity === "1" ? 1 : quantity === "" ? 1 : quantity,
-									name: this.state.productDetails.name,
-									description: this.state.productDetails.description,
-									price: this.state.price,//this.state.productDetails.price,
-									category: this.state.productDetails.category,
-									quantity: this.state.productDetails.quantity,
-									sub_heading: this.state.productDetails.sub_heading,
-									image: IMAGE_PATH + this.state.productDetails.image,
-									status: this.state.productDetails.status,
-									size_id:this.state.size_id,
-									flavour_id:this.state.flavour_id,
-									size_name:this.state.selectedSize,
-									flavour_name:this.state.selectedFlavour
-							};
-							this.props.dispatchAddCart(item);
 						})
-
-
+						var quantity = this.state.qty;
+						var item = {
+								id: this.state.productId,
+								totalQuantity: quantity === "1" ? 1 : quantity === "" ? 1 : quantity,
+								name: this.state.productDetails.name,
+								description: this.state.productDetails.description,
+								price: this.state.price,//this.state.productDetails.price,
+								category: this.state.productDetails.category,
+								quantity: this.state.productDetails.quantity,
+								sub_heading: this.state.productDetails.sub_heading,
+								image: IMAGE_PATH + this.state.productDetails.image,
+								status: this.state.productDetails.status,
+								size_id:this.state.size_id,
+								flavour_id:this.state.flavour_id,
+								size_name:this.state.selectedSize,
+								flavour_name:this.state.selectedFlavour
+						};
+						this.props.dispatchAddCart(item);
+						dataToModal= item
 				}
 }
 onBack(){
@@ -300,7 +298,6 @@ render() {
       };
   return (
       <Container style={styles.container}>
-
           <Header style={styles.header}>
                 <Left style={[styles.ham,{flexDirection:"row"}]}>
                   <Button style={styles.ham}
@@ -465,7 +462,7 @@ render() {
 																}}>
 																 <ModalAddtoCart
 																	onClose={this.onModalAddtoCartClosed.bind(this)}
-																	productDetailsData={this.state.productDetails}
+																	productDetailsData={dataToModal}
 																	productQtyData={this.state.qty}
 																	viewCart={this.onCartIcon.bind(this)}
 																	/>

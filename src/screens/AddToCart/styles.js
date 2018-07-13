@@ -5,28 +5,27 @@ import {
 
 const window = Dimensions.get('window');
 const styles: any = StyleSheet.create({
-    container: {
-        //backgroundColor: "#FFFFFF",
-        backgroundColor: "#edeeef",
-        flex:1
-    },
-    allCenter:{
-        justifyContent:'center',
-        alignItems:'center'
-    },
-    content: {
-        position: "relative",
-        flex: 1,
-        flexDirection: "column"
-    },
+  container: {
+      backgroundColor: "#edeeef",
+      flex:1
+  },
+  allCenter:{
+      justifyContent:'center',
+      alignItems:'center'
+  },
+  content: {
+      position: "relative",
+      flex: 1,
+      flexDirection: "column"
+  },
 	header: {
 		backgroundColor: "#34ace0"
     },
-    headerRightTextStyle:{
-        color:'white',
-        fontSize:16,
-        marginRight:2
-    },
+  headerRightTextStyle:{
+      color:'white',
+      fontSize:16,
+      marginRight:2
+  },
 	title: {
 		fontFamily: "Arial",
 		color: "#FFFFFF",
@@ -38,18 +37,18 @@ const styles: any = StyleSheet.create({
         backgroundColor: '#edeeef',
         borderWidth:1,
         borderColor:'black',
-        alignItems:'center'        
+        alignItems:'center'
     },
     discountedView: {
-        marginTop:0.5,   
+        marginTop:0.5,
         flexDirection: 'row',
         height: window.height * 0.05,
-        width: window.width * 0.9        
+        width: window.width * 0.9
     },
     discountedTextView: {
-        flex: 0.6,        
+        flex: 0.6,
         justifyContent: 'flex-end',
-        alignItems: 'flex-start'        
+        alignItems: 'flex-start'
     },
     discountedTextStyle:{
         fontSize:16
@@ -59,18 +58,18 @@ const styles: any = StyleSheet.create({
         fontWeight:'bold'
     },
     discountedPriceView: {
-        flex: 0.4,        
+        flex: 0.4,
         justifyContent: 'flex-end',
-        alignItems: 'flex-end'        
+        alignItems: 'flex-end'
     },
     secureCheckOutView: {
-        flex: 0.7,        
+        flex: 0.7,
         alignItems:'center',
         justifyContent:'center',
         height: window.height * 0.12,
         marginTop:10
     },
-    secureCheckOutButton: {                
+    secureCheckOutButton: {
         justifyContent: 'center',
         alignItems: 'center',
         height: window.height * 0.06,
@@ -84,7 +83,7 @@ const styles: any = StyleSheet.create({
     },
     footerContainer:{
         backgroundColor: '#edeeef',
-        alignItems:'center',       
+        alignItems:'center',
         borderWidth: 1,
         borderColor: 'black',
     },
@@ -97,38 +96,25 @@ const styles: any = StyleSheet.create({
     continueShoppingView:{
         alignItems:'center',
         justifyContent:'center',
-        height: window.height * 0.05,        
+        height: window.height * 0.05,
     },
     continueShoppingTextStyle:{
         color:'blue'
     },
-    // inputIcon: {
-    //     padding: 16
-    // },
-    productBlockView:{                   
-        //justifyContent: 'center',
+    productBlockView:{
         flexDirection: 'row',
-        flex: 1, 
-        //alignItems:'center'       
-        //height: window.height * 0.28,
-        // borderBottomWidth:0.7,
-        // borderBottomColor:'lightgrey',        
-        //backgroundColor:'orange'
+        flex: 1,
     },
     productBlock: {
-        //marginTop: 5,               
-        flex:1,      
-        flexDirection: "row",        
-        margin: 5,        
-        //display: "flex"
+        flex:1,
+        flexDirection: "row",
+        margin: 5,
     },
-    productDescription: {                 
-        flex:1, 
-        flexWrap: 'wrap',        
-        margin: 5, 
-        alignItems:'flex-start',
-        //display: "flex",         
-        //alignItems:'flex-start'
+    productDescription: {
+        flex:1,
+        flexWrap: 'wrap',
+        margin: 5,
+        alignItems:'flex-start'
     },
     type: {
         color: "#4286f4",
@@ -147,18 +133,17 @@ const styles: any = StyleSheet.create({
         color: "black",
         fontFamily: "Arial",
         fontWeight: "bold",
-        fontSize: 20,
-        paddingTop: 4,
+        fontSize: 16
     },
     stock:{
         color:'green',
         fontSize: 14,
-    },    
-    cartButtons: {        
+    },
+    cartButtons: {
         backgroundColor:'#FFFFFF',
-        height: window.height * 0.18,        
+        height: window.height * 0.18,
         justifyContent:'center',
-        alignItems:'center'        
+        alignItems:'center'
     },
     totalQuantityTextStyle: {
         fontSize: 18,
@@ -176,7 +161,7 @@ const styles: any = StyleSheet.create({
         width: "70%",
         backgroundColor:'#FFF',
         alignItems:'center',
-        justifyContent:'center'        
+        justifyContent:'center'
     },
     quantityPickerView:{
         width: "30%",
@@ -193,10 +178,10 @@ const styles: any = StyleSheet.create({
         flexDirection:'row'
     },
     promocodeTextView:{
-        width: window.width / 1.5,        
+        width: window.width / 1.5,
         backgroundColor:'white',
         alignItems:'flex-start',
-        justifyContent:'center',        
+        justifyContent:'center',
         borderWidth:0.3
     },
     applyTextView:{
@@ -207,7 +192,7 @@ const styles: any = StyleSheet.create({
         justifyContent: 'center',
     },
     promocodeConidtionView: {
-        alignItems: 'flex-start',        
+        alignItems: 'flex-start',
         height: window.height * 0.03,
         width: window.width / 1.02,
         justifyContent:'center',
@@ -215,7 +200,7 @@ const styles: any = StyleSheet.create({
     },
     promocodeConditionTextStyle:{
         color:'grey',
-        fontSize:13        
+        fontSize:13
     },
     deleteTextStyle: {
         color:"white",

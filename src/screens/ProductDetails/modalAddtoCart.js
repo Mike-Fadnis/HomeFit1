@@ -12,6 +12,7 @@ class ModalAddtoCart extends Component {
         };
     }
     componentWillMount(){
+    console.log("444444444: ", this.props.productDetailsData.image)
       this.setState({
           productDetails: this.props.productDetailsData,
           productQty: this.props.productQtyData
@@ -38,11 +39,11 @@ class ModalAddtoCart extends Component {
                     <View style={{flex:0.5,flexDirection:"row",backgroundColor:"white",marginTop:10,margin:5}}>
                       <View style={{flex:0.8,flexDirection:"row"}}>
                         <View style={{flex:0.3,justifyContent:"center",alignItems:"center"}}>
-                          <Image source={{uri: IMAGE_PATH + this.state.productDetails.image}} style={{height:80,width:70}} />
+                          <Image source={{uri:this.state.productDetails.image}} style={{height:80,width:70}} />
                         </View>
                         <View style={{flex:0.7,backgroundColor:"white",padding:10}}>
                           <Text style={{color:"grey",fontWeight:"bold"}}>{this.state.productDetails.name}</Text>
-                          <Text style={{fontWeight:"bold"}} numberOfLines={2}>{this.state.productDetails.description}</Text>
+                          <Text style={{fontWeight:"bold"}} numberOfLines={2}>{this.state.productDetails.flavour_name}, {this.state.productDetails.size_name}</Text>
                         </View>
                       </View>
                       <View style={{flex:0.2,backgroundColor:"#f4f4f4"}}>
