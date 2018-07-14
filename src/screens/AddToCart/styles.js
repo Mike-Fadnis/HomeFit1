@@ -44,7 +44,7 @@ const styles: any = StyleSheet.create({
       width: window.width * 0.9
   },
   discountedTextView: {
-      flex: 0.6,
+      flex: 0.7,
       justifyContent: 'flex-end',
       alignItems: 'flex-start'
   },
@@ -56,7 +56,7 @@ const styles: any = StyleSheet.create({
       fontWeight:'bold'
   },
   discountedPriceView: {
-      flex: 0.4,
+      flex: 0.3,
       justifyContent: 'flex-end',
       alignItems: 'flex-end'
   },

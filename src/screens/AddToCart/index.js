@@ -310,7 +310,7 @@ class Cart extends React.Component < Props, State > {
                 <View style={styles.subContainer}>
                     <View style={styles.discountedView}>
                         <View style={styles.discountedTextView}>
-                            <Text style={styles.discountedTextStyle}>Discounted SubTotal (1 item):</Text>
+                            <Text style={styles.discountedTextStyle}>Discounted SubTotal 1 item):</Text>
                         </View>
                         <View style={styles.discountedPriceView}>
                             <Text style={styles.discountedPriceTextStyle}>$ {myTotal}</Text>

@@ -3,10 +3,10 @@ import {ADD_CART_ITEM, REMOVE_CART_ITEM} from "@actions/ActionTypes";
 const cart = {
     cartItems :[],
     total: 0,
-    finalTotal:0,
     totalPrice: 0
 };
 const compareCartItem = (cartItem, action) => {
+alert("cart item:  "+JSON.stringify(cartItem)+ "   action:   "+ JSON.stringify(action))
   return cartItem.id === action.product.id && cartItem.size_id === action.product.size_id && cartItem.flavour_id === action.product.flavour_id ;
 };
 export default function addTocart(state = cart, action) {
