@@ -7,8 +7,7 @@ const cart = {
     totalPrice: 0
 };
 const compareCartItem = (cartItem, action) => {
-
-    return cartItem.id === action.product.id && cartItem.size_id === action.product.size_id && cartItem.flavour_id === action.product.flavour_id ;
+  return cartItem.id === action.product.id && cartItem.size_id === action.product.size_id && cartItem.flavour_id === action.product.flavour_id ;
 };
 export default function addTocart(state = cart, action) {
     switch (action.type) {
@@ -24,8 +23,14 @@ export default function addTocart(state = cart, action) {
                     item.totalQuantity = parseInt(item.totalQuantity) + parseInt(action.product.totalQuantity)
                     tot_Qty = item.totalQuantity
                     total_Qty = parseInt(qty) + parseInt(state.total)
+                      if (action.product.pickerQuantity === 0){
+                        total_Qty = total_Qty
+                       }else{
+                         var pickerQty = parseInt(action.product.pickerQuantity)
+                         total_Qty = parseInt(pickerQty) + parseInt(total_Qty) - 1
+                       }
                     }
-                }) }
+                })}
                 tot_Qty = total_Qty;
                 newcartItems: state.cartItems;
                 } else {
@@ -62,7 +67,6 @@ export default function addTocart(state = cart, action) {
                     total: totalQty,
                     totalPrice: totalCost
                 });
-
         default:
             return state;
             }

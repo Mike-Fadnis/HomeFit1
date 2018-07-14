@@ -8,7 +8,7 @@ import Picker from 'react-native-picker';
 import styles from "./styles";
 import {IMAGE_PATH} from "@common/global";
 import Images from "@theme/images/images";
-import {removeCartItem} from "@actions";
+import {addToCartItem,removeCartItem} from "@actions";
 
 export interface Props {navigation: any;}
 export interface State {}
@@ -56,7 +56,7 @@ class Cart extends React.Component < Props, State > {
     deletedItem(index) {
       var item = {
         id: index.id,
-        totalQuantity: 1, //quantity== ""?1:parseInt(quantity),
+        totalQuantity: 1,
         name: index.name,
         description: index.description,
         price: index.price,
@@ -96,6 +96,26 @@ class Cart extends React.Component < Props, State > {
             flavour_id:index.flavour_id
         });
     }
+  onAddToCart(data){
+   var item = {
+       id: data.id,
+       totalQuantity:  0,
+       name: data.name,
+       description: data.description,
+       price: data.price,
+       category: data.category,
+       quantity: data.quantity,
+       sub_heading: data.sub_heading,
+       image: IMAGE_PATH + data.image,
+       status: data.status,
+       size_id:data.size_id,
+       flavour_id:data.flavour_id,
+       size_name:data.selectedSize,
+       flavour_name:data.selectedFlavour,
+       pickerQuantity: data.totalQuantity,
+   };
+   this.props.dispatchAddCart(item);
+}
 
   onPicker(item,index){
     var quantity = parseInt(item.totalQuantity)
@@ -111,6 +131,7 @@ class Cart extends React.Component < Props, State > {
                   res.totalQuantity = data[0]
                 }
               })
+              this.onAddToCart(item)
               this.setState({
                 cartItems:this.state.cartItems
               })
@@ -146,41 +167,41 @@ class Cart extends React.Component < Props, State > {
   renderData = ({item,index}) => {
   if (this.state.onEditing === true) {
   return (
-          <View style={[styles.productBlockView,{borderBottomColor:"lightgrey",borderBottomWidth: 1,marginTop:15,marginBottom:15,width:window.width}]}>
-            {this.state.onRowOpenValue != item.id || this.state.size_id != item.size_id || this.state.flavour_id != item.flavour_id ?
-                  (<View style={{alignItems:"center", justifyContent:"center"}}>
-                  <Button transparent onPress={this.onSwipeRight.bind(this, item)} style={{marginLeft:10,alignItems:"center", justifyContent:"center"}}>
-                      <Image source={Images.deleteIcon} style={styles.deleteIcon} />
-                  </Button>
-                  </View>):(null)}
+          <View style={styles.productBlockEditView}>
+              {this.state.onRowOpenValue != item.id || this.state.size_id != item.size_id || this.state.flavour_id != item.flavour_id ?
+                    (<View style={styles.deleteIconView}>
+                    <Button transparent onPress={this.onSwipeRight.bind(this, item)} style={styles.deleteIconButton}>
+                        <Image source={Images.deleteIcon}/>
+                    </Button>
+                    </View>):(null)}
               <View style={styles.productBlock}>
-                  <View size={1} style={{alignItems:"flex-end",padding:5}}>
-                      <Image source={{uri: item.image}} style={{ width: 150, height: 150 }}  />
+                  <View size={1} style={styles.productImageView}>
+                      <Image source={{uri: item.image}} style={styles.productImageStyle}/>
                   </View>
                   <View style={styles.productDescription}>
-                      <View style={{flex:0.2,backgroundColor:"green"}}/>
-                      <View style={{flex:0.1,alignItems:"flex-start"}}>
+                      <View style={styles.emptyFlexView}/>
+                      <View style={styles.ProductDetailsTextView}>
                         <Text style={styles.type}>{item.name} {item.flavour_name}, {item.size_name}</Text>
                       </View>
-                      <View style={{flex:0.1,alignItems:"flex-start"}}>
+                      <View style={styles.ProductDetailsTextView}>
                         <Text style={styles.price}>${item.price}</Text>
                       </View>
-                      <View style={{flex:0.1,alignItems:"flex-start"}}>
+                      <View style={styles.ProductDetailsTextView}>
                         <Text style={styles.stock}>In Stock</Text>
                       </View>
-                      <View style={{flex:0.3}}>
+                      <View style={styles.quantityButtonView}>
                           <Button transparent onPress={this.onPicker.bind(this,item,index)}>
                               <View style={styles.quantityView}>
                                   <View style={styles.quantityTextView}>
                                     <Text>{item.totalQuantity}</Text>
                                   </View>
                                   <View style={styles.quantityPickerView}>
-                                      <Image source={Images.dropdownIcon} style={{width:20,height:20}}/>
+                                      <Image source={Images.dropdownIcon} style={styles.dropdownImageStyle}/>
                                   </View>
                               </View>
                           </Button>
                       </View>
-                      <View style={{flex:0.2,backgroundColor:"green"}}/>
+                      <View style={styles.emptyFlexView}/>
                   </View>
               </View>
                   {this.state.onRowOpenValue === item.id && this.state.size_id === item.size_id && this.state.flavour_id === item.flavour_id ?
@@ -198,42 +219,42 @@ class Cart extends React.Component < Props, State > {
                       disableRightSwipe={true}
                       style={{ paddingRight: 0}}
                       body={
-                          <View style={styles.productBlockView}>
+                          <View style={styles.productBlockSwipeView}>
                               <View style={styles.productBlock}>
-                                  <View size={1} style={{alignItems:"flex-end",padding:5}}>
-                                      <Image source={{uri: item.image}} style={{ width: 150, height: 150 }}  />
+                                  <View size={1} style={styles.productImageView}>
+                                      <Image source={{uri: item.image}} style={styles.productImageStyle}  />
                                   </View>
                                   <View style={styles.productDescription}>
-                                      <View style={{flex:0.2,backgroundColor:"green"}}/>
-                                      <View style={{flex:0.1,alignItems:"flex-start"}}>
+                                      <View style={styles.emptyFlexView}/>
+                                      <View style={styles.ProductDetailsTextView}>
                                         <Text style={styles.type}>{item.name} {item.flavour_name}, {item.size_name}</Text>
                                       </View>
-                                      <View style={{flex:0.1,alignItems:"flex-start"}}>
+                                      <View style={styles.ProductDetailsTextView}>
                                         <Text style={styles.price}>${item.price}</Text>
                                       </View>
-                                      <View style={{flex:0.1,alignItems:"flex-start"}}>
+                                      <View style={styles.ProductDetailsTextView}>
                                         <Text style={styles.stock}>In Stock</Text>
                                       </View>
-                                      <View style={{flex:0.3}}>
+                                      <View style={styles.quantityButtonView}>
                                           <Button transparent onPress={this.onPicker.bind(this,item,index)}>
                                               <View style={styles.quantityView}>
                                                   <View style={styles.quantityTextView}>
                                                     <Text>{item.totalQuantity}</Text>
                                                   </View>
                                                   <View style={styles.quantityPickerView}>
-                                                      <Image source={Images.dropdownIcon} style={{width:20,height:20}}/>
+                                                      <Image source={Images.dropdownIcon} style={styles.dropdownImageStyle}/>
                                                   </View>
                                               </View>
                                           </Button>
                                       </View>
-                                      <View style={{flex:0.2,backgroundColor:"green"}}/>
+                                      <View style={styles.emptyFlexView}/>
                                   </View>
                               </View>
                           </View>
                       }
                       right={
-                          <Button style={{ backgroundColor: "red" }} onPress={this.deleteRow.bind(this, item)}>
-                              <Text style={{fontWeight:"900"}}>Delete</Text>
+                          <Button style={styles.bgRed} onPress={this.deleteRow.bind(this, item)}>
+                              <Text style={styles.fontBold}>Delete</Text>
                           </Button>
                       }/>
               );
@@ -252,29 +273,30 @@ class Cart extends React.Component < Props, State > {
         return (
             <Container style={styles.container}>
              <Header style={styles.header}>
-                <Left style={{flexDirection:"row"}}>
-                    <Button transparent onPress={this.onBackPressed.bind(this)}>
-                        <Icon style={{color: "white"}} name="ios-arrow-back" />
-                    </Button>
-                    <Button style={[styles.ham,{marginLeft:10}]}
+                <Left style={styles.headerLeftStyle}>
+                  <Button transparent onPress={this.onBackPressed.bind(this)}>
+                      <Icon style={{color: "white"}} name="ios-arrow-back" />
+                  </Button>
+                  <Button style={[styles.ham,{marginLeft:10}]}
                      transparent
                      onPress = {() => this.props.navigation.navigate("DrawerOpen")}>
-                     <Icon name = "ios-menu" style={{color: "white"}}/ >
-                   </Button>
+                   <Icon name = "ios-menu" style={{color: "white"}}/ >
+                 </Button>
                 </Left>
                 <Body>
-                    <Title style={styles.title}>Cart</Title>
+                  <Title style={styles.title}>Cart</Title>
                 </Body>
                 <Right>
-                    <Button transparent onPress={this.onEdit.bind(this)}>
-                      {this.state.cartItems === [] || this.state.cartItems.length === 0 ? (
-                      null
-                      ):(this.state.onEditing === false ? (<Text style={styles.headerRightTextStyle}>Edit</Text>) : (
-                          <Text style={styles.headerRightTextStyle}>Done</Text>)
-                      )}
-                    </Button>
+                  <Button transparent onPress={this.onEdit.bind(this)}>
+                    {this.state.cartItems === [] || this.state.cartItems.length === 0 ? (
+                    null
+                    ):(this.state.onEditing === false ? (<Text style={styles.headerRightTextStyle}>Edit</Text>) : (
+                        <Text style={styles.headerRightTextStyle}>Done</Text>)
+                    )}
+                  </Button>
                 </Right>
             </Header>
+
             {this.state.cartItems === [] || this.state.cartItems.length === 0 ? (
                 <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
                   <Text> Your cart is empty.</Text>
@@ -284,12 +306,11 @@ class Cart extends React.Component < Props, State > {
                 </View>
             ): (
             <Content>
-            <View style={styles.content}>
-                {/* product image and description block */}
+              <View style={styles.content}>
                 <View style={styles.subContainer}>
                     <View style={styles.discountedView}>
                         <View style={styles.discountedTextView}>
-                            <Text style={styles.discountedTextStyle}>Discounted SubTotal(1 item):</Text>
+                            <Text style={styles.discountedTextStyle}>Discounted SubTotal (1 item):</Text>
                         </View>
                         <View style={styles.discountedPriceView}>
                             <Text style={styles.discountedPriceTextStyle}>$ {myTotal}</Text>
@@ -312,37 +333,37 @@ class Cart extends React.Component < Props, State > {
                         style={{backgroundColor:'#FFFFFF'}}
                     />
                 </List>
-                    <View style={styles.footerContainer}>
-                    <View style={styles.discountedView}>
-                        <View style={styles.discountedTextView}>
-                            <Text style={styles.discountedTextStyle}>Discounted SubTotal(1 item):</Text>
-                        </View>
-                        <View style={styles.discountedPriceView}>
-                            <Text style={styles.discountedPriceTextStyle}>${myTotal}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.discountedView}>
-                        <View style={styles.discountedTextView}>
-                            <Text style={styles.discountedTextStyle}> Shipping Estimation: </Text>
-                        </View>
-                        <View style={styles.discountedPriceView}>
-                            <Text style={styles.discountedPriceTextStyle}>$80</Text>
-                        </View>
-                    </View>
-                    <View style={styles.footersecureCheckOutView}>
-                      <TouchableOpacity onPress={this.onSecureCheckout.bind(this)}>
-                        <View style={styles.secureCheckOutButton}>
-                            <Text style={styles.secureCheckOutTextStyle}>SECURE CHECKOUT</Text>
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                    <View style={styles.continueShoppingView}>
-                      <TouchableOpacity onPress={this.onBackPressed.bind(this)}>
-                          <Text style={{color:"#4eabee"}}>CONTINUE SHOPPING</Text>
-                      </TouchableOpacity>
-                    </View>
+                <View style={styles.footerContainer}>
+                  <View style={styles.discountedView}>
+                      <View style={styles.discountedTextView}>
+                          <Text style={styles.discountedTextStyle}>Discounted SubTotal (1 item):</Text>
+                      </View>
+                      <View style={styles.discountedPriceView}>
+                          <Text style={styles.discountedPriceTextStyle}>${myTotal}</Text>
+                      </View>
+                  </View>
+                  <View style={styles.discountedView}>
+                      <View style={styles.discountedTextView}>
+                          <Text style={styles.discountedTextStyle}> Shipping Estimation: </Text>
+                      </View>
+                      <View style={styles.discountedPriceView}>
+                          <Text style={styles.discountedPriceTextStyle}>$80</Text>
+                      </View>
+                  </View>
+                  <View style={styles.footersecureCheckOutView}>
+                    <TouchableOpacity onPress={this.onSecureCheckout.bind(this)}>
+                      <View style={styles.secureCheckOutButton}>
+                          <Text style={styles.secureCheckOutTextStyle}>SECURE CHECKOUT</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.continueShoppingView}>
+                    <TouchableOpacity onPress={this.onBackPressed.bind(this)}>
+                        <Text style={{color:"#4eabee"}}>CONTINUE SHOPPING</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-            </View>
+              </View>
             </Content>
             )}
         </Container>
@@ -357,7 +378,8 @@ function mapStateToProps(state) {
 }
 function mapDispatchToProps(dispatch) {
   return {
-    dispatchDeleteCart: item => dispatch(removeCartItem(item))
+    dispatchDeleteCart: item => dispatch(removeCartItem(item)),
+    dispatchAddCart: item => dispatch(addToCartItem(item))
   };
 }
 

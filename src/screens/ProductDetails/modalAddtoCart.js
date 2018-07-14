@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, TouchableOpacity, FlatList, Image } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, Image, StyleSheet } from "react-native";
 import {Icon, List, ListItem, Left, Body, Right, Thumbnail, Button} from "native-base";
 import {IMAGE_PATH} from "@common/global";
 
@@ -23,31 +23,31 @@ class ModalAddtoCart extends Component {
     }
     render() {
     return (
-            <View style={{flex:1,backgroundColor:'#000000d1'}}>
-                <View style={{flex:0.5,backgroundColor:"#000000",margin:10,marginTop:100}}>
-                    {/*(1)item added to cart View*/}
-                    <View style={{flex:0.2,flexDirection:"row",borderBottomColor:"#4facee",borderBottomWidth:2}}>
-                      <View style={{flex:0.7,padding:10,justifyContent:"center"}}>
+            <View style={styles.container}>
+                <View style={styles.subContainer}>
+                    {/*(1)item addedtoCart View*/}
+                    <View style={styles.addedtoCartView}>
+                      <View style={styles.addedtoCartTextView}>
                         <Text style={{color:"#4facee",fontWeight:"bold"}}>(1)item added to cart</Text>
                       </View>
-                      <TouchableOpacity style={{flex:0.3,alignItems:"center",justifyContent:"center"}} onPress={this.props.onClose}>
+                      <TouchableOpacity style={styles.cancelButtonView} onPress={this.props.onClose}>
                         <Icon name="ios-close" style={{color: "white",fontSize:55}}/>
                       </TouchableOpacity>
                     </View>
 
-                    {/* Added Product View*/}
-                    <View style={{flex:0.5,flexDirection:"row",backgroundColor:"white",marginTop:10,margin:5}}>
-                      <View style={{flex:0.8,flexDirection:"row"}}>
-                        <View style={{flex:0.3,justifyContent:"center",alignItems:"center"}}>
+                    {/* Added ProductDetails View*/}
+                    <View style={styles.addedProductsView}>
+                      <View style={styles.addedProductsSubView}>
+                        <View style={styles.addedProductsImageView}>
                           <Image source={{uri:this.state.productDetails.image}} style={{height:80,width:70}} />
                         </View>
-                        <View style={{flex:0.7,backgroundColor:"white",padding:10}}>
+                        <View style={styles.addedProductsTextView}>
                           <Text style={{color:"grey",fontWeight:"bold"}}>{this.state.productDetails.name}</Text>
                           <Text style={{fontWeight:"bold"}} numberOfLines={2}>{this.state.productDetails.flavour_name}, {this.state.productDetails.size_name}</Text>
                         </View>
                       </View>
-                      <View style={{flex:0.2,backgroundColor:"#f4f4f4"}}>
-                        <View style={{flex:0.4,alignItems:"center",justifyContent:"center",padding:10,borderBottomColor:"#c8c8c8",borderBottomWidth:1}}>
+                      <View style={styles.addedProductsQuantityView}>
+                        <View style={styles.addedProductsQuantitySubView}>
                           <Text style={{fontSize:12,fontWeight:"bold",color:"lightgrey"}}>Qty</Text>
                           <Text style={{fontSize:22,fontWeight:"bold",color:"black"}}>{this.state.productQty}</Text>
                         </View>
@@ -55,26 +55,55 @@ class ModalAddtoCart extends Component {
                       </View>
                     </View>
 
-                    {/* View Cart View*/}
-                    <View style={{flex:0.15,marginTop:10,margin:5}}>
-                      <TouchableOpacity style={{flex:1,backgroundColor:"#5a5a5a"}} onPress={this.onViewCart.bind(this)}>
-                        <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
-                          <Text style={{color:"#FFFFFF",fontWeight:"bold",fontSize:20}}>VIEW CART</Text>
+                    {/* ViewCartButton View*/}
+                    <View style={styles.viewcartButtonView}>
+                      <TouchableOpacity style={styles.viewcartButtonSubView} onPress={this.onViewCart.bind(this)}>
+                        <View style={styles.viewcartButtonTextView}>
+                          <Text style={styles.viewcartButtonTextStyle}>VIEW CART</Text>
                         </View>
                       </TouchableOpacity>
                     </View>
 
-                    {/* Continue Shopping View*/}
-                    <TouchableOpacity style={{flex:0.15,margin:5}} onPress={this.props.onClose}>
-                      <View style={{flex:1,flexDirection:"row",alignItems:"center",justifyContent:"center"}}>
-                        <Icon name="ios-arrow-back" style={{color: "#5cafef",fontSize:35,marginRight:5}}/>
-                        <Text style={{color:"#4facee",fontWeight:"bold",fontSize:20}}> CONTINUE SHOPPING </Text>
+                    {/* ContinueShoppingButton View*/}
+                    <TouchableOpacity style={styles.continueShoppingButtonView} onPress={this.props.onClose}>
+                      <View style={styles.continueShoppingButtonSubView}>
+                        <Icon name="ios-arrow-back" style={{color: "#5cafef",fontSize:30,marginRight:5}}/>
+                        <Text style={styles.continueShoppingButtonTextStyle}> CONTINUE SHOPPING </Text>
                       </View>
                     </TouchableOpacity>
                 </View>
             </View>
         )
+  }
 }
-}
+
+const styles = StyleSheet.create({
+  container:{flex:1,backgroundColor:'#000000d1'},
+  subContainer:{flex:0.5,backgroundColor:"#000000",margin:10,marginTop:100},
+
+  addedtoCartView:{flex:0.2,flexDirection:"row",borderBottomColor:"#4facee",borderBottomWidth:2},
+  addedtoCartTextView:{flex:0.7,padding:10,justifyContent:"center"},
+  cancelButtonView:{flex:0.3,alignItems:"center",justifyContent:"center"},
+
+  addedProductsView:{flex:0.5,flexDirection:"row",backgroundColor:"white",marginTop:10,margin:5},
+  addedProductsSubView:{flex:0.8,flexDirection:"row"},
+  addedProductsImageView:{flex:0.3,justifyContent:"center",alignItems:"center"},
+  addedProductsTextView:{flex:0.7,backgroundColor:"white",padding:10},
+  addedProductsQuantityView:{flex:0.2,backgroundColor:"#f4f4f4"},
+  addedProductsQuantitySubView:{flex:0.4,alignItems:"center",justifyContent:"center",padding:10,borderBottomColor:"#c8c8c8",borderBottomWidth:1},
+
+  viewcartButtonView:{flex:0.15,marginTop:10,margin:5},
+  viewcartButtonTextView:{flex:1,alignItems:"center",justifyContent:"center"},
+  viewcartButtonSubView:{flex:1,backgroundColor:"#5a5a5a"},
+  viewcartButtonTextStyle:{color:"#FFFFFF",fontWeight:"bold",fontSize:16},
+
+  continueShoppingButtonView:{flex:0.15,margin:5},
+  continueShoppingButtonSubView:{flex:1,flexDirection:"row",alignItems:"center",justifyContent:"center"},
+  continueShoppingButtonTextStyle:{color:"#4facee",fontWeight:"bold",fontSize:16},
+
+
+
+
+})
 
 export default ModalAddtoCart;

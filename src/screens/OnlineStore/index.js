@@ -100,15 +100,6 @@ class OnlineStore extends Component {
               </Item>
               <Image source={{uri: "https://www.t-nation.com/system/publishing/articles/10003259/original/The-Single-Best-Muscle-Building-Method.jpg?1451932310"}} style={{ width: "100%", height: 200 }}  />
 
-              {/*<View style={styles.subContent} >
-                  <Text style={styles.heading}>
-                      BROWSE OUR PRODUCTS
-                  </Text>
-                  <Text style={styles.textContent}>
-                      Only the elite earns a position in our top 50 best-sellers list. These proven supplements can help you het the results you are working for.
-                  </Text>
-                </View> */}
-
               <Card style={styles.card}>
                 <CardItem>
                   <Body>
@@ -135,18 +126,18 @@ class OnlineStore extends Component {
               <View style={styles.storeItems}>
                 <List>
                     {this.state.spinner === true ? (
-                      <View style={styles.spinnerView}>
-                        <Spinner color={"black"} style={styles.spinnerPosition} />
-                      </View>
-                  ) :
-                    <FlatList
-                      data={this.state.allProducts}
-                      keyExtractor={(x, i) => x.id}
-                      renderItem={this.renderData.bind(this)}
-                      numColumns={2}
-                      style={{backgroundColor:'#dce2ef'}}
-                      />
-                }
+                        <View style={styles.spinnerView}>
+                          <Spinner color={"black"} style={styles.spinnerPosition} />
+                        </View>
+                      ):
+                      <FlatList
+                        data={this.state.allProducts}
+                        keyExtractor={(x, i) => x.id}
+                        renderItem={this.renderData.bind(this)}
+                        numColumns={2}
+                        style={{backgroundColor:'#dce2ef'}}
+                        />
+                    }
                 </List>
               </View>
         </Content>
