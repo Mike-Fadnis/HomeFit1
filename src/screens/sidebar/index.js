@@ -43,13 +43,7 @@ const datas = [
     route: "OnlineStore",
     icon: "navigate",
     bg: "#BE6F50"
-  },
-  {
-    name: "Product Details",
-    route: "ProductDetails",
-    icon: "navigate",
-    bg: "#BE6F50"
-  },
+  },  
   {
     name: "Trainer Login",
     route: "TrainerLogin",
@@ -84,7 +78,7 @@ class SideBar extends Component {
       <Container style={{backgroundColor: "#009FDB"}}>
         <Content
           bounces={false}
-          style={{ flex: 1, backgroundColor: "#009FDB", 
+          style={{ flex: 1, backgroundColor: "#009FDB",
             marginTop : 30,  borderColor : '#fff',
             borderBottomWidth : 1 }}
         >

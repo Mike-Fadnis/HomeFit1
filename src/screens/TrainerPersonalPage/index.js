@@ -39,7 +39,7 @@ class TrainerPersonalPage extends Component {
           </Body>
           <Right />
         </Header>
-       
+
 
         <Content padder>
           <View style={styles.onlineStore}>
@@ -58,34 +58,34 @@ class TrainerPersonalPage extends Component {
           <View style={styles.hostLiveGrpSession}>
             <View style={styles.buttonContainerStyle1}>
               <ButtonOne style={styles.buttonStyle}>
-                HOST A LIVE GROUP SESSION 
+                HOST A LIVE GROUP SESSION
               </ButtonOne>
             </View>
           </View>
           <View style={styles.hostLiveGrpSessionTextContainer}>
             <Text>
-                (Host a free 15 minute session to attract more 
+                (Host a free 15 minute session to attract more
             </Text>
             <Text>
-                clients nationally.) 
+                clients nationally.)
             </Text>
           </View>
 
           <View style={{ marginTop : 20}}>
             <Card>
               <CardSection style={ styles.totalClientsTextBox }>
-                <Text style={styles.totalClientsText}>  
-                  Total Clients Online : 
+                <Text style={styles.totalClientsText}>
+                  Total Clients Online :
                 </Text>
                 <Text style={styles.totalClientsTextTwo}>
-                  356                
+                  356
                 </Text>
               </CardSection>
             </Card>
           </View>
 
           <View style={styles.calendarContainer}>
-            <Calendar currentMonth={'2018-06-01'}      
+            <Calendar currentMonth={'2018-06-01'}
     customStyle={{day: {fontSize: 15, textAlign: 'center'}}}/>
           </View>
 
@@ -105,7 +105,7 @@ class TrainerPersonalPage extends Component {
               </Text>
           </View>
 
-        
+
 
       </Container>
     );

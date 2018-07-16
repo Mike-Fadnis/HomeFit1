@@ -51,29 +51,29 @@ class ViewTrainer extends Component {
           </View>
           <CardSection style={styles.singleImageContainer}>
             <View style={styles.imageBig}>
-              <Image style={{ height : 150, width : 175}} 
+              <Image style={{ height : 150, width : 175}}
                 source={{uri : 'https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg'}} />
               </View>
             <View style={styles.imageBig}>
-              <Image style={{ height : 150, width : 175}} 
+              <Image style={{ height : 150, width : 175}}
                 source={{uri : 'https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg'}} />
             </View>
           </CardSection>
           <CardSection style={styles.singleImageContainer}>
             <View style={styles.imageBig}>
-              <Image style={{ height : 150, width : 115 }} 
+              <Image style={{ height : 150, width : 115 }}
                 source={{uri : 'https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg'}} />
               </View>
             <View style={styles.imageBig}>
-              <Image style={{ height : 150, width : 115}} 
+              <Image style={{ height : 150, width : 115}}
                 source={{uri : 'https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg'}} />
             </View>
             <View style={styles.imageBig}>
-              <Image style={{ height : 150, width : 115}} 
+              <Image style={{ height : 150, width : 115}}
                 source={{uri : 'https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg'}} />
             </View>
           </CardSection>
-          
+
           <Card>
             <Text style={styles.specialityTitle}>Specialities :</Text>
             <CardSection>
@@ -88,21 +88,21 @@ class ViewTrainer extends Component {
           </Card>
 
           <View style={styles.bioContainer}>
-              <Text style={styles.bio}>
-                Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum
-                Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
-                Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
-                Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum
-                Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
-                Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum 
-              </Text>
+            <Text style={styles.bio}>
+              Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum
+              Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum
+              Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum
+              Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum
+              Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum
+              Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum
+            </Text>
           </View>
           <View style={styles.book}>
-              <Text style={styles.bookText}>
-                BOOK SESSION NOW! ONLY $34.99
-              </Text>
+            <Text style={styles.bookText}>
+              BOOK SESSION NOW! ONLY {"$34.99"}
+            </Text>
           </View>
-          
+
         </Content>
 
       </Container>

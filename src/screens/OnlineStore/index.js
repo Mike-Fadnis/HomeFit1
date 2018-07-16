@@ -27,9 +27,11 @@ class OnlineStore extends Component {
           spinner:false
         });
       } else {
+        this.setState({spinner:false})
         alert("Error getting product details | Check Network ");
       }
     }).catch((error)=> {
+      this.setState({spinner:false})
       console.log("Console Error", error);
     });
   }
@@ -134,6 +136,7 @@ class OnlineStore extends Component {
                         data={this.state.allProducts}
                         keyExtractor={(x, i) => x.id}
                         renderItem={this.renderData.bind(this)}
+                        removeClippedSubViews={true}
                         numColumns={2}
                         style={{backgroundColor:'#dce2ef'}}
                         />

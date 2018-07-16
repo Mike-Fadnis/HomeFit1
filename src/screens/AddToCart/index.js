@@ -97,12 +97,15 @@ class Cart extends React.Component < Props, State > {
         });
     }
   onAddToCart(data){
+    console.log("onaddtocat",data)
    var item = {
        id: data.id,
-       totalQuantity:  0,
+       totalQuantity:  data.totalQuantity,
        name: data.name,
+       pickerQuantity: data.totalQuantity,
+       originalquantity:data.originalquantity,
        description: data.description,
-       price: data.price,
+       price: data.price,//this.state.productDetails.price,
        category: data.category,
        quantity: data.quantity,
        sub_heading: data.sub_heading,
@@ -111,8 +114,7 @@ class Cart extends React.Component < Props, State > {
        size_id:data.size_id,
        flavour_id:data.flavour_id,
        size_name:data.selectedSize,
-       flavour_name:data.selectedFlavour,
-       pickerQuantity: data.totalQuantity,
+       flavour_name:data.selectedFlavour
    };
    this.props.dispatchAddCart(item);
 }
@@ -128,6 +130,7 @@ class Cart extends React.Component < Props, State > {
               });
               this.state.cartItems.map((res,i)=> {
                 if(res.id === item.id && res.size_id === item.size_id && res.flavour_id === item.flavour_id){
+                  res.originalquantity = item.totalQuantity;
                   res.totalQuantity = data[0]
                 }
               })
@@ -280,7 +283,7 @@ class Cart extends React.Component < Props, State > {
                   <Button style={[styles.ham,{marginLeft:10}]}
                      transparent
                      onPress = {() => this.props.navigation.navigate("DrawerOpen")}>
-                   <Icon name = "ios-menu" style={{color: "white"}}/ >
+                   <Icon name = "ios-menu" style={{color: "white"}}/>
                  </Button>
                 </Left>
                 <Body>
@@ -310,7 +313,7 @@ class Cart extends React.Component < Props, State > {
                 <View style={styles.subContainer}>
                     <View style={styles.discountedView}>
                         <View style={styles.discountedTextView}>
-                            <Text style={styles.discountedTextStyle}>Discounted SubTotal 1 item):</Text>
+                            <Text style={styles.discountedTextStyle}>Discounted SubTotal (1 item):</Text>
                         </View>
                         <View style={styles.discountedPriceView}>
                             <Text style={styles.discountedPriceTextStyle}>$ {myTotal}</Text>

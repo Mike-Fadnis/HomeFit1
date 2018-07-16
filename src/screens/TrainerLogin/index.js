@@ -27,11 +27,11 @@ class TrainerLogin extends Component {
           <View style={styles.title}>
             <Text style={styles.titleText}>Login</Text>
           </View>
-          
+
             <View style={styles.imputBoxContainer}>
               <View style={{ marginBottom : 10 }}>
-                <CardSection>
-                  <Input label="Email" placeholder="user@gmail.com" />
+                <CardSection style={{backgroundColor:"black"}}>
+                  <Input label="Email" placeholder="user@gmail.com" placeholderTextColor="red"/>
                 </CardSection>
               </View>
               <View>
@@ -40,14 +40,14 @@ class TrainerLogin extends Component {
                 </CardSection>
               </View>
             </View>
-          
+
           <ListItem style={{ marginBottom : 20}}>
             <CheckBox checked={false} color="white" />
             <Body>
               <Text style={{ color : '#fff'}}>Remember Me!</Text>
             </Body>
           </ListItem>
-          <View style={{ paddingLeft : 10, paddingRight : 10, 
+          <View style={{ paddingLeft : 10, paddingRight : 10,
               marginBottom : 10 }}>
             <Button block light
               onPress={ () => this.props.navigation.navigate("TrainerPersonalPage")}>

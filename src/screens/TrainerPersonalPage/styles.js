@@ -43,7 +43,7 @@ hostLiveGrpSession : {
   shadowOpacity : 0.8,
 },
 sessionSliderStyle : {
-  width: '100%', 
+  width: '100%',
   height: 130 ,
   marginTop: 20
 },
@@ -54,7 +54,7 @@ hostLiveGrpSessionTextContainer : {
   alignItems : 'center'
 },
 hostLiveGrpSessionText : {
-  
+
 },
 totalClientsTextBox : {
   flexDirection : 'row'
