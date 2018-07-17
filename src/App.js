@@ -147,7 +147,8 @@ import OnlineStore from "./screens/OnlineStore";
 import AddToCart from "./screens/AddToCart";
 import ProductDetails from "./screens/ProductDetails";
 import TrainerChooseDates from "./screens/TrainerChooseDates";
-
+import ClientSignup from "./screens/ClientSignup";
+import ClientLogin from "./screens/ClientLogin";
 const Drawer = DrawerNavigator(
   {
     Landing: { screen: Landing },
@@ -155,14 +156,16 @@ const Drawer = DrawerNavigator(
     BrowseTrainers: { screen: BrowseTrainers },
     ViewTrainer: { screen: ViewTrainer },
     TrainerLogin : { screen : TrainerLogin },
-    TrainerSignUp : { screen : TrainerSignUp }, 
+    TrainerSignUp : { screen : TrainerSignUp },
     TrainerHome : { screen : TrainerHome },
     TrainerFinancialDetails : { screen : TrainerFinancialDetails },
     TrainerPersonalPage : { screen : TrainerPersonalPage },
     OnlineStore : { screen : OnlineStore },
     AddToCart : { screen : AddToCart },
     ProductDetails : { screen : ProductDetails },
-    TrainerChooseDates : { screen : TrainerChooseDates}
+    TrainerChooseDates : { screen : TrainerChooseDates},
+    ClientLogin : { screen : ClientLogin },
+    ClientSignup : { screen : ClientSignup }
   },
   {
     initialRouteName: "Landing",

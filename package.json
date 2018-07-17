@@ -31,9 +31,8 @@
   "dependencies": {
     "color": "1.0.3",
     "lodash": "4.13.1",
-    "moment": "2.13.0",
+    "moment": "^2.13.0",
     "native-base": "^2.5.1",
-    "prop-types": "^15.6.2",
     "react": "16.3.1",
     "react-native": "0.55.4",
     "react-native-calendar": "^0.13.1",
@@ -41,6 +40,7 @@
     "react-native-elements": "^0.19.1",
     "react-native-image-slider": "^2.0.3",
     "react-native-picker": "^4.3.7",
+    "react-native-push-notification": "^3.0.2",
     "react-native-vector-icons": "4.5.0",
     "react-navigation": "^1.5.0",
     "react-redux": "^5.0.7",

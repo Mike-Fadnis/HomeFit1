@@ -1,14 +1,15 @@
 import React, { Component } from "react";
-import { ImageBackground, View, StatusBar, StyleSheet } from "react-native";
+import { ImageBackground, View, StatusBar, StyleSheet,AsyncStorage } from "react-native";
 //import { createStackNavigator } from 'react-navigation';
 import { Container, H3, Text } from "native-base";
 import ImageSlider from 'react-native-image-slider';
 import { connect } from 'react-redux';
+
 //import ClientHome from "../ClientHome/";
 import { Button, Header } from '../common';
-
+var PushNotification = require('react-native-push-notification');
 state = {
-  
+
 };
 
 const libraries  = [
@@ -28,15 +29,55 @@ const libraries  = [
       "id" : 0,
       "image" : "https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/image1.jpeg"
   }
-]; 
+];
 
 class Landing extends Component {
     static navigationOptions = {
         title: 'Landing',
       };
+componentWillMount(){
+  PushNotification.configure({
 
+    // (optional) Called when Token is generated (iOS and Android)
+    onRegister: function(token) {
+        console.log( 'TOKEN@@@@@@:',token);
+         AsyncStorage.setItem('@token:key', JSON.stringify(token))
+    },
+
+    // (required) Called when a remote or local notification is opened or received
+    onNotification: function(notification) {
+        console.log( 'NOTIFICATION:', notification );
+
+        // process the notification
+
+        // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
+        notification.finish(PushNotificationIOS.FetchResult.NoData);
+    },
+
+    // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications)
+    senderID: "YOUR GCM SENDER ID",
+
+    // IOS ONLY (optional): default: all - Permissions to register.
+    permissions: {
+        alert: true,
+        badge: true,
+        sound: true
+    },
+
+    // Should the initial notification be popped automatically
+    // default: true
+    popInitialNotification: true,
+
+    /**
+      * (optional) default: true
+      * - Specified if permissions (ios) and token (android and ios) will requested or not,
+      * - if not, you must call PushNotificationsHandler.requestPermissions() later
+      */
+    requestPermissions: true,
+});
+}
   render() {
-    
+
     return (
       <Container style={styles.container}>
         <Header headerText="HomeFit" />
@@ -88,7 +129,7 @@ const styles=StyleSheet.create({
     backgroundColor : '#fff'
   },
   sliderStyle : {
-      width: '100%', 
+      width: '100%',
       height: 315 ,
       marginTop: 10
   },
@@ -132,7 +173,7 @@ const styles=StyleSheet.create({
       fontSize : 17,
       color : '#009FDB',
       fontWeight : "600",
-      
+
   },
   buttonStyle : {
       flexDirection : 'row',

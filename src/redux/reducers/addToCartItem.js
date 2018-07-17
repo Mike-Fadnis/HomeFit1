@@ -3,7 +3,6 @@ import {ADD_CART_ITEM, REMOVE_CART_ITEM} from "@actions/ActionTypes";
 const cart = {
     cartItems :[],
     total: 0,
-    finalTotal:0,
     totalPrice: 0
 };
 const compareCartItem = (cartItem, action) => {
