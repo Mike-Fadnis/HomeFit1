@@ -46,7 +46,6 @@ const AppUtils = {
         });
     },
     clientSignUp:async function (signUp) {
-      // alert(JSON.stringify(signUp.name))
         return fetch(API_BASE_URL + "action=sign_up&name="+ signUp.name+"&email="+signUp.email+"&password="+signUp.password+"&deviceType="+signUp.deviceType+"&deviceToken="+signUp.deviceToken, {
             method: "POST"
         }).then((response) => {
@@ -58,9 +57,41 @@ const AppUtils = {
         });
     },
     clientLogin:async function (login) {
-      // alert(JSON.stringify(signUp.name))
-// action=user_login&email=tester@gmail.com&password=123456
-        return fetch(API_BASE_URL +"action=user_login&email="+login.email+"&password="+login.password, {
+        return fetch(API_BASE_URL +"action=user_login&email="+login.email+"&password="+login.password+"&deviceType="+login.deviceType+"&deviceToken="+login.deviceToken, {
+            method: "POST"
+        }).then((response) => {
+            return response.json();
+        }, function (error){
+            console.log("error", error);
+        }).catch((error) => {
+            console.log("error", error);
+        });
+    },
+    trainerSignUp:async function (signUp) {
+        return fetch(API_BASE_URL + "action=trainer_sign_up&name="+ signUp.name+"&email="+signUp.email+"&password="+signUp.password+"&deviceType="+signUp.deviceType+"&deviceToken="+signUp.deviceToken, {
+            method: "POST"
+        }).then((response) => {
+            return response.json();
+        }, function (error){
+            console.log("error", error);
+        }).catch((error) => {
+            console.log("error", error);
+        });
+    },
+    trainerLogin:async function (login) {
+        return fetch(API_BASE_URL +"action=trainer_login&email="+login.email+"&password="+login.password+"&deviceType="+login.deviceType+"&deviceToken="+login.deviceToken, {
+            method: "POST"
+        }).then((response) => {
+            return response.json();
+        }, function (error){
+            console.log("error", error);
+        }).catch((error) => {
+            console.log("error", error);
+        });
+    },
+
+    availableDates:async function (dates) {
+        return fetch(API_BASE_URL +"action=save_tainer_dates&id="+dates.id+"&date_time="+dates.availableSlot, {
             method: "POST"
         }).then((response) => {
             return response.json();

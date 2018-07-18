@@ -1,3 +1,5 @@
+import {Dimensions} from "react-native";
+const window = Dimensions.get('window');
 export default {
   container: {
     backgroundColor: "#fff",
@@ -76,7 +78,7 @@ calendarContainer : {
   borderColor : "#009FDB",
   shadowOffset : { width : 0, height : 2 },
   shadowOpacity : 0.8,
-  marginRight : 5
+
 },
 book : {
   flexDirection : 'row',
@@ -94,4 +96,22 @@ bookText : {
   paddingBottom : 10,
   paddingTop : 10
 },
+avatarContainer: {
+    borderColor: '#9B9B9B',
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  avatar: {
+    borderRadius: window.width/7.4,//50
+    width: window.width/3.7,//100
+    height: window.width/3.7
+  },
+  backgroundVideo:{
+   position: 'absolute',
+   top: 10,
+   left: 0,
+   bottom: 10,
+   right: 0,
+  }
 };

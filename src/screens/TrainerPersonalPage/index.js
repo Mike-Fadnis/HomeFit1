@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { View } from 'react-native';
+import { View ,Modal,TouchableOpacity,Image} from 'react-native';
 import ImageSlider from 'react-native-image-slider';
-import Calendar from 'react-native-calendar';
+import { Calendar,CalendarList } from 'react-native-calendars'
+import moment from 'moment'
 import {
   Container,
   Header,
@@ -14,14 +15,153 @@ import {
   FooterTab,
   Left,
   Right,
-  Body
+  Body,
+  Spinner
 } from "native-base";
 import { ButtonTwo, Card, CardSection } from '../common';
 import ButtonOne from './ButtonOne';
-
+import ModalOpenDesign from './ModalOpenDesign'
 import styles from "./styles";
-
+import Images from "@theme/images/images";
+var ImagePicker = require('react-native-image-picker');
+import API from "@utils/ApiUtils";
+import TrainersMedia from './TrainersMedia'
+var finalRecordData = []
+const _format = 'YYYY-MM-DD'
+var options = {
+  title: 'Select Avatar',
+  customButtons: [
+    {name: 'fb', title: 'Choose Photo from Facebook'},
+  ],
+  storageOptions: {
+    skipBackup: true,
+    path: 'images'
+  }
+};
 class TrainerPersonalPage extends Component {
+ initialState = {}
+  constructor() {
+    super()
+    this.state = {
+      _markedDates: this.initialState,
+      modalVisible: false,
+      getSelectedTime: [],
+      _selectedDay: '',
+      finalSelectedDates: [],
+      avatarSource: null,
+      spinner:false
+    }
+    this.onModalOpen = this.onModalOpen.bind(this)
+    this.onModalClose = this.onModalClose.bind(this)
+  }
+  onDaySelect = day => {
+    const _selectedDay = moment(day.dateString).format(_format)
+    this.setState({ _selectedDay: _selectedDay })
+    let selected = true
+    let markedDates = {}
+    if (this.state._markedDates[_selectedDay]) {
+      selected = !this.state._markedDates[_selectedDay].selected
+      markedDates = this.state._markedDates[_selectedDay]
+    }
+    markedDates = { ...markedDates, ...{ selected } }
+    const updatedMarkedDates = {
+      ...this.state._markedDates,
+      ...{ [_selectedDay]: markedDates }
+    }
+    this.setState({ _markedDates: updatedMarkedDates })
+    if (this.state.finalSelectedDates.length > 0) {
+      this.state.finalSelectedDates.map((res, i) => {
+        if (res.date === _selectedDay) {
+          this.state.finalSelectedDates.splice(i, 1)
+          console.log('1456:  ', JSON.stringify(this.state.finalSelectedDates))
+        } else {
+          this.onModalOpen(true)
+        }
+      })
+    } else {
+      this.onModalOpen(true)
+    }
+  }
+  onModalOpen(visible) {
+    this.setState({ modalVisible: visible })
+  }
+  onModalClose() {
+    this.setState({ modalVisible: false })
+  }
+  getDataObj(getSelectedTime) {
+    this.setState({ getSelectedTime: getSelectedTime }, () => {
+      let finalRecord = {
+        date: this.state._selectedDay,
+        time: this.state.getSelectedTime
+      }
+      finalRecordData.push(finalRecord)
+      this.setState({ finalSelectedDates: getSelectedTime }, () => {
+      console.log("PICKED HOURS AND DATES",this.state.finalSelectedDates)
+        this.setState({ modalVisible: false })
+      })
+    })
+  }
+selectPhotoTapped() {
+      this.setState({
+      spinner:true
+      })
+    const options = {
+      quality: 1.0,
+      maxWidth: 500,
+      maxHeight: 500,
+      storageOptions: {
+        skipBackup: true
+      }
+    };
+
+    ImagePicker.showImagePicker(options, (response) => {
+      console.log('Response = ', response);
+
+      if (response.didCancel) {
+        this.setState({
+        spinner:false
+        })
+        console.log('User cancelled photo picker');
+      }
+      else if (response.error) {
+        this.setState({
+        spinner:false
+        })
+        console.log('ImagePicker Error: ', response.error);
+      }
+      else if (response.customButton) {
+        this.setState({
+        spinner:false
+        })
+        console.log('User tapped custom button: ', response.customButton);
+      }
+      else {
+        let source = { uri: response.uri };
+        // You can also display the image using data:
+        // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+        this.setState({
+          avatarSource: source,
+          spinner:false
+        });
+      }
+    });
+  }
+  onAvailableDates(){
+      if(this.state.finalSelectedDates === []|| this.state.finalSelectedDates.length === 0){
+            alert("Please select atleast one day")
+      }else{
+        var availableDates = {
+              id:"20",
+              availableSlot:this.state.finalSelectedDates
+            }
+        API.availableDates(availableDates).then(async (response) => {
+           // alert(JSON.stringify(response))
+        }).catch((error)=>{
+        this.setState({spinner:false})
+          console.log("Console Error",error);
+        });
+      }
+  }
   render() {
     return (
       <Container style={styles.container}>
@@ -29,9 +169,8 @@ class TrainerPersonalPage extends Component {
          <Left style={styles.ham}>
             <Button style={styles.ham}
             transparent
-            onPress={() => this.props.navigation.navigate("DrawerOpen")}
-            >
-            <Icon name="ios-menu" />
+            onPress={() => this.props.navigation.navigate("DrawerOpen")}>
+            <Icon name="ios-menu" style={{color: "white"}}/>
             </Button>
           </Left>
           <Body>
@@ -39,10 +178,18 @@ class TrainerPersonalPage extends Component {
           </Body>
           <Right />
         </Header>
-
-
         <Content padder>
           <View style={styles.onlineStore}>
+             <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)} style={{alignItems:'center', justifyContent:'center'}}>
+              <View style={[styles.avatar, styles.avatarContainer, {marginBottom: 20}]}>
+              { this.state.spinner ? (<Spinner color="black"/>):this.state.avatarSource === null ? <Image style={styles.avatar} source={Images.user} /> :
+                <Image style={styles.avatar} source={this.state.avatarSource} />
+              }
+              </View>
+            </TouchableOpacity>
+            <View>
+                <TrainersMedia />
+            </View>
             <View style={styles.buttonContainerStyle1}>
                 <ButtonTwo style={styles.buttonStyle}
                   onPress={() => this.props.navigation.navigate("OnlineStore")}>
@@ -54,7 +201,6 @@ class TrainerPersonalPage extends Component {
               </View>
             </View>
           </View>
-
           <View style={styles.hostLiveGrpSession}>
             <View style={styles.buttonContainerStyle1}>
               <ButtonOne style={styles.buttonStyle}>
@@ -70,7 +216,6 @@ class TrainerPersonalPage extends Component {
                 clients nationally.)
             </Text>
           </View>
-
           <View style={{ marginTop : 20}}>
             <Card>
               <CardSection style={ styles.totalClientsTextBox }>
@@ -83,30 +228,34 @@ class TrainerPersonalPage extends Component {
               </CardSection>
             </Card>
           </View>
-
           <View style={styles.calendarContainer}>
-            <Calendar currentMonth={'2018-06-01'}
-    customStyle={{day: {fontSize: 15, textAlign: 'center'}}}/>
+            <Calendar
+              onDayPress={this.onDaySelect}
+              // horizontal={true}
+              markedDates={this.state._markedDates}/>
           </View>
-
          <View style={styles.onlineStore}>
             <View style={styles.buttonContainerStyle1}>
-                <ButtonTwo style={styles.buttonStyle}
-                  onPress={() => this.props.navigation.navigate("OnlineStore")}>
+                <ButtonTwo style={styles.buttonStyle}>
                     UPDATE AVAILABLE DATES
                 </ButtonTwo>
               </View>
             </View>
-
+            <Modal
+            animationType="slide"
+            transparent={false}
+            visible={this.state.modalVisible}>
+            <ModalOpenDesign
+              onClose={this.onModalClose}
+              getDataObj={this.getDataObj.bind(this)}
+              selectedDate={this.state._selectedDay}/>
+          </Modal>
         </Content>
           <View style={styles.book}>
               <Text style={styles.bookText}>
                   JOIN NEXT UPCOMING TRAINING SESSION
               </Text>
           </View>
-
-
-
       </Container>
     );
   }

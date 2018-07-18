@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity,AsyncStorage,ActivityIndicator,Alert } from 'react-native';
 import {
   Container,
   Header,
@@ -17,8 +17,9 @@ import {
   Body
 } from "native-base";
 import { Input, Card, CardSection, ButtonTwo } from '../common';
-
+import API from "@utils/ApiUtils";
 import styles from "./styles";
+var dismissKeyboard = require('dismissKeyboard');
 
 class TrainerLogin extends Component {
   constructor(props){
@@ -26,6 +27,7 @@ class TrainerLogin extends Component {
     this.state={
       email:'',
       password:'',
+      spinner:false
     }
   }
 
@@ -44,14 +46,54 @@ class TrainerLogin extends Component {
      return email.test(Email)
    }
   onLogin(){
-    if (!this.validEmail(this.state.email)) {
-       alert('Please enter correct Email-id')
-     }
-     else{
-      alert(" EMAIL: "+this.state.email+" PASSWORD "+this.state.password)
-     }
-// this.props.navigation.navigate("TrainerPersonalPage")
+        dismissKeyboard();
+      if(this.state.email === ""|| this.state.email=== null){
+        Alert.alert('Email','Email should not be empty')
+      }
+      else if (!this.validEmail(this.state.email)) {
+         Alert.alert('Email','Please enter correct Email-id')
+       }
+       else if (this.state.password === ""|| this.state.password=== null) {
+          Alert.alert('Password','Password should not be empty')
         }
+       else{
+         this.setState({
+           spinner:true
+         })
+    AsyncStorage.getItem('@token:key', (err, token) => {
+        getToken = JSON.parse(token)
+           var login={
+               email:this.state.email,
+               password:this.state.password,
+               deviceType:getToken === null? "":getToken.os,
+               deviceToken:getToken === null? "":getToken.token
+           }
+           API.trainerLogin(login).then(async (response) => {
+              // alert(JSON.stringify(response))
+             if(response.status === true){
+             console.log("TRAINERUSERDTAAAA!@@@@: ", response)
+               this.setState({
+                 userData:response.data,
+                 spinner:false
+               },()=>{
+                 var getUserData = this.state.userData
+                  // AsyncStorage.setItem('@getUserData:key', JSON.stringify(getUserData))
+                 this.props.navigation.navigate("TrainerPersonalPage")
+               })
+             }else{
+               this.setState({
+                 spinner:false
+               },()=>{
+                 Alert.alert(response.message,"")
+               })
+             }
+           }).catch((error)=>{
+           this.setState({spinner:false})
+             console.log("Console Error",error);
+           });
+          }).done()
+       }
+    }
   render() {
     return (
         <View style={styles.container}>
@@ -67,6 +109,7 @@ class TrainerLogin extends Component {
                     placeholder="user@gmail.com"
                     onChangeText={this.onChangeEmail.bind(this)}
                     value={this.state.email}
+                    keyboardType = "email-address"
                   />
                 </CardSection>
               </View>
@@ -78,6 +121,7 @@ class TrainerLogin extends Component {
                     secureTextEntry
                     onChangeText={this.onChangePassword.bind(this)}
                     value={this.state.password}
+                    keyboardType = "default"
                   />
                 </CardSection>
               </View>
@@ -106,6 +150,13 @@ class TrainerLogin extends Component {
             onPress={ () => this.props.navigation.navigate("ClientHome")}>
             <Text style={styles.goBackText}>Go back!</Text>
           </TouchableOpacity>
+          {this.state.spinner === true ? (
+          <View style={styles.container_spinner}>
+            <View style={styles.spinnerView}>
+              <ActivityIndicator size="large" color="black"/>
+            </View>
+          </View>
+          ) : null}
         </View>
       );
   }

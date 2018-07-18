@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity,Alert, AsyncStorage} from 'react-native';
+import { View, TouchableOpacity,Alert, AsyncStorage,ActivityIndicator} from 'react-native';
 import {
   Container,
   Header,
@@ -20,6 +20,7 @@ import {
 import { Input, Card, CardSection, ButtonTwo } from '../common';
 import API from "@utils/ApiUtils";
 import styles from "./styles";
+var dismissKeyboard = require('dismissKeyboard');
 
 class ClientSignup extends Component {
   constructor(props){
@@ -58,6 +59,7 @@ class ClientSignup extends Component {
     return email.test(Email)
   }
  onRegister(){
+      dismissKeyboard();
       if(this.state.name === "" || this.state.name === null){
         Alert.alert('Name','Name should not be empty')
       }
@@ -134,6 +136,7 @@ class ClientSignup extends Component {
                placeholder="John Doe"
                onChangeText={this.onChangeName.bind(this)}
                value={this.state.name}
+               keyboardType = "default"
              />
              </CardSection>
          </View>
@@ -144,6 +147,7 @@ class ClientSignup extends Component {
                placeholder="user@gmail.com"
                onChangeText={this.onChangeEmail.bind(this)}
                value={this.state.email}
+               keyboardType = "email-address"
              />
            </CardSection>
          </View>
@@ -155,6 +159,7 @@ class ClientSignup extends Component {
                secureTextEntry
                onChangeText={this.onChangePassword.bind(this)}
                value={this.state.password}
+               keyboardType = "default"
              />
            </CardSection>
          </View>
@@ -166,15 +171,12 @@ class ClientSignup extends Component {
                secureTextEntry
                onChangeText={this.onChangeConfirmPassword.bind(this)}
                value={this.state.confirmPassword}
+              keyboardType = "default"
              />
            </CardSection>
          </View>
         </View>
-        {this.state.spinner === true ? (
-         <View style={styles.spinnerView}>
-           <Spinner color="black" style={styles.container_spinner} />
-         </View>
-       ) : null}
+
       <View style={{ paddingLeft : 10, paddingRight : 10, marginTop : 20}}>
         <Button block light
           onPress={this.onRegister.bind(this)}>
@@ -185,6 +187,13 @@ class ClientSignup extends Component {
         onPress={ () => this.props.navigation.navigate("ClientLogin")}>
         <Text style={styles.goBackText}>Go back!</Text>
       </TouchableOpacity>
+      {this.state.spinner === true ? (
+      <View style={styles.container_spinner}>
+        <View style={styles.spinnerView}>
+          <ActivityIndicator size="large" color="black"/>
+        </View>
+      </View>
+      ) : null}
     </View>
 );
   }
