@@ -84,7 +84,7 @@ class ClientSignup extends Component {
         })
         var getToken = {}
             AsyncStorage.getItem('@token:key', (err, token) => {
-                getToken = JSON.parse(token)
+                let getToken = JSON.parse(token)
                 // alert("token@@@@@@ "+JSON.stringify(getToken))
                 var signUp={
                   name:this.state.name,
@@ -101,6 +101,7 @@ class ClientSignup extends Component {
                         spinner:false
                       },()=>{
                         var getUserData = this.state.userData
+                        AsyncStorage.setItem('@getUserType:key', "User")
                          AsyncStorage.setItem('@getUserData:key', JSON.stringify(getUserData))
                         this.props.navigation.navigate("ClientHome")
                       })

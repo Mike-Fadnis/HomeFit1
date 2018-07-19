@@ -14,73 +14,46 @@ import Images from "@theme/images/images";
 
 var rowData = []
 var selectedTime = []
-export default class ModalOpenDesign extends Component {
+export default class ModalDesign extends Component {
   constructor() {
     super()
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
     this.state = {
       dataSource: ds,
       selectedTime: [],
-      timesData: []
+      timesData: [],
+      time_slot:[]
     }
   }
   componentWillMount() {
-  console.log("SELECTED_DATE",this.props.selectedDate)
-    selectedTime = []
-    var times = []
-    var periods = ['AM', 'PM']
-    var hours = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-    var prop = null
-    var hour = null
-    var min = null
-    for (prop in periods) {
-      for (hour in hours) {
-        let present = hours[hour]
-        let nexthour
-        if (hours[parseInt(hour) + 1]) {
-          nexthour = hours[parseInt(hour) + 1]
-        } else {
-          nexthour = hours[0]
-        }
-        var rec =('0' + hours[hour]).slice(-2) +
-            ' ' +
-            periods[prop] +
-            ' ' +
-            '-' +
-            ' ' +
-            ('0' + nexthour).slice(-2) +
-            ' ' +
-            periods[prop]
-
-        times.push(rec)
+  var _selectedTimeArray = this.props.selectedTime
+  _selectedTimeArray.map((res, key)=>{
+      if(res.date === this.props.selectedDate){
+        this.state.time_slot.push({timeSlot:res.time_slot})
       }
-    }
-    this.setState({ timesData: times, selectedTime: [] }, () => {
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(this.state.timesData)
-      })
-    })
+  })
+    this.setState({ timesData: this.state.time_slot[0].timeSlot, selectedTime: [] })
   }
   onDatePressed(item) {
+    var record = {date:this.props.selectedDate,time:item.item.time_slot}
     let count = 0
-    var record = {date:this.props.selectedDate,time:item.item}
-     if (this.state.selectedTime.length === 0) {
-       this.state.selectedTime.push(record)
-     } else {
-       this.state.selectedTime.map((res, i) => {
-         console.log("comparism", item , "    ",res)
-         if (item.item === res.time) {
-           this.state.selectedTime.splice(i, 1)
-           count++
-         }
-       })
-       if (count === 0) {
-         this.state.selectedTime.push(record)
-       }
-     }
-     this.setState({
-       selectedTime: this.state.selectedTime
-     })
+    if(this.state.selectedTime.length > 0){
+      this.state.selectedTime.map((res,i)=>{
+        if(res.time === item.item.time_slot){
+          this.state.selectedTime.splice(i,1);
+          count++;
+        }
+      })
+      if(count === 0){
+        this.state.selectedTime.push(record)
+      }
+    }else{
+      this.state.selectedTime.push(record)
+    }
+    this.setState({ selectedTime: this.state.selectedTime }, () => {
+       // alert(JSON.stringify(this.state.selectedTime))
+      //this.props.getDataObj(this.state.selectedTime)
+    })
   }
   onPropsModalClose() {
     this.props.onClose()
@@ -97,7 +70,7 @@ export default class ModalOpenDesign extends Component {
     let images = []
     let count = 0
     this.state.selectedTime.map((res1, j) => {
-      if (res1.time === item.item) {
+      if (res1.time === item.item.time_slot) {
         data1 = 'true'
         count = count + 1
       }
@@ -106,6 +79,7 @@ export default class ModalOpenDesign extends Component {
       }
     })
     if (data1 === 'true') {
+      console.log('112211:  ')
       images.push(
           <Image source={Images.checked} style={{height:20,width:20}} />
       )
@@ -117,7 +91,7 @@ export default class ModalOpenDesign extends Component {
         <View style={{flex: 0.8,justifyContent: 'center',paddingLeft: 15}}>
           <TouchableOpacity onPress={this.onDatePressed.bind(this, item)}>
             <Text style={{ color: 'black', fontSize: 18 }}>
-              {item.item}
+              {item.item.time_slot}
             </Text>
           </TouchableOpacity>
         </View>

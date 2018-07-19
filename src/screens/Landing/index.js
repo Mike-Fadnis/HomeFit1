@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { ImageBackground, View, StatusBar, StyleSheet,AsyncStorage } from "react-native";
+import { ImageBackground, View, AsyncStorage, StyleSheet } from "react-native";
 //import { createStackNavigator } from 'react-navigation';
 import { Container, H3, Text } from "native-base";
 import ImageSlider from 'react-native-image-slider';
@@ -76,6 +76,23 @@ componentWillMount(){
     requestPermissions: true,
 });
 }
+onEnter(){
+  AsyncStorage.getItem('@getUserType:key', (err, type) => {
+    if(type){
+      this.setState({
+        userType:type
+      },()=>{
+        if(type === 'Trainer'){
+          this.props.navigation.navigate("TrainerPersonalPage")
+        }else{
+          this.props.navigation.navigate("ClientHome")
+        }
+      })
+    }else{
+      this.props.navigation.navigate("ClientHome")
+    }
+  })
+}
   render() {
 
     return (
@@ -110,8 +127,7 @@ componentWillMount(){
               </View>
           </View>
           <View style={styles.buttonStyle}>
-              <Button onPress={
-                () => this.props.navigation.navigate("ClientHome")}>
+              <Button onPress={this.onEnter.bind(this)}>
                   Enter
               </Button>
           </View>

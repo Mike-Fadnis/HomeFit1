@@ -61,7 +61,7 @@ class TrainerLogin extends Component {
            spinner:true
          })
     AsyncStorage.getItem('@token:key', (err, token) => {
-        getToken = JSON.parse(token)
+        let getToken = JSON.parse(token)
            var login={
                email:this.state.email,
                password:this.state.password,
@@ -77,7 +77,8 @@ class TrainerLogin extends Component {
                  spinner:false
                },()=>{
                  var getUserData = this.state.userData
-                  // AsyncStorage.setItem('@getUserData:key', JSON.stringify(getUserData))
+                 AsyncStorage.setItem('@getUserType:key', "Trainer")
+                  AsyncStorage.setItem('@getUserData:key', JSON.stringify(getUserData))
                  this.props.navigation.navigate("TrainerPersonalPage")
                })
              }else{

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Image,View, AsyncStorage, ListView } from "react-native";
+import { Image,View, AsyncStorage, ListView, Alert,Modal} from "react-native";
 import {
   Content,
   Text,
@@ -9,67 +9,67 @@ import {
   Container,
   Left,
   Right,
+  Button,
   Badge
 } from "native-base";
 import styles from "./style";
+import RadioForm from 'react-native-simple-radio-button';
+var radio_props = [
+ {label: 'User', value: 0 },
+ {label: 'Trainer', value: 1 }
+];
 
-const datas = [
-  {
-    name: "Landing",
-    route: "Landing",
-    icon: "navigate",
-    bg: "#477EEA"
-  },
+const dataUser = [
   {
     name: "Home",
-    route: "ClientHome",
+    //route: "ClientHome",
     icon: "navigate",
     bg: "#C5F442"
   },
   {
-    name: "Browse Trainers",
-    route: "BrowseTrainers",
+    name: "Notifications",
+    //route: "BrowseTrainers",
     icon: "navigate",
     bg: "#BE6F50"
   },
   {
-    name: "View Trainer",
-    route: "ViewTrainer",
+    name: "Upcoming Sessions",
+    //route: "ViewTrainer",
     icon: "navigate",
     bg: "#BE6F50"
   },
   {
-    name: "Visit Online Store",
-    route: "OnlineStore",
+    name: "Profile",
+  //  route: "OnlineStore",
     icon: "navigate",
     bg: "#BE6F50"
   },
   {
-    name: "Trainer Login",
-    route: "TrainerLogin",
+    name: "Cart",
+    //route: "TrainerLogin",
     icon: "navigate",
     bg: "#BE6F50"
   },
   {
-    name: "Trainer Sign Up",
-    route: "TrainerSignUp",
+    name: "Rate your past trainers",
+    //route: "TrainerSignUp",
     icon: "navigate",
     bg: "#BE6F50"
   },
   {
-    name: "Trainer Home",
-    route: "TrainerPersonalPage",
+    name: "Order History & Recurring Purchases",
+    //route: "TrainerPersonalPage",
     icon: "navigate",
     bg: "#BE6F50"
   },
   {
-    name: "Client Sign Up",
-    route: "ClientSignup",
+    name: "Progress Tracker",
+  //  route: "ClientSignup",
     icon: "navigate",
     bg: "#BE6F50"
   },
   {
-    name: "Client Login",
+    name: "Track / Follow your Friends techniques",
     route: "ClientLogin",
     icon: "navigate",
     bg: "#BE6F50"
@@ -80,6 +80,87 @@ const datas = [
     bg: "#BE6F50"
   },
 ];
+const dataTrainer = [
+  {
+    name: "Notifications",
+    //route: "BrowseTrainers",
+    icon: "navigate",
+    bg: "#BE6F50"
+  },
+  {
+    name: "Upcoming Sessions",
+    //route: "ViewTrainer",
+    icon: "navigate",
+    bg: "#BE6F50"
+  },
+  {
+    name: "Profile",
+  //  route: "OnlineStore",
+    icon: "navigate",
+    bg: "#BE6F50"
+  },
+  {
+    name: "Billing Information",
+  //  route: "OnlineStore",
+    icon: "navigate",
+    bg: "#BE6F50"
+  },
+  {
+    name: "Cart",
+    //route: "TrainerLogin",
+    icon: "navigate",
+    bg: "#BE6F50"
+  },
+  {
+    name: "Track your Commission & Payments",
+    //route: "TrainerSignUp",
+    icon: "navigate",
+    bg: "#BE6F50"
+  },
+  {
+    name: "Order History & Recurring Purchases",
+    //route: "TrainerPersonalPage",
+    icon: "navigate",
+    bg: "#BE6F50"
+  },
+  {
+    name: "Track / Follow your Friends techniques",
+    route: "ClientLogin",
+    icon: "navigate",
+    bg: "#BE6F50"
+  },
+  {
+    name: "Logout",
+    icon: "navigate",
+    bg: "#BE6F50"
+  },
+];
+const emptyData =[
+  {
+    name: "Landing",
+    //route: "ClientHome",
+    icon: "navigate",
+    bg: "#C5F442"
+  },
+  {
+    name: "Home",
+    //route: "BrowseTrainers",
+    icon: "navigate",
+    bg: "#BE6F50"
+  },
+  {
+    name: "Browse Trainers",
+    //route: "ViewTrainer",
+    icon: "navigate",
+    bg: "#BE6F50"
+  },
+  {
+    name: "View Online Store",
+  //  route: "OnlineStore",
+    icon: "navigate",
+    bg: "#BE6F50"
+  },
+]
 
 class SideBar extends Component {
   constructor(props) {
@@ -88,41 +169,56 @@ class SideBar extends Component {
       dataSource: new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }),
       shadowOffsetWidth: 1,
       shadowRadius: 4,
-      userData:null
+      userData:null,
+      userType:'',
+      modalVisible:false,
+      radioButton:0
     };
+    this.onLogin = this.onLogin.bind(this);
+  }
+  fetchData(){
+    AsyncStorage.getItem('@getUserType:key', (err, type) => {
+      if(type){
+        this.setState({
+          userType:type
+        },()=>{
+          if(this.state.userType === 'Trainer'){
+            this.setState({
+              dataSource:new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows(dataTrainer)
+            })
+          }else{
+            this.setState({
+              dataSource:new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows(dataUser)
+            })
+          }
+        })
+      }else{
+        this.setState({
+          dataSource:new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows(emptyData)
+        })
+      }
+    })
+    AsyncStorage.getItem('@getUserData:key', (err, getUserData) => {
+        var get_user = JSON.parse(getUserData)
+        this.setState({
+          userData:get_user
+        })
+     }).done()
   }
   componentWillMount(){
-    this.setState({
-      dataSource:this.state.dataSource.cloneWithRows(datas)
-    })
-    AsyncStorage.getItem('@getUserData:key', (err, getUserData) => {
-
-        var get_user = JSON.parse(getUserData)
-        // alert(JSON.stringify(get_user))
-      this.setState({
-        userData:get_user
-      })
-     }).done()
+    this.fetchData();
   }
   componentWillReceiveProps(newProps){
-    this.setState({
-      dataSource:new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows(datas)
-    })
-    AsyncStorage.getItem('@getUserData:key', (err, getUserData) => {
-
-        var get_user = JSON.parse(getUserData)
-        // alert(JSON.stringify(get_user))
-      this.setState({
-        userData:get_user
-      })
-     }).done()
+    this.fetchData();
   }
   onClicking(data){
     if(data.name === "Logout"){
       AsyncStorage.removeItem('@getUserData:key')
+      AsyncStorage.removeItem('@getUserType:key')
       this.props.navigation.navigate("Landing")
     }else{
-      this.props.navigation.navigate(data.route)
+    //  this.props.navigation.navigate(data.route)
+    alert("HI")
     }
   }
 renderData(data){
@@ -157,10 +253,46 @@ renderData(data){
     </ListItem>
   )
 }
+onLogin(){
+  this.setState({modalVisible:true})
+  // Alert.alert("HomeFit", "Do you want to login as ?", [
+  //   {
+  //     text: "User",
+  //     onPress: () => {
+  //         this.props.navigation.navigate("ClientLogin")
+  //     }
+  //   },
+  //   {
+  //     text: "Trainer",
+  //     onPress: () => {
+  //         this.props.navigation.navigate("TrainerLogin")
+  //     }
+  //   },
+  //   { text: "Cancel", onPress: () => console.log("cancel Pressed") }
+  // ])
+}
+onModalClose(){
+  this.setState({modalVisible:false})
+}
+onDone(){
+  console.log("44556699:   ",JSON.stringify(this.state.radioButton))
+  if(this.state.radioButton === 0){
+    this.onModalClose();
+    this.props.navigation.navigate("ClientLogin")
+  }else{
+    this.onModalClose();
+    this.props.navigation.navigate("TrainerLogin")
+  }
+}
+onRadioFormPressed(value){
+  this.setState({
+    radioButton: value
+  })
+}
 render() {
  console.log("USERDATA@@@@@:"+JSON.stringify(this.state.userData))
     return (
-      <Container style={{backgroundColor: "#009FDB"}}>
+      <Container style={{backgroundColor: "#009FDB",}}>
         <Content
           bounces={false}
           style={{ flex: 1, backgroundColor: "#009FDB",
@@ -168,8 +300,13 @@ render() {
             borderBottomWidth : 1 }}>
             <View style={{ alignItems:'center', justifyContent:'center'}}>
             <Icon name="ios-contact" style={{color: "white"}} />
-            {this.state.userData === null ? (<Text style={{color: "white"}}>Login</Text>):
-             this.state.userData.user_name? (<Text style={{color: "white"}}>{this.state.userData.user_name}</Text>):(  <Text style={{color: "white"}}>{this.state.userData.name}</Text>)}
+            {this.state.userData === null ? (
+            <Button onPress={this.onLogin} style={{alignSelf:"center"}} transparent>
+              <Text style={{color: "white"}}>Sign Up/Log In</Text>
+            </Button>
+            ):
+             this.state.userData.user_name? (
+               <Text style={{color: "white",fontSize:20}}>{this.state.userData.user_name}</Text>):(<Text style={{color: "white",fontSize:20}}>{this.state.userData.name}</Text>)}
             </View>
           <ListView
             dataSource={this.state.dataSource}
@@ -210,6 +347,38 @@ render() {
               }
           />
         </Content>
+        <Modal
+         animationType="slide"
+         transparent={true}
+         visible={this.state.modalVisible}>
+         <View style={styles.modalView}>
+           <View style={{flex:1,backgroundColor:"white",borderWidth:1,borderColor:"white",borderRadius:10}}>
+             <View style={{flex:0.2,margin:10,alignItems:"center",justifyContent:"center"}}>
+                <Button transparent style={{flex:1,alignItems:"flex-end"}} onPress={this.onModalClose.bind(this)}>
+                  <Text style={{fontSize:16,fontWeight:"500"}}>x</Text>
+                </Button>
+             </View>
+             <View style={{flex:0.3,justifyContent:"center",alignItems:"center",margin:10}}>
+               <Text style={{textAlign:"center",fontSize:16,fontWeight:"500"}}>Do you want to Sign Up/Log In as ?</Text>
+             </View>
+             <View style={{flex:0.4,justifyContent:"center"}}>
+             <RadioForm
+                 radio_props={radio_props}
+                 initial={0}
+                 formHorizontal={true}
+                 style={{flex:1,justifyContent:"space-around",alignItems:"center"}}
+                 buttonColor={'#009FDB'}
+                 onPress={this.onRadioFormPressed.bind(this)}
+               />
+             </View>
+             <View style={{flex:0.3,justifyContent:"center",alignItems:"center",marginBottom:10,flexDirection:"row"}}>
+                <Button onPress={this.onDone.bind(this)}>
+                   <Text style={{textAlign:"center",fontSize:18,fontWeight:"500"}}>Done</Text>
+                </Button>
+             </View>
+           </View>
+        </View>
+       </Modal>
       </Container>
     );
   }

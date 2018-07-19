@@ -84,7 +84,7 @@ class TrainerSignUp extends Component {
         })
         var getToken = {}
             AsyncStorage.getItem('@token:key', (err, token) => {
-                getToken = JSON.parse(token)
+              let getToken = JSON.parse(token)
                 // alert("token@@@@@@ "+JSON.stringify(getToken))
                 var signUp={
                   name:this.state.name,
@@ -101,7 +101,8 @@ class TrainerSignUp extends Component {
                         spinner:false
                       },()=>{
                         var getUserData = this.state.userData
-                         // AsyncStorage.setItem('@getUserData:key', JSON.stringify(getUserData))
+                        AsyncStorage.setItem('@getUserType:key', "Trainer")
+                        AsyncStorage.setItem('@getUserData:key', JSON.stringify(getUserData))
                         this.props.navigation.navigate("TrainerPersonalPage")
                       })
                     }else{

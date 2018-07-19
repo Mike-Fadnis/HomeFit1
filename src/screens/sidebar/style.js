@@ -21,9 +21,9 @@ export default {
     resizeMode: "cover"
   },
   text: {
-    fontWeight: Platform.OS === "ios" ? "500" : "400",
-    fontSize: 20,
-    marginLeft: 20,
+    fontWeight: Platform.OS === "ios" ? "400" : "400",
+    fontSize: 18,
+    marginLeft: 10,
     color : '#fff'
   },
   badgeText: {
@@ -31,5 +31,11 @@ export default {
     fontWeight: "400",
     textAlign: "center",
     marginTop: Platform.OS === "android" ? -3 : undefined
+  },
+  modalView:{
+    width: 300,
+    alignSelf:"center",
+    marginTop:deviceHeight/3.5,
+    height: 250
   }
 };

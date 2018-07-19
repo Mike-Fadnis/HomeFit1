@@ -1,31 +1,20 @@
 import React, { Component } from "react";
-import { View ,Modal,TouchableOpacity,Image} from 'react-native';
+import { View ,Modal,TouchableOpacity,Image, FlatList,AsyncStorage,Alert} from 'react-native';
 import ImageSlider from 'react-native-image-slider';
 import { Calendar,CalendarList } from 'react-native-calendars'
 import moment from 'moment'
-import {
-  Container,
-  Header,
-  Title,
-  Content,
-  Text,
-  Icon,
-  Footer,
-  Button,
-  FooterTab,
-  Left,
-  Right,
-  Body,
-  Spinner
-} from "native-base";
+import {Container,Header,Title,Content,Text,Icon,Footer,Button,FooterTab,Left,Right,Body,Spinner} from "native-base";
+var ImagePicker = require('react-native-image-picker');
+
 import { ButtonTwo, Card, CardSection } from '../common';
 import ButtonOne from './ButtonOne';
 import ModalOpenDesign from './ModalOpenDesign'
 import styles from "./styles";
 import Images from "@theme/images/images";
-var ImagePicker = require('react-native-image-picker');
 import API from "@utils/ApiUtils";
 import TrainersMedia from './TrainersMedia'
+import SpecialtyModalDesign from "./specialtyModalDesign"
+
 var finalRecordData = []
 const _format = 'YYYY-MM-DD'
 var options = {
@@ -49,11 +38,31 @@ class TrainerPersonalPage extends Component {
       _selectedDay: '',
       finalSelectedDates: [],
       avatarSource: null,
-      spinner:false
+      spinner:false,
+      specialtyModal: false,
+      selectedSpecialties: [],
+      loading:false,
+      userData: null
     }
     this.onModalOpen = this.onModalOpen.bind(this)
     this.onModalClose = this.onModalClose.bind(this)
+    this.onAvailableDates = this.onAvailableDates.bind(this)
   }
+  async componentWillMount(){
+     AsyncStorage.getItem('@getUserType:key', (err, type) => {
+      if(type === "Trainer"){
+        AsyncStorage.getItem('@getUserData:key', (err, getUserData) => {
+            var get_user = JSON.parse(getUserData)
+            console.log("userData",get_user)
+            this.setState({
+              userData:get_user
+            })
+         }).done()
+      }
+     })
+    this.getPushedSpecialityData();
+  }
+
   onDaySelect = day => {
     const _selectedDay = moment(day.dateString).format(_format)
     this.setState({ _selectedDay: _selectedDay })
@@ -101,6 +110,8 @@ class TrainerPersonalPage extends Component {
       })
     })
   }
+
+
 selectPhotoTapped() {
       this.setState({
       spinner:true
@@ -146,22 +157,51 @@ selectPhotoTapped() {
       }
     });
   }
-  onAvailableDates(){
+onAvailableDates(){
+     this.setState({loading : true})
       if(this.state.finalSelectedDates === []|| this.state.finalSelectedDates.length === 0){
-            alert("Please select atleast one day")
+          alert("Please select atleast one day")
+          this.setState({loading : false})
       }else{
+        console.log("id",this.state.userData.id,)
         var availableDates = {
-              id:"20",
-              availableSlot:this.state.finalSelectedDates
-            }
+          id:this.state.userData.id,
+          availableSlot:JSON.stringify(this.state.finalSelectedDates)
+        }
         API.availableDates(availableDates).then(async (response) => {
-           // alert(JSON.stringify(response))
+            this.setState({loading : false})
+            if(response.status === "true") {
+              Alert.alert("HomeFit",response.message)
+            }else{
+              Alert.alert("HomeFit",response.message)
+            }
         }).catch((error)=>{
         this.setState({spinner:false})
           console.log("Console Error",error);
         });
       }
   }
+  onSpecialtyPressed(){
+    this.setState({specialtyModal: true})
+  }
+  onSpecialtyModalClose(){
+    this.setState({specialtyModal: false})
+  }
+  getPushedSpecialityData(getSpecialtyData){
+    console.log("check123:  ", JSON.stringify(getSpecialtyData))
+    this.setState({specialtyModal: false,selectedSpecialties:getSpecialtyData})
+  }
+  renderData(item){
+    console.log("111111111:   ",JSON.stringify(item))
+    return(
+      <View style={{flex:1,margin: 5,backgroundColor: '#EDEEF0',height: 50,justifyContent:"center"}}>
+        <View style={{alignItems:"flex-start",paddingLeft:10,justifyContent:"center"}}>
+          <Text>{item.item.item.speciality}</Text>
+        </View>
+      </View>
+    )
+  }
+
   render() {
     return (
       <Container style={styles.container}>
@@ -195,6 +235,36 @@ selectPhotoTapped() {
                   onPress={() => this.props.navigation.navigate("OnlineStore")}>
                     VIEW OUR ONLINE STORE
                 </ButtonTwo>
+            </View>
+
+          	<View style={{flex:0.5,marginTop:20}}>
+  						<TouchableOpacity style={{flex: 1,flexDirection: "row",margin: 5,backgroundColor: '#EDEEF0',height: 50,borderWidth: 1.2,borderColor: "lightgrey"}} onPress={this.onSpecialtyPressed.bind(this)}>
+  							<View style={{flex: 0.7,justifyContent: "center",padding: 10}}>
+  									<Text>Specialties</Text>
+  							</View>
+  							<View style={{flex: 0.3,justifyContent: "center",alignItems: "center",borderLeftWidth: 1.2,borderColor: "lightgrey"}}>
+                  <Image source={Images.dropdownIcon} style={{width:20,height:20}}/>
+  							</View>
+  						</TouchableOpacity>
+              <Modal
+                animationType="slide"
+                transparent={false}
+                visible={this.state.specialtyModal}>
+                  <SpecialtyModalDesign
+                    onClose={this.onSpecialtyModalClose.bind(this)}
+                    getPushedSpecialityData={this.getPushedSpecialityData.bind(this)}
+                  />
+                </Modal>
+  					</View>
+            <View style={{flex:1}}>
+              <FlatList
+                  data={this.state.selectedSpecialties}
+                  renderItem={this.renderData.bind(this)}
+                  extraData={this.state}
+                />
+            </View>
+
+            <View style={styles.buttonContainerStyle1}>
               <View style={styles.sessionSliderStyle}>
                   <ImageSlider
                       images={storeImages.map((album) => album.image) }/>
@@ -231,20 +301,20 @@ selectPhotoTapped() {
           <View style={styles.calendarContainer}>
             <Calendar
               onDayPress={this.onDaySelect}
-              // horizontal={true}
+              minDate={new Date()}
               markedDates={this.state._markedDates}/>
           </View>
          <View style={styles.onlineStore}>
             <View style={styles.buttonContainerStyle1}>
-                <ButtonTwo style={styles.buttonStyle}>
+                <ButtonTwo style={styles.buttonStyle} onPress={this.onAvailableDates}>
                     UPDATE AVAILABLE DATES
                 </ButtonTwo>
               </View>
             </View>
             <Modal
-            animationType="slide"
-            transparent={false}
-            visible={this.state.modalVisible}>
+              animationType="slide"
+              transparent={false}
+              visible={this.state.modalVisible}>
             <ModalOpenDesign
               onClose={this.onModalClose}
               getDataObj={this.getDataObj.bind(this)}
@@ -256,6 +326,13 @@ selectPhotoTapped() {
                   JOIN NEXT UPCOMING TRAINING SESSION
               </Text>
           </View>
+           {this.state.loading === true ? (
+                      <View style={styles.container_spinner}>
+                        <View style={styles.spinnerView}>
+                          <Spinner size="large" color="black"/>
+                        </View>
+                      </View>
+                    ) : null}
       </Container>
     );
   }
