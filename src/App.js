@@ -149,6 +149,10 @@ import ProductDetails from "./screens/ProductDetails";
 import TrainerChooseDates from "./screens/TrainerChooseDates";
 import ClientSignup from "./screens/ClientSignup";
 import ClientLogin from "./screens/ClientLogin";
+import Payment from "./screens/Payment";
+
+
+
 const Drawer = DrawerNavigator(
   {
     Landing: { screen: Landing },
@@ -165,7 +169,8 @@ const Drawer = DrawerNavigator(
     ProductDetails : { screen : ProductDetails },
     TrainerChooseDates : { screen : TrainerChooseDates},
     ClientLogin : { screen : ClientLogin },
-    ClientSignup : { screen : ClientSignup }
+    ClientSignup : { screen : ClientSignup },
+    Payment: { screen: Payment}
   },
   {
     initialRouteName: "Landing",

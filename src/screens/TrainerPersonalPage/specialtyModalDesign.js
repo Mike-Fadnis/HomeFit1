@@ -17,6 +17,9 @@ export default class SpecialtyModalDesign extends Component {
     }
   }
   async componentWillMount(){
+    if(this.props.sendSelectedData){
+      this.setState({pushSelectedSpeciality: this.props.sendSelectedData})
+    }
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(this.state.specialtiesData)
     })
@@ -31,27 +34,11 @@ export default class SpecialtyModalDesign extends Component {
   }
   onSpecialitiesSelected(item){
     let count = 0
-    //alert(JSON.stringify(item))
-    // record.push(item)
-    // this.setState({pushSelectedSpeciality:record},()=>{
-    //   //alert("asdf:  "+JSON.stringify(this.state.pushSelectedSpeciality))
-    // })
-
-    // this.state.pushSelectedSpeciality.map((res1, j) => {
-    //   if (res1.item.id === item.item.id) {
-    //       alert("if both are same this should appear")
-    //     // this.state.pushSelectedSpeciality.splice(j,1)
-    //     // alert("splice:  "+ JSON.stringify(this.state.pushSelectedSpeciality))
-    //   }
-    // })
-
-
-
     if(this.state.pushSelectedSpeciality.length > 0){
       this.state.pushSelectedSpeciality.map((obj,j) => {
         if(obj.item.id === item.item.id){
           this.state.pushSelectedSpeciality.splice(j, 1)
-          count++          
+          count++
         }
       })
       if(count === 0){
@@ -61,7 +48,6 @@ export default class SpecialtyModalDesign extends Component {
       this.state.pushSelectedSpeciality.push(item)
     }
     this.setState({pushSelectedSpeciality: this.state.pushSelectedSpeciality})
-
   }
   onPropsModalDone() {
     if (this.state.pushSelectedSpeciality.length > 0) {
@@ -74,23 +60,25 @@ export default class SpecialtyModalDesign extends Component {
     let data1
     let images = []
     let count = 0
-    this.state.pushSelectedSpeciality.map((res1, j) => {
-      if (res1.item.id === item.item.id) {
-        console.log("resss:  "+res1.id + ":  "+ JSON.stringify(item.item.id))
-        data1 = 'true'
-        count = count + 1
+      if (this.state.pushSelectedSpeciality.length > 0) {
+          this.state.pushSelectedSpeciality.map((res1, j) => {
+            if (res1.item.id === item.item.id) {
+              console.log("resss:  "+res1.id + ":  "+ JSON.stringify(item.item.id))
+              data1 = 'true'
+              count = count + 1
+            }
+            if (count === 0) {
+              data1 = ''
+            }
+          })
+          if (data1 === 'true') {
+            images.push(
+                <Image source={Images.checked} style={{height:20,width:20}} />
+            )
+          } else {
+            images.push(<View />)
+        }
       }
-      if (count === 0) {
-        data1 = ''
-      }
-    })
-    if (data1 === 'true') {
-      images.push(
-          <Image source={Images.checked} style={{height:20,width:20}} />
-      )
-    } else {
-      images.push(<View />)
-    }
     return (
       <View style={{flex:1}}>
         <TouchableOpacity style={{flexGrow: 1, flexDirection: 'row', marginTop: 5, height: 55}} onPress={this.onSpecialitiesSelected.bind(this, item)}>
@@ -108,7 +96,10 @@ export default class SpecialtyModalDesign extends Component {
     return (
       <View style={{ flex: 1 }}>
         <View style={{ height: 20 }}/>
-        <View style={{height: 44,backgroundColor: 'white',justifyContent: 'flex-end', alignItems: 'center', paddingLeft: 10, paddingRight: 10, borderBottomWidth: 1, borderBottomColor: 'grey', flexDirection: 'row'}}>
+        <View style={{height: 44,backgroundColor: 'white',justifyContent:"space-between",alignItems:"center", paddingLeft: 10, paddingRight: 10, borderBottomWidth: 1, borderBottomColor: 'grey', flexDirection: 'row'}}>
+          <TouchableOpacity onPress={this.props.onClose}>
+            <Text style={{fontSize:16, fontWeight:'800', color:'#009FDB'}}>Close</Text>
+          </TouchableOpacity>
           <TouchableOpacity onPress={this.onPropsModalDone.bind(this)}>
             <Text style={{fontSize:16, fontWeight:'800', color:'#009FDB'}}>Done</Text>
           </TouchableOpacity>

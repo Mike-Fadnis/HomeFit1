@@ -14,7 +14,8 @@ class TrainersMedia extends Component{
       MediaData:[],
       videoavatarSource:"",
       modalVisible:false,
-      videoUrl:''
+      videoUrl:'',
+      isModalVisible:false,
     };
     this.onAddMedia = this.onAddMedia.bind(this);
     this.renderItem = this.renderItem.bind(this);
@@ -27,6 +28,16 @@ class TrainersMedia extends Component{
       videoUrl : item.videoUrl
     },()=>{
       this.setState({modalVisible:true})
+    })
+  }
+  onModalOpen(){
+    this.setState({
+      isModalVisible:true
+    })
+  }
+  onModal_Close(){
+    this.setState({
+      isModalVisible:false
     })
   }
   renderItem = ({item,index}) => {
@@ -61,7 +72,8 @@ class TrainersMedia extends Component{
       {
         text: "Videos",
         onPress: () => {
-          this.onVideo();
+          //this.onVideo();
+          this.onModalOpen();
         }
       },
       { text: "Cancel", onPress: () => console.log("cancel Pressed") }
@@ -115,7 +127,7 @@ class TrainersMedia extends Component{
               data.push(record);
               this.setState({MediaData : data});
             })
-           
+
           });
       }
     });
@@ -165,6 +177,12 @@ class TrainersMedia extends Component{
   onModalClose(){
     this.setState({modalVisible: false})
   }
+
+  onDone(){
+    this.setState({isModalVisible: false},()=>{
+      this.props.onPayment()
+    })
+  }
   render() {
     return (
       <View style={{flex:1,flexDirection:"row"}}>
@@ -190,6 +208,33 @@ class TrainersMedia extends Component{
               videoUrl = {this.state.videoUrl}
             />
           </Modal>
+          <Modal
+             animationType="slide"
+             transparent={true}
+             visible={this.state.isModalVisible}>
+             <View style={styles.modalView}>
+               <View style={{width: 300, alignSelf:"center", marginTop:window.height/3,height: 120,backgroundColor:"white",borderWidth:1,borderColor:"white",borderRadius:10}}>
+
+                 <View style={{flex:0.5,justifyContent:"center",alignItems:"center",margin:10}}>
+                   <Text style={{textAlign:"center",fontSize:16,fontWeight:"700"}}>Do you want to pay  $1.00 to upload this video?</Text>
+                 </View>
+
+                 <View style={{flex:0.5,marginBottom:10,flexDirection:"row"}}>
+                  <View style={{flex:0.5,justifyContent:"center",alignItems:"center"}}>
+                    <TouchableOpacity onPress={this.onDone.bind(this)}>
+                       <Text style={{textAlign:"center",fontSize:18,fontWeight:"800", color:'#009FDB'}}>Continue</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={{flex:0.5,justifyContent:"center",alignItems:"center"}}>
+                    <TouchableOpacity onPress={this.onModal_Close.bind(this)}>
+                       <Text style={{textAlign:"center",fontSize:18,fontWeight:"800", color:'#009FDB'}}>Cancel</Text>
+                    </TouchableOpacity>
+                  </View>
+                 </View>
+
+               </View>
+            </View>
+           </Modal>
       </View>
     )
   }

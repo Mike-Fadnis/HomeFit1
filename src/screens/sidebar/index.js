@@ -22,7 +22,7 @@ var radio_props = [
 const dataUser = [
   {
     name: "Home",
-    //route: "ClientHome",
+    route: "ClientHome",
     icon: "navigate",
     bg: "#C5F442"
   },
@@ -46,7 +46,7 @@ const dataUser = [
   },
   {
     name: "Cart",
-    //route: "TrainerLogin",
+    route: "AddToCart",
     icon: "navigate",
     bg: "#BE6F50"
   },
@@ -70,7 +70,7 @@ const dataUser = [
   },
   {
     name: "Track / Follow your Friends techniques",
-    route: "ClientLogin",
+  //  route: "ClientLogin",
     icon: "navigate",
     bg: "#BE6F50"
   },
@@ -81,6 +81,12 @@ const dataUser = [
   },
 ];
 const dataTrainer = [
+  {
+    name: "Home",
+    route: "TrainerPersonalPage",
+    icon: "navigate",
+    bg: "#C5F442"
+  },
   {
     name: "Notifications",
     //route: "BrowseTrainers",
@@ -107,7 +113,7 @@ const dataTrainer = [
   },
   {
     name: "Cart",
-    //route: "TrainerLogin",
+    route: "AddToCart",
     icon: "navigate",
     bg: "#BE6F50"
   },
@@ -125,7 +131,7 @@ const dataTrainer = [
   },
   {
     name: "Track / Follow your Friends techniques",
-    route: "ClientLogin",
+  //  route: "ClientLogin",
     icon: "navigate",
     bg: "#BE6F50"
   },
@@ -138,25 +144,25 @@ const dataTrainer = [
 const emptyData =[
   {
     name: "Landing",
-    //route: "ClientHome",
+    route: "Landing",
     icon: "navigate",
     bg: "#C5F442"
   },
   {
     name: "Home",
-    //route: "BrowseTrainers",
+    route: "ClientHome",
     icon: "navigate",
     bg: "#BE6F50"
   },
   {
     name: "Browse Trainers",
-    //route: "ViewTrainer",
+    route: "BrowseTrainers",
     icon: "navigate",
     bg: "#BE6F50"
   },
   {
     name: "View Online Store",
-  //  route: "OnlineStore",
+     route: "OnlineStore",
     icon: "navigate",
     bg: "#BE6F50"
   },
@@ -217,8 +223,11 @@ class SideBar extends Component {
       AsyncStorage.removeItem('@getUserType:key')
       this.props.navigation.navigate("Landing")
     }else{
-    //  this.props.navigation.navigate(data.route)
-    alert("HI")
+      if(data.route){
+        this.props.navigation.navigate(data.route)
+      }else{
+        alert("No Routing Given")
+      }
     }
   }
 renderData(data){
@@ -255,21 +264,6 @@ renderData(data){
 }
 onLogin(){
   this.setState({modalVisible:true})
-  // Alert.alert("HomeFit", "Do you want to login as ?", [
-  //   {
-  //     text: "User",
-  //     onPress: () => {
-  //         this.props.navigation.navigate("ClientLogin")
-  //     }
-  //   },
-  //   {
-  //     text: "Trainer",
-  //     onPress: () => {
-  //         this.props.navigation.navigate("TrainerLogin")
-  //     }
-  //   },
-  //   { text: "Cancel", onPress: () => console.log("cancel Pressed") }
-  // ])
 }
 onModalClose(){
   this.setState({modalVisible:false})
@@ -283,6 +277,9 @@ onDone(){
     this.onModalClose();
     this.props.navigation.navigate("TrainerLogin")
   }
+}
+onCancel(){
+  this.onModalClose();
 }
 onRadioFormPressed(value){
   this.setState({
@@ -352,30 +349,26 @@ render() {
          transparent={true}
          visible={this.state.modalVisible}>
          <View style={styles.modalView}>
-           <View style={{flex:1,backgroundColor:"white",borderWidth:1,borderColor:"white",borderRadius:10}}>
-             <View style={{flex:0.2,margin:10,alignItems:"center",justifyContent:"center"}}>
-                <Button transparent style={{flex:1,alignItems:"flex-end"}} onPress={this.onModalClose.bind(this)}>
-                  <Text style={{fontSize:16,fontWeight:"500"}}>x</Text>
-                </Button>
-             </View>
-             <View style={{flex:0.3,justifyContent:"center",alignItems:"center",margin:10}}>
-               <Text style={{textAlign:"center",fontSize:16,fontWeight:"500"}}>Do you want to Sign Up/Log In as ?</Text>
-             </View>
-             <View style={{flex:0.4,justifyContent:"center"}}>
-             <RadioForm
-                 radio_props={radio_props}
-                 initial={0}
-                 formHorizontal={true}
-                 style={{flex:1,justifyContent:"space-around",alignItems:"center"}}
-                 buttonColor={'#009FDB'}
-                 onPress={this.onRadioFormPressed.bind(this)}
-               />
-             </View>
-             <View style={{flex:0.3,justifyContent:"center",alignItems:"center",marginBottom:10,flexDirection:"row"}}>
-                <Button onPress={this.onDone.bind(this)}>
-                   <Text style={{textAlign:"center",fontSize:18,fontWeight:"500"}}>Done</Text>
-                </Button>
-             </View>
+           <View style={styles.modalInnerView}>
+               <View style={styles.modalTopView}>
+                 <Text style={styles.modalTopText}>Do you want to Sign Up/Log In as ?</Text>
+               </View>
+               <View style={styles.modalMiddleView}>
+               <RadioForm
+                  radio_props={radio_props}
+                  initial={0}
+                  onPress={this.onRadioFormPressed.bind(this)}
+                  style={styles.modalRadioButtonStyles}
+                  />
+               </View>
+                <View style={styles.modalBottomView}>
+                   <Button transparent onPress={this.onCancel.bind(this)} style={styles.modalBotomButtonView}>
+                      <Text style={styles.modalBottomButtonText}>Cancel</Text>
+                   </Button>
+                  <Button transparent onPress={this.onDone.bind(this)} style={styles.modalBotomButtonView}>
+                     <Text style={styles.modalBottomButtonText}>Done</Text>
+                  </Button>
+               </View>
            </View>
         </View>
        </Modal>

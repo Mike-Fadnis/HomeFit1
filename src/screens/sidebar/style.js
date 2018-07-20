@@ -1,5 +1,8 @@
 const React = require("react-native");
-const { Platform, Dimensions } = React;
+const {
+  Platform,
+  Dimensions
+} = React;
 
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
@@ -24,7 +27,7 @@ export default {
     fontWeight: Platform.OS === "ios" ? "400" : "400",
     fontSize: 18,
     marginLeft: 10,
-    color : '#fff'
+    color: '#fff'
   },
   badgeText: {
     fontSize: Platform.OS === "ios" ? 13 : 11,
@@ -32,10 +35,56 @@ export default {
     textAlign: "center",
     marginTop: Platform.OS === "android" ? -3 : undefined
   },
-  modalView:{
-    width: 300,
-    alignSelf:"center",
-    marginTop:deviceHeight/3.5,
-    height: 250
+  modalView: {
+    flex:1,
+    backgroundColor:'#000000c4',
+    justifyContent:'center',
+    alignItems:'center'
+  },
+  modalInnerView: {
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "transparent",
+    borderRadius: 5,
+    alignSelf:"center",        
+    height: 250,
+    width: 300
+  },
+  modalTopView: {
+    flex: 0.3,
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden"
+  },
+  modalMiddleView: {
+    flex: 0.4,
+    marginLeft: 20
+  },
+  modalBottomView: {
+    flex: 0.3,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    flexDirection: "row",
+    marginRight: 10
+  },
+  modalTopText: {
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "500",
+    color: "black"
+  },
+  modalRadioButtonStyles: {
+    flex: 1,
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    fontSize: 18
+  },
+  modalBotomButtonView: {
+    alignSelf: "center"
+  },
+  modalBottomButtonText: {
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "500"
   }
 };

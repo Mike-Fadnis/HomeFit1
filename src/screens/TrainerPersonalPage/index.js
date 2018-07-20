@@ -63,7 +63,47 @@ class TrainerPersonalPage extends Component {
     this.getPushedSpecialityData();
   }
 
-  onDaySelect = day => {
+  // onDaySelect = day => {
+  //   // const _selectedDay = moment(day.dateString).format(_format)
+  //   // this.setState({ _selectedDay: _selectedDay })
+  //   // let selected = true
+  //   // let markedDates = {}
+  //   // if (this.state._markedDates[_selectedDay]) {
+  //   //   selected = !this.state._markedDates[_selectedDay].selected
+  //   //   markedDates = this.state._markedDates[_selectedDay]
+  //   // }
+  //   // markedDates = { ...markedDates, ...{ selected } }
+  //   // const updatedMarkedDates = {
+  //   //   ...this.state._markedDates,
+  //   //   ...{ [_selectedDay]: markedDates }
+  //   // }
+  //   // this.setState({ _markedDates: updatedMarkedDates })
+  //
+  //   const _selectedDay = moment(day.dateString).format(_format)
+  //   this.setState({ _selectedDay: _selectedDay })
+  //   let count = 0
+  //      this.setState({selectAll: false})
+  //      if (this.state.finalSelectedDates.length === 0) {
+  //        this.onModalOpen(true);
+  //      } else {
+  //        this.state.finalSelectedDates.map((res, i) => {
+  //          if (res.date === _selectedDay) {
+  //            this.state.finalSelectedDates.splice(i, 1)
+  //            count++;
+  //          }
+  //        });
+  //        if (count === 0) {
+  //          this.onModalOpen(true);
+  //        }
+  //
+  //      }
+  //      this.setState({
+  //        finalSelectedDates: this.state.finalSelectedDates
+  //      })
+  //
+  // }
+
+onDaySelect = day => {
     const _selectedDay = moment(day.dateString).format(_format)
     this.setState({ _selectedDay: _selectedDay })
     let selected = true
@@ -77,54 +117,75 @@ class TrainerPersonalPage extends Component {
       ...this.state._markedDates,
       ...{ [_selectedDay]: markedDates }
     }
+
     this.setState({ _markedDates: updatedMarkedDates })
+  let count = 0
     if (this.state.finalSelectedDates.length > 0) {
       this.state.finalSelectedDates.map((res, i) => {
         if (res.date === _selectedDay) {
-          this.state.finalSelectedDates.splice(i, 1)
-          console.log('1456:  ', JSON.stringify(this.state.finalSelectedDates))
+          this.state.finalSelectedDates.splice(i, 1);
+          count ++;
         } else {
-          this.onModalOpen(true)
+          count = 0
         }
       })
+      if(count === 0){
+        this.onModalOpen(true)
+      }
     } else {
       this.onModalOpen(true)
     }
-  }
+    console.log('1456:  ', JSON.stringify(this.state.finalSelectedDates))
+   }
+
+
   onModalOpen(visible) {
     this.setState({ modalVisible: visible })
   }
   onModalClose() {
     this.setState({ modalVisible: false })
   }
+  // getDataObj(getSelectedTime) {
+  //    getSelectedTime.map((res,i)=>{
+  //      this.state.getSelectedTime.push(res);
+  //    })
+  //    this.setState({ finalSelectedDates: this.state.getSelectedTime  }, () => {
+  //       var subdata = {};
+  //       this.state.finalSelectedDates.map((res,i)=>{
+  //         console.log("reddd:   ", JSON.stringify(res))
+  //         var date = moment(res.date).format(_format);
+  //         subdata[res.date] = {selected: true};
+  //       })
+  //       // console.log("lkjhgf:   ", JSON.stringify(subdata))
+  //       this.setState({_markedDates:subdata})
+  //
+  //       this.setState({ modalVisible: false })
+  //     })
+  // }
   getDataObj(getSelectedTime) {
-    this.setState({ getSelectedTime: getSelectedTime }, () => {
-      let finalRecord = {
-        date: this.state._selectedDay,
-        time: this.state.getSelectedTime
-      }
-      finalRecordData.push(finalRecord)
-      this.setState({ finalSelectedDates: getSelectedTime }, () => {
-      console.log("PICKED HOURS AND DATES",this.state.finalSelectedDates)
-        this.setState({ modalVisible: false })
+      var arr = [];
+      getSelectedTime.map((res,i)=>{
+        arr.push({"time": res.time})
       })
-    })
-  }
-
-
-selectPhotoTapped() {
-      this.setState({
-      spinner:true
-      })
-    const options = {
-      quality: 1.0,
-      maxWidth: 500,
-      maxHeight: 500,
-      storageOptions: {
-        skipBackup: true
+      var record = {"date":this.state._selectedDay,"time":arr}
+      this.state.getSelectedTime.push(record)
+      this.setState({ finalSelectedDates: this.state.getSelectedTime  }, () => {
+        console.log("PICKED HOURS AND DATESdsdsdsd",this.state.finalSelectedDates)
+          this.setState({ modalVisible: false })
+       })
       }
-    };
-
+  selectPhotoTapped() {
+        this.setState({
+        spinner:true
+        })
+      const options = {
+        quality: 1.0,
+        maxWidth: 500,
+        maxHeight: 500,
+        storageOptions: {
+          skipBackup: true
+        }
+      };
     ImagePicker.showImagePicker(options, (response) => {
       console.log('Response = ', response);
 
@@ -163,10 +224,18 @@ onAvailableDates(){
           alert("Please select atleast one day")
           this.setState({loading : false})
       }else{
+        var finararray = []
+        this.state.finalSelectedDates.map((res,i)=>{
+          res.time.map((res1,k)=>{
+            var record = {"date":res.date,"time":res1.time}
+             finararray.push(record)
+          })
+        })
+        console.log("hfklfkfjl;djflad",finararray)
         console.log("id",this.state.userData.id,)
         var availableDates = {
           id:this.state.userData.id,
-          availableSlot:JSON.stringify(this.state.finalSelectedDates)
+          availableSlot:JSON.stringify(finararray)
         }
         API.availableDates(availableDates).then(async (response) => {
             this.setState({loading : false})
@@ -181,18 +250,16 @@ onAvailableDates(){
         });
       }
   }
-  onSpecialtyPressed(){
-    this.setState({specialtyModal: true})
-  }
-  onSpecialtyModalClose(){
-    this.setState({specialtyModal: false})
-  }
-  getPushedSpecialityData(getSpecialtyData){
-    console.log("check123:  ", JSON.stringify(getSpecialtyData))
-    this.setState({specialtyModal: false,selectedSpecialties:getSpecialtyData})
-  }
+    onSpecialtyPressed(){
+      this.setState({specialtyModal: true})
+    }
+    onSpecialtyModalClose(){
+      this.setState({specialtyModal: false})
+    }
+    getPushedSpecialityData(getSpecialtyData){
+      this.setState({specialtyModal: false,selectedSpecialties:getSpecialtyData})
+    }
   renderData(item){
-    console.log("111111111:   ",JSON.stringify(item))
     return(
       <View style={{flex:1,margin: 5,backgroundColor: '#EDEEF0',height: 50,justifyContent:"center"}}>
         <View style={{alignItems:"flex-start",paddingLeft:10,justifyContent:"center"}}>
@@ -200,6 +267,9 @@ onAvailableDates(){
         </View>
       </View>
     )
+  }
+  onPayment(){
+    this.props.navigation.navigate("Payment")
   }
 
   render() {
@@ -228,7 +298,7 @@ onAvailableDates(){
               </View>
             </TouchableOpacity>
             <View>
-                <TrainersMedia />
+                <TrainersMedia onPayment={this.onPayment.bind(this)}/>
             </View>
             <View style={styles.buttonContainerStyle1}>
                 <ButtonTwo style={styles.buttonStyle}
@@ -253,6 +323,7 @@ onAvailableDates(){
                   <SpecialtyModalDesign
                     onClose={this.onSpecialtyModalClose.bind(this)}
                     getPushedSpecialityData={this.getPushedSpecialityData.bind(this)}
+                    sendSelectedData={this.state.selectedSpecialties}
                   />
                 </Modal>
   					</View>

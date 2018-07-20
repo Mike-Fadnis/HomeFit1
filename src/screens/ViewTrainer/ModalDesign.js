@@ -22,7 +22,8 @@ export default class ModalDesign extends Component {
       dataSource: ds,
       selectedTime: [],
       timesData: [],
-      time_slot:[]
+      time_slot:[],
+      forEmptyTimeSlot: false
     }
   }
   componentWillMount() {
@@ -32,7 +33,15 @@ export default class ModalDesign extends Component {
         this.state.time_slot.push({timeSlot:res.time_slot})
       }
   })
-    this.setState({ timesData: this.state.time_slot[0].timeSlot, selectedTime: [] })
+    if(this.state.time_slot === [] || this.state.time_slot.length === 0){
+      console.log("jjkkll:  ", JSON.stringify(this.state.time_slot))
+      this.setState({forEmptyTimeSlot: true},()=>{
+        console.log("Hiiii123")
+      })
+    }else{
+      this.setState({ forEmptyTimeSlot: false,timesData: this.state.time_slot[0].timeSlot, selectedTime: [] })
+    }
+
   }
   onDatePressed(item) {
     var record = {date:this.props.selectedDate,time:item.item.time_slot}
@@ -52,7 +61,7 @@ export default class ModalDesign extends Component {
     }
     this.setState({ selectedTime: this.state.selectedTime }, () => {
        // alert(JSON.stringify(this.state.selectedTime))
-      //this.props.getDataObj(this.state.selectedTime)
+      // this.props.getDataObj(this.state.selectedTime)
     })
   }
   onPropsModalClose() {
@@ -105,11 +114,30 @@ export default class ModalDesign extends Component {
     return (
       <View style={{ flex: 1 }}>
         <View style={{ height: 20 }}/>
-        <View style={{height: 44,backgroundColor: 'white',justifyContent: 'flex-end', alignItems: 'center', paddingLeft: 10, paddingRight: 10, borderBottomWidth: 1, borderBottomColor: 'grey', flexDirection: 'row'}}>
-          <TouchableOpacity onPress={this.onPropsModalDone.bind(this)}>
-            <Text style={{fontSize:16, fontWeight:'800', color:'#009FDB'}}>Done</Text>
-          </TouchableOpacity>
+
+          {this.state.forEmptyTimeSlot === true ? (
+            <View style={{height: 44,backgroundColor: 'white',justifyContent: 'space-between', alignItems: 'center', paddingLeft: 10, paddingRight: 10, borderBottomWidth: 1, borderBottomColor: 'grey', flexDirection: 'row'}}>
+              <TouchableOpacity onPress={this.props.onClose}>
+                <Text style={{fontSize:16, fontWeight:'800', color:'#009FDB'}}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          ):(
+            <View style={{height: 44,backgroundColor: 'white',justifyContent: 'space-between', alignItems: 'center', paddingLeft: 10, paddingRight: 10, borderBottomWidth: 1, borderBottomColor: 'grey', flexDirection: 'row'}}>
+              <TouchableOpacity onPress={this.props.onClose}>
+                <Text style={{fontSize:16, fontWeight:'800', color:'#009FDB'}}>Close</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.onPropsModalDone.bind(this)}>
+                <Text style={{fontSize:16, fontWeight:'800', color:'#009FDB'}}>Done</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+
+      {this.state.forEmptyTimeSlot === true ? (
+        <View>
+          <Text> Nothing to display</Text>
         </View>
+      ):(
         <View style={{ flex: 1 }}>
           <FlatList
             data={this.state.timesData}
@@ -117,6 +145,7 @@ export default class ModalDesign extends Component {
             extraData={this.state}
           />
         </View>
+      )}
       </View>
     )
   }

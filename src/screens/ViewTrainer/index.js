@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, ScrollView, Image ,Modal} from 'react-native';
+import { View, ScrollView, Image ,Modal, TouchableOpacity} from 'react-native';
 import {
   Container,
   Header,
@@ -8,26 +8,18 @@ import {
   Text,
   Button,
   Icon,
-  Footer,
-  FooterTab,
   Left,
   Right,
   Body
 } from "native-base";
-import { Calendar } from 'react-native-calendars'
-import { Card, CardSection } from '../common';
+import { Calendar } from 'react-native-calendars';
+import { Card, CardSection, Spinner } from '../common';
 import styles from "./styles";
-import moment from 'moment'
+import moment from 'moment';
 import API from "@utils/ApiUtils";
-const _format = 'YYYY-MM-DD'
-import ModalDesign from "./ModalDesign"
-const image  = [
-  {
-      "id" : 3,
-      "image" : "https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/image4.jpeg"
-  }
-];
-var finalRecordData = []
+const _format = 'YYYY-MM-DD';
+import ModalDesign from "./ModalDesign";
+
 class ViewTrainer extends Component {
   initialState = {}
   constructor() {
@@ -38,21 +30,25 @@ class ViewTrainer extends Component {
       _selectedDay: '',
       modalVisible: false,
       finalSelectedDates: [],
-      getSelectedTime: [],
       slotsAlloted:[],
       finalResponseArray:[],
-      subdata:{}
+      subdata:{},
+      data:"sdls",
+      getSelectedTimedata:[],
+      showModal:false
     }
     this.onModalOpen = this.onModalOpen.bind(this)
     this.onModalClose = this.onModalClose.bind(this)
+    this.onShowModalClose = this.onShowModalClose.bind(this);
+    this.onShowModalContinue = this.onShowModalContinue.bind(this)
   }
   onDaySelect = day => {
     const _selectedDay = moment(day.dateString).format(_format)
     this.setState({ _selectedDay: _selectedDay })
-    let selected = true
+    let selected = true;
     let markedDates = {}
     if (this.state._markedDates[_selectedDay]) {
-      selected = !this.state._markedDates[_selectedDay].selected
+      selected = !this.state._markedDates[_selectedDay].selected;
       markedDates = this.state._markedDates[_selectedDay]
     }
     markedDates = { ...markedDates, ...{ selected } }
@@ -64,15 +60,35 @@ class ViewTrainer extends Component {
     if (this.state.finalSelectedDates.length > 0) {
       this.state.finalSelectedDates.map((res, i) => {
         if (res.date === _selectedDay) {
-          this.state.finalSelectedDates.splice(i, 1)
-          console.log('1456:  ', JSON.stringify(this.state.finalSelectedDates))
+          this.onShow(res);
+          this.state.finalSelectedDates.splice(i, 1);
+          this.setState({
+            finalSelectedDates: this.state.finalSelectedDates
+          },()=>{
+           // alert('1456:kajkdklcfkadsjnk'+ JSON.stringify(this.state.finalSelectedDates))
+          });
         } else {
-          this.onModalOpen(true)
+          this.onModalOpen(true);
         }
-      })
+      });
     } else {
-      this.onModalOpen(true)
+      this.onModalOpen(true);
     }
+  }
+  onShow(res){
+    var self = this;
+      Object.keys(self.state.subdata).forEach(function (key) {
+        if (res.date === key) {
+            self.state.subdata[key] = {selected:true};
+        }
+    });
+    var obj = {};
+    Object.keys(self.state.subdata).forEach(function (key) {
+      obj[key] = {selected:self.state.subdata[key].selected ,selectedColor:self.state.subdata[key].selectedColor};
+    });
+    self.setState({
+      subdata:obj
+    });
   }
   onModalOpen(visible) {
     this.setState({ modalVisible: visible })
@@ -81,20 +97,52 @@ class ViewTrainer extends Component {
     this.setState({ modalVisible: false })
   }
   getDataObj(getSelectedTime) {
-    this.setState({ getSelectedTime: getSelectedTime }, () => {
-      let finalRecord = {
-        date: this.state._selectedDay,
-        time: this.state.getSelectedTime
-      }
-      finalRecordData.push(finalRecord)
-      this.setState({ finalSelectedDates: getSelectedTime }, () => {
-      console.log("PICKED HOURS AND DATES",this.state.finalSelectedDates)
-        this.setState({ modalVisible: false })
-      })
-    })
+     this.setState({ getSelectedTimedata:getSelectedTime,modalVisible:false},()=>{
+       this.setState({showModal: true})
+     })
   }
+   onShowModalClose(){
+   this.setState({
+     showModal: false
+   },()=>{
+     console.log("getselected temas: ",this.state.finalSelectedDates)
+   })
+ }
+ onShowModalContinue(){
+   this.setState({
+     showModal: false
+   },()=>{
+     this.state.getSelectedTimedata.map((res,i)=>{
+       this.state.getSelectedTime.push(res);
+     });
+     this.setState({ finalSelectedDates: this.state.getSelectedTime  }, () => {
+       this.props.navigation.navigate("Payment");
+       //   let count = 0;
+       //   var self = this;
+       //   Object.keys(self.state.subdata).forEach(function (key) {
+       //     self.state.finalSelectedDates.map((res,i)=>{
+       //       if (res.date === key) {
+       //         count++;
+       //       } else {
+       //         count = 0;
+       //       }
+       //     });
+       //     if (count !== 0) {
+       //         self.state.subdata[key] = {selected:true,selectedColor:"green"};
+       //     }
+       //   });
+       //   var obj = {}
+       //   Object.keys(self.state.subdata).forEach(function (key) {
+       //     obj[key] = {selected:self.state.subdata[key].selected ,selectedColor:self.state.subdata[key].selectedColor};
+       //   });
+       //   self.setState({
+       //     subdata:obj
+       //   });
+     });
+   })
+ }
   componentWillMount(){
-    var Id="16"
+    var Id="22";
      API.getAvailableSlots(Id).then(async (response) => {
        this.setState({
          slotsAlloted:response.data
@@ -104,14 +152,11 @@ class ViewTrainer extends Component {
        var subdata = {};
        response.data.map((res,i)=>{
          var date = moment(res.date).format(_format);
-         subdata[date] = {selected: true}
+         subdata[date] = {selected: true};
        })
        this.setState({subdata:subdata})
-       var record = {subdata}
-       console.log("recordDate",record)
         }).catch((error)=>{
-        this.setState({isLoading:false})
-          console.log("Console Error",error);
+        this.setState({isLoading:false});
         });
   }
   getNewResponse(){
@@ -144,13 +189,10 @@ class ViewTrainer extends Component {
 		});
     this.setState({
         finalResponseArray: finalResponseArray
-    },()=>{
-      // alert(JSON.stringify(this.state.finalResponseArray))
     });
   }
   render() {
     return (
-      <ScrollView>
         <Container style={styles.container}>
           <Header style={styles.headerStyle}>
           <Left style={styles.ham}>
@@ -219,14 +261,13 @@ class ViewTrainer extends Component {
             </Text>
           </View>
           <View style={styles.calendarContainer}>
+          <Text style={styles.specialityTitle}>Available Slots :</Text>
+          {Object.keys(this.state.subdata).length > 0 ? (
             <Calendar
               onDayPress={this.onDaySelect}
               markedDates={this.state.subdata}/>
-          </View>
-          <View style={styles.book}>
-            <Text style={styles.bookText}>
-              BOOK SESSION NOW! ONLY {"$34.99"}
-            </Text>
+          ) : <Spinner color="black" />}
+
           </View>
           <Modal
           animationType="slide"
@@ -238,9 +279,36 @@ class ViewTrainer extends Component {
             selectedDate={this.state._selectedDay}
             selectedTime={this.state.finalResponseArray}/>
         </Modal>
+
+        <Modal
+           animationType="slide"
+           transparent={true}
+           visible={this.state.showModal}>
+           <View style={styles.modalView}>
+             <View style={{width: 300, alignSelf:"center", marginTop:window.height/3,height: 120,backgroundColor:"white",borderWidth:1,borderColor:"white",borderRadius:10}}>
+
+               <View style={{flex:0.5,justifyContent:"center",alignItems:"center",margin:10}}>
+                 <Text style={{textAlign:"center",fontSize:16,fontWeight:"700"}}>{"Do you want to book this Date and time ? It costs $1.00"}</Text>
+               </View>
+
+               <View style={{flex:0.5,marginBottom:10,flexDirection:"row"}}>
+                <View style={{flex:0.5,justifyContent:"center",alignItems:"center"}}>
+                  <TouchableOpacity onPress={this.onShowModalContinue}>
+                     <Text style={{textAlign:"center",fontSize:18,fontWeight:"800", color:'#009FDB'}}>Continue</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={{flex:0.5,justifyContent:"center",alignItems:"center"}}>
+                  <TouchableOpacity onPress={this.onShowModalClose}>
+                     <Text style={{textAlign:"center",fontSize:18,fontWeight:"800", color:'#009FDB'}}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+               </View>
+             </View>
+          </View>
+         </Modal>
+
         </Content>
       </Container>
-    </ScrollView>
     );
   }
 }
