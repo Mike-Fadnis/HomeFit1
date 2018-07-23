@@ -1,3 +1,7 @@
+import {
+  Dimensions
+} from 'react-native';
+const window = Dimensions.get('window');
 export default {
   container: {
     backgroundColor: "#fff"
@@ -92,5 +96,37 @@ export default {
     backgroundColor: '#000000c4',
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  bookSessionView: {
+    backgroundColor: '#009FDB',
+    marginTop: 2
+  },
+  bookSessionButton: {
+    width: window.width / 1,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  quickAdviceView: {
+    backgroundColor: '#009FDB',
+    marginTop: 2
+  },
+  quickAdviceButton: {
+    width: window.width / 1,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  spinnerView: {
+    alignSelf: 'center',
+    justifyContent: 'center'
+  },
+  spinnerPosition: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    justifyContent: 'center',
   }
 };

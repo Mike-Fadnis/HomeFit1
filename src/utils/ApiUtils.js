@@ -125,5 +125,16 @@ const AppUtils = {
            console.log("error", error);
        });
    },
+   addCardDetails:async function (cardDetailsObject) {
+        return fetch(API_BASE_URL +"action=trainer_cards&primaryId="+cardDetailsObject.user_id+"&cardNumber="+cardDetailsObject.cardNumber+"&expiryDate="+cardDetailsObject.expiryDate+"&cvc="+cardDetailsObject.cvc+"&cardType="+cardDetailsObject.cardType+"&cardHolderName="+cardDetailsObject.cardHolderName+"&billingAddress="+cardDetailsObject.billingAddress+"&city="+cardDetailsObject.city+"&state="+cardDetailsObject.state+"&zipCode="+cardDetailsObject.zipCode, {
+            method: "POST"
+        }).then((response) => {
+            return response.json();
+        }, function (error){
+            console.log("error", error);
+        }).catch((error) => {
+            console.log("error", error);
+        });
+    }
 };
 export default AppUtils;

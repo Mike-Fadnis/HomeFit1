@@ -1,22 +1,6 @@
 import React, { Component } from "react";
 import { View, TouchableOpacity,Alert,AsyncStorage,ActivityIndicator } from 'react-native';
-import {
-  Container,
-  Header,
-  Title,
-  Content,
-  Text,
-  ListItem,
-  CheckBox,
-  Button,
-  Icon,
-  Footer,
-  FooterTab,
-  Left,
-  Right,
-  Body,
-  Spinner
-} from "native-base";
+import {Container,Header,Title,Content,Text,ListItem,CheckBox,Button,Icon,Footer,FooterTab,Left,Right,Body,Spinner} from "native-base";
 import { Input, Card, CardSection, ButtonTwo } from '../common';
 import dismissKeyboard from 'dismissKeyboard'
 import styles from "./styles";
@@ -29,10 +13,10 @@ class ClientLogin extends Component {
       email:'',
       password:'',
       userData:{},
-      spinner:false
+      spinner:false,
+      afterBookSession: this.props.navigation.getParam('afterBookSession')
     }
   }
-
   onChangeEmail(text){
     this.setState({
       email:text
@@ -78,10 +62,14 @@ class ClientLogin extends Component {
                userData:response.data,
                spinner:false
              },()=>{
-               var getUserData = this.state.userData
-               AsyncStorage.setItem('@getUserType:key', "User")
-                AsyncStorage.setItem('@getUserData:key', JSON.stringify(getUserData))
-               this.props.navigation.navigate("ClientHome")
+              var getUserData = this.state.userData
+              AsyncStorage.setItem('@getUserType:key', "User")
+              AsyncStorage.setItem('@getUserData:key', JSON.stringify(getUserData))
+              if(this.state.afterBookSession === true){
+                this.props.navigation.navigate("ViewTrainer")
+              } else{
+                this.props.navigation.navigate("ClientHome")
+              }
              })
            }else{
              this.setState({

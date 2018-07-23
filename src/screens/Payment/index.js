@@ -23,31 +23,38 @@ import {
 import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-input";
 import styles from './styles'
 import Images from "@theme/images/images";
+import API from "@utils/ApiUtils";
+
 var creditCardArray = [
   {
     id:'1',
-    name:'visa',
-    last:'.... 4242'
+    name:'ABCDABCD ABCD JOHN',
+    last:'4242',
+    cardType: "visa"
   },
   {
     id:'2',
-    name:'master',
-    last:'.... 3222'
+    name:'EFGHEFGH EFGH JOHN',
+    last:'3222',
+    cardType: "master"
   },
   {
     id:'3',
-    name:'american-express',
-    last:'.... 0005'
+    name:'IJKLIJKL IJKL JOHN',
+    last:'0005',
+    cardType: "american-express"
   },
   {
     id:'4',
-    name:'visa',
-    last:'.... 5554'
+    name:'MNOPMNOP MNOP JOHN',
+    last:'5554',
+    cardType: "visa"
   },
   {
     id:'5',
-    name:'master',
-    last:'.... 4444'
+    name:'QRSTQRST QRST JOHN',
+    last:'4444',
+    cardType: "master"
   }
 ]
 class Payment extends Component {
@@ -60,8 +67,21 @@ class Payment extends Component {
       stateValue:'',
       zipcode:'',
       checkedSame:false,
-      checkedDiff:false
+      checkedDiff:false,
+      userData:{},
+      radioValue:'1',
+      itemId: '1',
+      spinner: false
     }
+  }
+  componentWillMount(){
+    AsyncStorage.getItem('@getUserData:key', (err, getUserData) => {
+        var get_user = JSON.parse(getUserData)
+        this.setState({
+          userData:get_user
+        })
+         console.log("COMPONENTWILLMOUNT: "+JSON.stringify(this.state.userData))
+     }).done()
   }
   _onChange(values) {
     this.setState({
@@ -70,22 +90,71 @@ class Payment extends Component {
       console.log("CREDITCARDDETAILS@@@@ ",this.state.user_cardDetails)
     })
   }
-
+  onRadioButtonPressed(item){
+    this.setState({itemId: item.id})
+  }
   addingCreditCard() {
-    if (this.state.user_cardDetails.values === undefined) {
-      alert('Please enter card details')
-    } else {
-      alert("CREDITCARD: "+JSON.stringify(this.state.user_cardDetails) +" Address: "+this.state.address+ " City: "+this.state.city+ " State: "+this.state.stateValue+ " Zipcode: "+this.state.zipcode)
-    }
+     console.log("adding card: "+JSON.stringify(this.state.userData))
+      if (this.state.user_cardDetails.values === undefined) {
+        alert('Please enter card details')
+      } else {
+        this.setState({spinner: true})
+        var cardNumber = this.state.user_cardDetails.values.number
+        var cardNumberDetails = cardNumber.replace(/\s/g, '')
+        var expiry = this.state.user_cardDetails.values.expiry
+        var cardExpiryDate = expiry.split('/')
+        var expiryMonth = cardExpiryDate[0]
+        var expiryYear = '20' + cardExpiryDate[1]
+        var expiryDate= expiryMonth+'/'+expiryYear
+        var cardDetailsObject = {
+          user_id:this.state.userData.id,
+          cardNumber:cardNumberDetails,
+          expiryDate:expiryDate,
+          cvc:this.state.user_cardDetails.values.cvc,
+          cardType:this.state.user_cardDetails.values.type,
+          cardHolderName:this.state.user_cardDetails.values.name,
+          billingAddress:this.state.address,
+          city:this.state.city,
+          state:this.state.stateValue,
+          zipCode:this.state.user_cardDetails.values.postalCode,
+        }
+        API.addCardDetails(cardDetailsObject).then(async (response) => {
+          this.setState({spinner: false},()=> {
+            Alert.alert("Payment",response.message)
+          })
+        }).catch((error)=>{
+        this.setState({spinner:false})
+          console.log("Console Error",error);
+        });
+      }
   }
 
   renderData(item){
       var item = item.item
       return(
-          <TouchableOpacity>
-            <View style={{flex:1, height:50, flexDirection:'row', justifyContent:'space-between', borderBottomColor:'grey', borderWidth:0.5, alignItems:'center'}}>
-            <Text style={{color:'black', fontSize:16, fontWeight:'600', marginLeft:5}}>{item.name}</Text>
-              <Text style={{color:'black', fontSize:16, fontWeight:'600', marginRight:15}}>{item.last}</Text>
+          <TouchableOpacity onPress={this.onRadioButtonPressed.bind(this,item)}>
+            <View style={{flexDirection:"row",margin:5,padding:5, height:70,backgroundColor:"#f9f9f9",borderRadius:5,borderColor:this.state.itemId === item.id ? ("#34ace0"):("#f9f9f9"), borderWidth:2, alignItems:'center'}}>
+                <View style={{flex:0.1,alignItems:"center",justifyContent:"center"}}>
+                  {this.state.itemId === item.id ? (
+                    <Image source={Images.success} style={{height:20,width:20}} />
+                  ): (
+                    <Image source={Images.emptyCircle} style={{height:20,width:20}} />
+                  )}
+                </View>
+                <View style={{flex:0.2,backgroundColor:"white",alignItems:"center",justifyContent:"center"}}>
+                  {item.cardType === "master" ? (<Image source={Images.masterCard} style={{height:40,width:50}} />) : item.cardType === "visa" ? (<Image source={Images.visaCard} style={{height:40,width:50}} />) : (<Image source={Images.amexpCard} style={{height:40,width:50}} />)}
+                </View>
+                <View style={{flex:0.5,paddingLeft:20,alignItems:"flex-start",justifyContent:"center"}}>
+                  <Text numberOfLines={1} style={styles.cardHolderNameStyle}>{item.name}</Text>
+                  <View style={{flexDirection:"row"}}>
+                    <Text> ....  ....  ....  </Text>
+                    <Text>{item.last}</Text>
+                  </View>
+                </View>
+                <View style={{flex:0.2,alignItems:"flex-end"}}>
+                  <Text style={{color:"#b3b3b3"}}>EXP. </Text>
+                  <Text style={{color:"#b3b3b3"}}>01/2018 </Text>
+                </View>
             </View>
           </TouchableOpacity>
           )
@@ -154,12 +223,14 @@ class Payment extends Component {
                 </View>
                 <View style={{margin:10}}>
                   <CreditCardInput
-                    autoFocus
                     requiresName
+                    requiresPostalCode
                     inputStyle={{ fontSize: 16, color: 'black' }}
                     validColor={'green'}
                     invalidColor={'red'}
                     placeholderColor={'darkgray'}
+                    cardImageFront={Images.cardFront}
+                    cardImageBack={Images.cardBack}
                     onChange={this._onChange.bind(this)}/>
                 </View>
                 <View style={{marginLeft:20, marginRight:20}}>
@@ -174,10 +245,6 @@ class Payment extends Component {
                   <Item stackedLabel>
                      <Label>State</Label>
                      <Input placeholder="AP" value={this.state.stateValue} onChangeText={this.onChangeState.bind(this)}/>
-                  </Item>
-                  <Item stackedLabel>
-                     <Label>Zipcode</Label>
-                     <Input placeholder="530013" value={this.state.zipcode} onChangeText={this.onChangeZipcode.bind(this)}/>
                   </Item>
                  </View>
                  <View style={{flex:1,flexDirection:'row', marginTop:10}}>
@@ -219,6 +286,13 @@ class Payment extends Component {
                   <Text style={{fontWeight:'700'}}>CONFIRM PAYMENT</Text>
                 </Button>
             </Content>
+            {this.state.spinner === true ? (
+            <View style={styles.container_spinner}>
+              <View style={styles.spinnerView}>
+                <ActivityIndicator size="large" color="black"/>
+              </View>
+            </View>
+            ) : null}
         </Container>
       );
   }

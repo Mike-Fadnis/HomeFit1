@@ -7,6 +7,14 @@ const images = {
     user:require('@images/user.png'),
     playIcon:require('@images/playIcon.png'),
     unChecked:require('@images/unChecked.png'),
-    checkedIcon:require('@images/checkedIcon.png')
+    checkedIcon:require('@images/checkedIcon.png'),
+    cardFront:require('@images/card-front.png'),
+    cardBack:require('@images/card-back.png'),
+    masterCard:require('@images/mastercard.png'),
+    visaCard:require('@images/visa.png'),
+    amexpCard:require('@images/american-express.png'),
+    emptyCircle:require('@images/emptyCircle.png'),
+    success:require('@images/success.png')
+
 }
 export default images

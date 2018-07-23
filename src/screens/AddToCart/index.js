@@ -46,7 +46,7 @@ class Cart extends React.Component < Props, State > {
       });
     }
     onBackPressed() {
-      this.props.navigation.navigate("ProductDetails")
+      this.props.navigation.navigate("OnlineStore")
     }
     onEdit() {
       this.setState({

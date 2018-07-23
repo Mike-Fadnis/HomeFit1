@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { ImageBackground, View, AsyncStorage, StyleSheet } from "react-native";
 //import { createStackNavigator } from 'react-navigation';
-import { Container, H3, Text } from "native-base";
+import { Container, H3, Text, Footer } from "native-base";
 import ImageSlider from 'react-native-image-slider';
 import { connect } from 'react-redux';
 
@@ -126,12 +126,12 @@ onEnter(){
                   <Text style={styles.lowerText}>Buy the best products!</Text>
               </View>
           </View>
-          <View style={styles.buttonStyle}>
-              <Button onPress={this.onEnter.bind(this)}>
-                  Enter
-              </Button>
-          </View>
         </View>
+        <Footer style={{marginTop:25}}>
+          <Button full onPress={this.onEnter.bind(this)}>
+            Enter
+          </Button>
+        </Footer>
       </Container>
     );
   }
@@ -190,10 +190,6 @@ const styles=StyleSheet.create({
       color : '#009FDB',
       fontWeight : "600",
 
-  },
-  buttonStyle : {
-      flexDirection : 'row',
-      marginTop : 30
   }
 });
 
