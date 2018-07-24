@@ -19,24 +19,21 @@ import {
 import styles from "./styles";
 
 class ClientHome extends Component {
-  render(){      
+  render(){
       return(
         <Container style={styles.container}>
             <Header style={styles.headerStyle}>
           <Left style={styles.ham}>
             <Button style={styles.ham}
               transparent
-              onPress = {
-                  () => this.props.navigation.navigate("DrawerOpen")
-              }
-            >
+              onPress = {() => this.props.navigation.navigate("DrawerOpen")}>
               < Icon name = "ios-menu" style={{color: "white"}}/ >
             </Button>
           </Left>
           <Body>
             <Title style={styles.title}>Home</Title>
           </Body>
-          <Right> 
+          <Right>
               <TouchableOpacity style={styles.trainerTextContainer}
                 onPress={() => this.props.navigation.navigate("TrainerLogin")}>
                   <Text style={styles.trainerText}>Trainers</Text>
@@ -47,14 +44,14 @@ class ClientHome extends Component {
            <View style={styles.container}>
                <View style={styles.topTextContainer}>
                    <Text style={styles.topText}>
-                       Browse through our Personal Trainers 
+                       Browse through our Personal Trainers
                        and find the one that will be best in
                        helping you reach your fitness goals.
                    </Text>
                </View>
                <View style={styles.browseTrainersContainer}>
                    <View style={styles.buttonContainerStyle}>
-                       <ButtonThree onPress={() => this.props.navigation.navigate("BrowseTrainers")} 
+                       <ButtonThree onPress={() => this.props.navigation.navigate("BrowseTrainers")}
                         style={styles.buttonStyle}>
                            View Our Personal Trainers
                        </ButtonThree>
@@ -97,8 +94,8 @@ class ClientHome extends Component {
                    </View>
                    <View style={styles.topTextContainer}>
                        <Text style={styles.onlineStoreText}>
-                           Check out our online store for daily specials 
-                           and all your supplement and equipment needs. 
+                           Check out our online store for daily specials
+                           and all your supplement and equipment needs.
                        </Text>
                     </View>
                     <View style={styles.trainerSliderStyle}>

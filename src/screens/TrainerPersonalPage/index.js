@@ -47,6 +47,7 @@ class TrainerPersonalPage extends Component {
     this.onModalOpen = this.onModalOpen.bind(this)
     this.onModalClose = this.onModalClose.bind(this)
     this.onAvailableDates = this.onAvailableDates.bind(this)
+    this.onViewourOnlineStore = this.onViewourOnlineStore.bind(this)
   }
   async componentWillMount(){
      AsyncStorage.getItem('@getUserType:key', (err, type) => {
@@ -62,82 +63,39 @@ class TrainerPersonalPage extends Component {
      })
     this.getPushedSpecialityData();
   }
-
-  // onDaySelect = day => {
-  //   // const _selectedDay = moment(day.dateString).format(_format)
-  //   // this.setState({ _selectedDay: _selectedDay })
-  //   // let selected = true
-  //   // let markedDates = {}
-  //   // if (this.state._markedDates[_selectedDay]) {
-  //   //   selected = !this.state._markedDates[_selectedDay].selected
-  //   //   markedDates = this.state._markedDates[_selectedDay]
-  //   // }
-  //   // markedDates = { ...markedDates, ...{ selected } }
-  //   // const updatedMarkedDates = {
-  //   //   ...this.state._markedDates,
-  //   //   ...{ [_selectedDay]: markedDates }
-  //   // }
-  //   // this.setState({ _markedDates: updatedMarkedDates })
-  //
-  //   const _selectedDay = moment(day.dateString).format(_format)
-  //   this.setState({ _selectedDay: _selectedDay })
-  //   let count = 0
-  //      this.setState({selectAll: false})
-  //      if (this.state.finalSelectedDates.length === 0) {
-  //        this.onModalOpen(true);
-  //      } else {
-  //        this.state.finalSelectedDates.map((res, i) => {
-  //          if (res.date === _selectedDay) {
-  //            this.state.finalSelectedDates.splice(i, 1)
-  //            count++;
-  //          }
-  //        });
-  //        if (count === 0) {
-  //          this.onModalOpen(true);
-  //        }
-  //
-  //      }
-  //      this.setState({
-  //        finalSelectedDates: this.state.finalSelectedDates
-  //      })
-  //
-  // }
-
-onDaySelect = day => {
-    const _selectedDay = moment(day.dateString).format(_format)
-    this.setState({ _selectedDay: _selectedDay })
-    let selected = true
-    let markedDates = {}
-    if (this.state._markedDates[_selectedDay]) {
-      selected = !this.state._markedDates[_selectedDay].selected
-      markedDates = this.state._markedDates[_selectedDay]
-    }
-    markedDates = { ...markedDates, ...{ selected } }
-    const updatedMarkedDates = {
-      ...this.state._markedDates,
-      ...{ [_selectedDay]: markedDates }
-    }
-
-    this.setState({ _markedDates: updatedMarkedDates })
-  let count = 0
-    if (this.state.finalSelectedDates.length > 0) {
-      this.state.finalSelectedDates.map((res, i) => {
-        if (res.date === _selectedDay) {
-          this.state.finalSelectedDates.splice(i, 1);
-          count ++;
-        } else {
-          count = 0
+  onDaySelect = day => {
+      const _selectedDay = moment(day.dateString).format(_format)
+      this.setState({ _selectedDay: _selectedDay })
+      let selected = true
+      let markedDates = {}
+      if (this.state._markedDates[_selectedDay]) {
+        selected = !this.state._markedDates[_selectedDay].selected
+        markedDates = this.state._markedDates[_selectedDay]
+      }
+      markedDates = { ...markedDates, ...{ selected } }
+      const updatedMarkedDates = {
+        ...this.state._markedDates,
+        ...{ [_selectedDay]: markedDates }
+      }
+      this.setState({ _markedDates: updatedMarkedDates })
+      let count = 0
+      if (this.state.finalSelectedDates.length > 0) {
+        this.state.finalSelectedDates.map((res, i) => {
+          if (res.date === _selectedDay) {
+            this.state.finalSelectedDates.splice(i, 1);
+            count ++;
+          } else {
+            count = 0
+          }
+        })
+        if(count === 0){
+          this.onModalOpen(true)
         }
-      })
-      if(count === 0){
+      } else {
         this.onModalOpen(true)
       }
-    } else {
-      this.onModalOpen(true)
-    }
-    console.log('1456:  ', JSON.stringify(this.state.finalSelectedDates))
-   }
-
+      console.log('1456:  ', JSON.stringify(this.state.finalSelectedDates))
+  }
 
   onModalOpen(visible) {
     this.setState({ modalVisible: visible })
@@ -145,23 +103,6 @@ onDaySelect = day => {
   onModalClose() {
     this.setState({ modalVisible: false })
   }
-  // getDataObj(getSelectedTime) {
-  //    getSelectedTime.map((res,i)=>{
-  //      this.state.getSelectedTime.push(res);
-  //    })
-  //    this.setState({ finalSelectedDates: this.state.getSelectedTime  }, () => {
-  //       var subdata = {};
-  //       this.state.finalSelectedDates.map((res,i)=>{
-  //         console.log("reddd:   ", JSON.stringify(res))
-  //         var date = moment(res.date).format(_format);
-  //         subdata[res.date] = {selected: true};
-  //       })
-  //       // console.log("lkjhgf:   ", JSON.stringify(subdata))
-  //       this.setState({_markedDates:subdata})
-  //
-  //       this.setState({ modalVisible: false })
-  //     })
-  // }
   getDataObj(getSelectedTime) {
       var arr = [];
       getSelectedTime.map((res,i)=>{
@@ -269,9 +210,12 @@ onAvailableDates(){
     )
   }
   onPayment(){
-    this.props.navigation.navigate("Payment")
+    this.props.navigation.navigate("Payment",{backFromPayment: "true"})
   }
 
+  onViewourOnlineStore(){
+    this.props.navigation.navigate("OnlineStore",{backfromOnlinestore:"true"})
+  }
   render() {
     return (
       <Container style={styles.container}>
@@ -302,7 +246,7 @@ onAvailableDates(){
             </View>
             <View style={styles.buttonContainerStyle1}>
                 <ButtonTwo style={styles.buttonStyle}
-                  onPress={() => this.props.navigation.navigate("OnlineStore")}>
+                  onPress={this.onViewourOnlineStore}>
                     VIEW OUR ONLINE STORE
                 </ButtonTwo>
             </View>

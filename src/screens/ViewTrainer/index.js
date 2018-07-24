@@ -80,10 +80,12 @@ class ViewTrainer extends Component {
                // alert('1456:kajkdklcfkadsjnk'+ JSON.stringify(this.state.finalSelectedDates))
               });
             } else {
+              this.setState({spinner: false})
               this.onModalOpen(true);
             }
           });
         } else {
+          this.setState({spinner: false})
           this.onModalOpen(true);
         }
 

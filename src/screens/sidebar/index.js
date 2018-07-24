@@ -14,6 +14,7 @@ import {
 } from "native-base";
 import styles from "./style";
 import RadioForm from 'react-native-simple-radio-button';
+
 var radio_props = [
  {label: 'User', value: 0 },
  {label: 'Trainer', value: 1 }
@@ -40,7 +41,7 @@ const dataUser = [
   },
   {
     name: "Profile",
-  //  route: "OnlineStore",
+    route: "ClientProfile",
     icon: "navigate",
     bg: "#BE6F50"
   },

@@ -3,6 +3,9 @@ import { Root } from "native-base";
 import { StackNavigator, DrawerNavigator } from "react-navigation";
 import Landing from "./screens/Landing";
 import ClientHome from "./screens/ClientHome";
+import ClientProfile from "./screens/ClientProfile";
+
+
 import BrowseTrainers from "./screens/BrowseTrainers";
 import ViewTrainer from "./screens/ViewTrainer";
 import TrainerLogin from "./screens/TrainerLogin";
@@ -170,6 +173,7 @@ const Drawer = DrawerNavigator(
     TrainerChooseDates : { screen : TrainerChooseDates},
     ClientLogin : { screen : ClientLogin },
     ClientSignup : { screen : ClientSignup },
+    ClientProfile : { screen : ClientProfile },
     Payment: { screen: Payment}
   },
   {

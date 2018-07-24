@@ -1,9 +1,10 @@
 import * as React from "react";
 import { Image, View ,Dimensions, TouchableOpacity, Modal} from "react-native";
-import {Container,Header,Title,Content,Button,Icon,Left,Body,Badge,Right,Text,Item,Input,Picker,Form,List,ListItem,Thumbnail,Spinner} from "native-base";
+import {Container,Header,Title,Content,Button,Icon,Left,Body,Badge,Right,Text,Item,Input,Form,List,ListItem,Thumbnail,Spinner} from "native-base";
 import { Col, Grid } from "react-native-easy-grid";
-
+import Picker from 'react-native-picker';
 import { connect } from "react-redux";
+
 import {addToCartItem} from "@actions";
 import API from "@utils/ApiUtils";
 import {IMAGE_PATH} from "@common/global";
@@ -12,6 +13,8 @@ import moment from 'moment';
 import ModalSizeDesignComponent from "./modalSizeDesignComponent";
 import ModalFlavourDesignComponent from "./modalFlavourDesignComponent";
 import ModalAddtoCart from "./modalAddtoCart";
+import Images from "@theme/images/images";
+
 
 const window = Dimensions.get('window');
 
@@ -35,18 +38,19 @@ class ProductDetails extends React.Component {
             allProducts: [] ,
             badgeTotal: 0,
             qty:"1",
-			customerReviews:[],
-      isLoading:true,
-			spinner:true,
-			modalSizeVisible: false,
-			modalFlavourVisible: false,
-			selectedSize: "",
-			selectedFlavour:"",
-			finalResponseArray:[],
-			flavoursArray: [],
-			flavour_id:'',
-			size_id:'',
-			modalAddtoCart: false
+      			customerReviews:[],
+            isLoading:true,
+      			spinner:true,
+      			modalSizeVisible: false,
+      			modalFlavourVisible: false,
+      			selectedSize: "",
+      			selectedFlavour:"",
+      			finalResponseArray:[],
+      			flavoursArray: [],
+      			flavour_id:'',
+      			size_id:'',
+      			modalAddtoCart: false,
+            quantityList: []
         };
     }
 	async	getCustomerReviews(){
@@ -102,6 +106,9 @@ componentWillMount(){
 	this.setState({
 		badgeTotal: this.props.cartTotal.addToCartItem.total
 	});
+  for(var i=1;i<100;i++){
+   this.state.quantityList.push(i);
+  }
 }
 componentWillReceiveProps(nextProps){
    this.setState({
@@ -255,6 +262,41 @@ getNewResponse(){
         finalResponseArray: finalResponseArray
     });
 }
+
+
+
+onPicker(){
+ Picker.init({
+     pickerData: this.state.quantityList,
+     selectedValue: [1],
+     onPickerConfirm: data => {
+       this.setState({
+         qty:data
+       });
+       console.log("PICKERQUANTITY@@@: " + this.state.qty);
+     },
+     onPickerCancel: data => {
+         console.log(data);
+     },
+     onPickerSelect: data => {
+         console.log(data);
+     },
+     pickerTitleText:"Quantity",
+     pickerConfirmBtnText:"Done",
+     pickerCancelBtnText:"Cancel",
+     pickerFontSize:50,
+     pickerRowHeight:35,
+     pickerBg:[255,255,255,1],
+     pickerToolBarBg:[69, 69, 69, 1],
+     pickerTitleColor:[255,255,255,1],
+     pickerCancelBtnColor:[255,255,255,1],
+     pickerConfirmBtnColor:[255,255,255,1]
+ });
+ Picker.show();
+}
+
+
+
 renderItem(item){
 	var reviewDate =  moment(item.created_at).format('LL');
 	var reviewUserImg = IMAGE_PATH + item.image;
@@ -291,17 +333,12 @@ render() {
   return (
       <Container style={styles.container}>
           <Header style={styles.header}>
-				<Left style={[styles.ham,{flexDirection:"row"}]}>
-				<Button style={styles.ham}
-						transparent
-						onPress={this.onBack.bind(this)}>
-						<Icon name="ios-arrow-back" style={{color: "white"}}/>
-				</Button>
-				<Button style={[styles.ham,{marginLeft:10}]}
-					transparent
-					onPress = {() => this.props.navigation.navigate("DrawerOpen")}>
-					<Icon name = "ios-menu" style={{color: "white"}}/>
-				</Button>
+      				<Left style={[styles.ham,{flexDirection:"row"}]}>
+        				<Button style={styles.ham}
+        						transparent
+        						onPress={this.onBack.bind(this)}>
+        						<Icon name="ios-arrow-back" style={{color: "white"}}/>
+        				</Button>
               </Left>
               <Body>
               <Title style={styles.title}> Store</Title>
@@ -321,7 +358,6 @@ render() {
 
           <Content style={{flex:1}}>
             <View style={styles.content}>
-
               {this.state.isLoading ?<Spinner color='black' /> :
               <View style={styles.productBlock}>
                   <View size={1} style={styles.productImageView}>
@@ -344,68 +380,68 @@ render() {
 
                 </View>
                 }
-				<View style={styles.modalPickersView}>
-					<View style={styles.pickerView}>
-						<TouchableOpacity
-							style={styles.pickerStyle}
-							onPress={() => {
-								this.setModalVisible(true);
-							}}>
-							<View style={styles.pickerTextView}>
-								{this.state.selectedSize === "" ? (
-										<Text>Size</Text>
-									) : (
-										<Text>{this.state.selectedSize}</Text>
-									)}
-							</View>
-							<View style={styles.pickerDropdownView}>
-								<Icon name = "ios-arrow-forward" style={{color: "grey"}}/>
-							</View>
-						</TouchableOpacity>
-					</View>
-					<View style={styles.pickerView}>
-						<TouchableOpacity
-							style={styles.pickerStyle}
-							onPress={() => {
-								this.setModalVisibleFlavour(true);
-							}}>
-							<View style={styles.pickerTextView}>
-								{this.state.selectedFlavour === "" ? (
-									<Text>Flavour</Text>
-								):(
-									<Text>{this.state.selectedFlavour}</Text>
-								)}
-							</View>
-							<View style={styles.pickerDropdownView}>
-								<Icon name = "ios-arrow-forward" style={{color: "grey"}}/>
-							</View>
-						</TouchableOpacity>
-					</View>
-					<Modal
-						animationType="slide"
-						transparent={false}
-						visible={this.state.modalSizeVisible}
-						onRequestClose={() => {
-						alert("Modal has been closed.")}}>
-							<ModalSizeDesignComponent
-								onClose={this.onModalSizeClose.bind(this)}
-								onSelect={this.setModalVisibleFlavour.bind(this)}
-								sendItem={this.getItem.bind(this)}
-								responseDuplicateArray={this.state.finalResponseArray}
-								onModalBack={this.onModalSizeBack.bind(this)}/>
-					</Modal>
-					<Modal
-						animationType="slide"
-						transparent={false}
-						visible={this.state.modalFlavourVisible}
-						onRequestClose={() => {
-						alert('Modal has been closed.')}}>
-							<ModalFlavourDesignComponent
-								onClose={this.onModalFlavourClose.bind(this)}
-								sendFlavourItem={this.getFlavourItem.bind(this)}
-								flavoursArray={this.state.flavoursArray}/>
-					</Modal>
-				</View>
+        				<View style={styles.modalPickersView}>
+        					<View style={styles.pickerView}>
+        						<TouchableOpacity
+        							style={styles.pickerStyle}
+        							onPress={() => {
+        								this.setModalVisible(true);
+        							}}>
+        							<View style={styles.pickerTextView}>
+        								{this.state.selectedSize === "" ? (
+        										<Text>Size</Text>
+        									) : (
+        										<Text>{this.state.selectedSize}</Text>
+        									)}
+        							</View>
+        							<View style={styles.pickerDropdownView}>
+        								<Icon name = "ios-arrow-forward" style={{color: "grey"}}/>
+        							</View>
+        						</TouchableOpacity>
+        					</View>
+        					<View style={styles.pickerView}>
+        						<TouchableOpacity
+        							style={styles.pickerStyle}
+        							onPress={() => {
+        								this.setModalVisibleFlavour(true);
+        							}}>
+        							<View style={styles.pickerTextView}>
+        								{this.state.selectedFlavour === "" ? (
+        									<Text>Flavour</Text>
+        								):(
+        									<Text>{this.state.selectedFlavour}</Text>
+        								)}
+        							</View>
+        							<View style={styles.pickerDropdownView}>
+        								<Icon name = "ios-arrow-forward" style={{color: "grey"}}/>
+        							</View>
+        						</TouchableOpacity>
+        					</View>
+        					<Modal
+        						animationType="slide"
+        						transparent={false}
+        						visible={this.state.modalSizeVisible}
+        						onRequestClose={() => {
+        						alert("Modal has been closed.")}}>
+        							<ModalSizeDesignComponent
+        								onClose={this.onModalSizeClose.bind(this)}
+        								onSelect={this.setModalVisibleFlavour.bind(this)}
+        								sendItem={this.getItem.bind(this)}
+        								responseDuplicateArray={this.state.finalResponseArray}
+        								onModalBack={this.onModalSizeBack.bind(this)}/>
+        					</Modal>
+        					<Modal
+        						animationType="slide"
+        						transparent={false}
+        						visible={this.state.modalFlavourVisible}
+        						onRequestClose={() => {
+        						alert('Modal has been closed.')}}>
+        							<ModalFlavourDesignComponent
+        								onClose={this.onModalFlavourClose.bind(this)}
+        								sendFlavourItem={this.getFlavourItem.bind(this)}
+        								flavoursArray={this.state.flavoursArray}/>
+        					</Modal>
+        				</View>
               	<View style={styles.priceBlock}>
                  	 <Text style={styles.price}>${this.state.price}</Text>
              	 </View>
@@ -416,16 +452,30 @@ render() {
               	<View style={styles.cartButtons}>
                 	<Grid>
                       	<Col size={1} style={styles.qty}>
-                          	<Text style={styles.freeShippingAdditionalText}>Qty:</Text>
-                          	<Item regular style={{width: "40%", maxHeight: 46, marginLeft: 25}}>
+                            <View style={{flex:1,backgroundColor:"white",flexDirection: "row"}}>
+                              <View style={{flex:0.4,backgroundColor:"white",alignItems:"center",justifyContent:"center"}}>
+                            	 <Text style={styles.freeShippingAdditionalText}>Qty: </Text>
+                              </View>
+                              <TouchableOpacity style={{flex:1,borderWidth:0.7}} onPress={this.onPicker.bind(this)}>
+                                <View style={{flex:1,flexDirection:"row"}}>
+                                  <View style={{flex:0.6,backgroundColor:"white",alignItems:"center",justifyContent:"center",borderRightWidth:0.5}}>
+                                	 <Text style={styles.freeShippingAdditionalText}>{ this.state.qty }</Text>
+                                  </View>
+                                  <View style={{flex:0.4,backgroundColor:"#edeef0",alignItems:"center",justifyContent:"center"}}>
+                                   <Image source={Images.dropdownIcon} style={styles.dropdownImageStyle}/>
+                                  </View>
+                                </View>
+                              </TouchableOpacity>
+                            </View>
+                          	{/*<Item regular style={{width: "40%", maxHeight: 46, marginLeft: 25}}>
                               	<Input keyboardType={"numeric"} onChangeText = {
                                 	this.onChangeText.bind(this)
                               	}
                                 value={this.state.qty} />
-                          	</Item>
+                          	</Item>*/}
                       	</Col>
                       	<Col size={2}>
-                         	 <Button full style={{backgroundColor: "#34ace0"}}
+                         	 <Button full style={{backgroundColor: "#34ace0",marginLeft:5}}
                          		 onPress={this.onAddToCardPressed.bind(this)}>
                             		  <Text style={styles.addCartButton}>{"Add to Cart".toUpperCase()}</Text>
                          	 </Button>
@@ -441,6 +491,7 @@ render() {
 										onClose={this.onModalAddtoCartClosed.bind(this)}
 										productDetailsData={dataToModal}
 										productQtyData={this.state.qty}
+                    onContinueShopping={this.onBack.bind(this)}
 										viewCart={this.onCartIcon.bind(this)}
 										/>
 								</Modal>

@@ -76,7 +76,7 @@ class TrainerSignUp extends Component {
         Alert.alert('Verify Password','Verify password should not be empty')
       }
       else if(this.state.password != this.state.confirmPassword){
-        Alert.alert('Password',"Mismatch Password")
+        Alert.alert('Password',"Password and Confirm Password fields do not match")
       }
       else{
         this.setState({
@@ -166,7 +166,7 @@ class TrainerSignUp extends Component {
            </CardSection>
          </View>
          <View>
-           <CardSection>
+           <CardSection style={{backgroundColor:"green"}}>
              <Input
                label="Verify Password"
                placeholder="Password"

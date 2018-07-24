@@ -71,7 +71,8 @@ class Payment extends Component {
       userData:{},
       radioValue:'1',
       itemId: '1',
-      spinner: false
+      spinner: false,
+      backFromPayment:this.props.navigation.getParam('backFromPayment')
     }
   }
   componentWillMount(){
@@ -191,8 +192,11 @@ class Payment extends Component {
     })
   }
   onBack(){
-    // this.props.navigation.navigate("TrainerPersonalPage")
-    this.props.navigation.goBack()
+    if(this.state.backFromPayment){
+      this.props.navigation.navigate("TrainerPersonalPage")
+    }else{
+       this.props.navigation.navigate("ViewTrainer")
+    }
   }
   render() {
     return (

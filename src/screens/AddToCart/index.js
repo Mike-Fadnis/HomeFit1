@@ -279,12 +279,7 @@ class Cart extends React.Component < Props, State > {
                 <Left style={styles.headerLeftStyle}>
                   <Button transparent onPress={this.onBackPressed.bind(this)}>
                       <Icon style={{color: "white"}} name="ios-arrow-back" />
-                  </Button>
-                  <Button style={[styles.ham,{marginLeft:10}]}
-                     transparent
-                     onPress = {() => this.props.navigation.navigate("DrawerOpen")}>
-                   <Icon name = "ios-menu" style={{color: "white"}}/>
-                 </Button>
+                  </Button>                  
                 </Left>
                 <Body>
                   <Title style={styles.title}>Cart</Title>

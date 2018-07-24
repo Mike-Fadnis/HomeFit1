@@ -65,6 +65,7 @@ class ClientLogin extends Component {
               var getUserData = this.state.userData
               AsyncStorage.setItem('@getUserType:key', "User")
               AsyncStorage.setItem('@getUserData:key', JSON.stringify(getUserData))
+              console.log("afterBookSession@@@@"+this.state.afterBookSession)
               if(this.state.afterBookSession === true){
                 this.props.navigation.navigate("ViewTrainer")
               } else{

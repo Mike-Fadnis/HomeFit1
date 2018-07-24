@@ -46,7 +46,7 @@ export default {
     borderWidth: 1,
     borderColor: "transparent",
     borderRadius: 5,
-    alignSelf:"center",        
+    alignSelf:"center",
     height: 250,
     width: 300
   },
@@ -76,8 +76,7 @@ export default {
   modalRadioButtonStyles: {
     flex: 1,
     alignItems: "flex-start",
-    justifyContent: "space-between",
-    fontSize: 18
+    justifyContent: "space-between"    
   },
   modalBotomButtonView: {
     alignSelf: "center"

@@ -156,7 +156,6 @@ class TrainersMedia extends Component{
         console.log('User tapped custom button: ', response.customButton);
       }
       else {
-        // You can display the image using either:
         var source;
         if (Platform.OS === "android") {
           source = {uri: response.uri, isStatic: true};

@@ -4,12 +4,13 @@ import {Icon, List, ListItem, Left, Body, Right, Thumbnail, Button} from "native
 import {IMAGE_PATH} from "@common/global";
 
 class ModalAddtoCart extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state={
           productDetails: "",
           productQty: ""
         };
+        this.onContinueShopping = this.onContinueShopping.bind(this)
     }
     componentWillMount(){
     console.log("444444444: ", this.props.productDetailsData.image)
@@ -20,6 +21,9 @@ class ModalAddtoCart extends Component {
     }
     onViewCart(){
       this.props.viewCart();
+    }
+    onContinueShopping(){
+      this.props.onContinueShopping()
     }
     render() {
     return (
@@ -65,7 +69,7 @@ class ModalAddtoCart extends Component {
                     </View>
 
                     {/* ContinueShoppingButton View*/}
-                    <TouchableOpacity style={styles.continueShoppingButtonView} onPress={this.props.onClose}>
+                    <TouchableOpacity style={styles.continueShoppingButtonView} onPress={this.onContinueShopping}>
                       <View style={styles.continueShoppingButtonSubView}>
                         <Icon name="ios-arrow-back" style={{color: "#5cafef",fontSize:30,marginRight:5}}/>
                         <Text style={styles.continueShoppingButtonTextStyle}> CONTINUE SHOPPING </Text>

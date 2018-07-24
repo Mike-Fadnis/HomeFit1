@@ -1,4 +1,6 @@
-import {StyleSheet} from "react-native";
+import {
+  StyleSheet
+} from "react-native";
 
 const styles: any = StyleSheet.create({
   container: {
@@ -176,16 +178,17 @@ const styles: any = StyleSheet.create({
   },
   freeShippingAdditionalText: {
     fontFamily: "Arial",
-    fontSize: 14,
-    paddingLeft: 3
+    fontSize: 14
   },
   cartButtons: {
     padding: 5
   },
   qty: {
-    display: "flex",
-    alignItems: "center",
-    flexDirection: "row"
+    // display: "flex",
+    flex:1,
+    backgroundColor: "#5aaadf",
+    alignItems: "center",    
+    margin:1
   },
   addCartButton: {
     fontWeight: "bold"
@@ -229,7 +232,11 @@ const styles: any = StyleSheet.create({
     marginLeft: 5,
     marginRight: 5,
     marginTop: 10,
-  }
+  },
+  dropdownImageStyle: {
+    width: 20,
+    height: 20
+  },
 });
 
 export default styles;

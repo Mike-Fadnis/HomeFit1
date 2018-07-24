@@ -16,7 +16,8 @@ class OnlineStore extends Component {
     this.state = {
       allProducts: [],
       onlineProductsArray: [],
-      spinner:true
+      spinner:true,
+      backfromOnlinestore:this.props.navigation.getParam('backfromOnlinestore')
     };
   }
   async componentWillMount(){
@@ -37,14 +38,12 @@ class OnlineStore extends Component {
   }
 
   onBackPressed(){
-        this.props.navigation.dispatch({
-            type: 'Navigation/NAVIGATE',
-            routeName: 'ClientHome',
-            action: {
-                type: 'Navigation/NAVIGATE',
-                routeName: 'ClientHome',
-            }
-        });
+    //this.props.navigation.navigate("ClientHome");
+      if(this.state.backfromOnlinestore){
+        this.props.navigation.navigate("TrainerPersonalPage")
+      }else{
+        this.props.navigation.navigate("ClientHome")
+      }
     }
   renderData = ({item, index}) => {
       return (
@@ -79,14 +78,8 @@ class OnlineStore extends Component {
           <Left style={[styles.ham,{flexDirection:"row"}]}>
             <Button style={styles.ham}
               transparent
-               onPress = {this.onBackPressed.bind(this)}>
-              <Icon name = "ios-arrow-back" style={{color: "white"}} />
-            </Button>
-            <Button style={[styles.ham,{marginLeft:10}]}
-              transparent
-              onPress = {() => this.props.navigation.navigate("DrawerOpen")}
-              >
-                < Icon name = "ios-menu" style={{color: "white"}}/ >
+              onPress = {() => this.props.navigation.navigate("DrawerOpen")}>
+              < Icon name = "ios-menu" style={{color: "white"}}/ >
             </Button>
           </Left>
           <Body>
