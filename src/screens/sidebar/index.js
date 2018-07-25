@@ -1,17 +1,6 @@
 import React, { Component } from "react";
 import { Image,View, AsyncStorage, ListView, Alert,Modal} from "react-native";
-import {
-  Content,
-  Text,
-  List,
-  ListItem,
-  Icon,
-  Container,
-  Left,
-  Right,
-  Button,
-  Badge
-} from "native-base";
+import {Content,Text,List,ListItem,Icon,Container,Left,Right,Button,Badge} from "native-base";
 import styles from "./style";
 import RadioForm from 'react-native-simple-radio-button';
 
@@ -29,13 +18,13 @@ const dataUser = [
   },
   {
     name: "Notifications",
-    //route: "BrowseTrainers",
+    route: "Notifications",
     icon: "navigate",
     bg: "#BE6F50"
   },
   {
     name: "Upcoming Sessions",
-    //route: "ViewTrainer",
+    route: "UpcomingSessions",
     icon: "navigate",
     bg: "#BE6F50"
   },
@@ -53,13 +42,13 @@ const dataUser = [
   },
   {
     name: "Rate your past trainers",
-    //route: "TrainerSignUp",
+    route: "ClientRating",
     icon: "navigate",
     bg: "#BE6F50"
   },
   {
     name: "Order History & Recurring Purchases",
-    //route: "TrainerPersonalPage",
+    route: "OrderHistory",
     icon: "navigate",
     bg: "#BE6F50"
   },
@@ -71,7 +60,7 @@ const dataUser = [
   },
   {
     name: "Track / Follow your Friends techniques",
-  //  route: "ClientLogin",
+    route: "TrackFriends",
     icon: "navigate",
     bg: "#BE6F50"
   },
@@ -81,28 +70,24 @@ const dataUser = [
     bg: "#BE6F50"
   },
 ];
-const dataTrainer = [
+
+
+const dataTrainer = [  
   {
-    name: "Home",
+    name: "Profile",
     route: "TrainerPersonalPage",
     icon: "navigate",
-    bg: "#C5F442"
+    bg: "#BE6F50"
   },
   {
     name: "Notifications",
-    //route: "BrowseTrainers",
+    route: "Notifications",
     icon: "navigate",
     bg: "#BE6F50"
   },
   {
     name: "Upcoming Sessions",
-    //route: "ViewTrainer",
-    icon: "navigate",
-    bg: "#BE6F50"
-  },
-  {
-    name: "Profile",
-  //  route: "OnlineStore",
+    route: "UpcomingSessions",
     icon: "navigate",
     bg: "#BE6F50"
   },
@@ -126,13 +111,13 @@ const dataTrainer = [
   },
   {
     name: "Order History & Recurring Purchases",
-    //route: "TrainerPersonalPage",
+    route: "OrderHistory",
     icon: "navigate",
     bg: "#BE6F50"
   },
   {
     name: "Track / Follow your Friends techniques",
-  //  route: "ClientLogin",
+    route: "TrackFriends",
     icon: "navigate",
     bg: "#BE6F50"
   },

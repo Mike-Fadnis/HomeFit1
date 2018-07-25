@@ -1,15 +1,6 @@
 import React from "react";
 import { Root } from "native-base";
 import { StackNavigator, DrawerNavigator } from "react-navigation";
-import Landing from "./screens/Landing";
-import ClientHome from "./screens/ClientHome";
-import ClientProfile from "./screens/ClientProfile";
-
-
-import BrowseTrainers from "./screens/BrowseTrainers";
-import ViewTrainer from "./screens/ViewTrainer";
-import TrainerLogin from "./screens/TrainerLogin";
-import TrainerHome from "./screens/TrainerHome";
 
 import Header from "./screens/Header/";
 import Header1 from "./screens/Header/1";
@@ -143,23 +134,52 @@ import Actionsheet from "./screens/actionsheet";
 import NHAccordion from "./screens/accordion/";
 import NHDatePicker from "./screens/datepicker/";
 
-import TrainerSignUp from "./screens/TrainerSignUp";
-import TrainerFinancialDetails from "./screens/TrainerFinancialDetails";
-import TrainerPersonalPage from "./screens/TrainerPersonalPage";
+//common
+import Landing from "./screens/Landing";
 import OnlineStore from "./screens/OnlineStore";
 import AddToCart from "./screens/AddToCart";
 import ProductDetails from "./screens/ProductDetails";
-import TrainerChooseDates from "./screens/TrainerChooseDates";
+import Payment from "./screens/Payment";
+import Notifications from "./screens/Notifications";
+import NotificationMessages from "./screens/Notifications/NotificationMessages";
+import OrderHistory from "./screens/OrderHistory";
+import UpcomingSessions from "./screens/UpcomingSessions";
+import TrackFriends from "./screens/TrackFriends";
+
+//client
+import ClientHome from "./screens/ClientHome";
+import ClientProfile from "./screens/ClientProfile";
 import ClientSignup from "./screens/ClientSignup";
 import ClientLogin from "./screens/ClientLogin";
-import Payment from "./screens/Payment";
+import ClientRating from "./screens/ClientRating";
 
-
+//trainer
+import BrowseTrainers from "./screens/BrowseTrainers";
+import ViewTrainer from "./screens/ViewTrainer";
+import TrainerLogin from "./screens/TrainerLogin";
+import TrainerHome from "./screens/TrainerHome";
+import TrainerSignUp from "./screens/TrainerSignUp";
+import TrainerFinancialDetails from "./screens/TrainerFinancialDetails";
+import TrainerPersonalPage from "./screens/TrainerPersonalPage";
+import TrainerChooseDates from "./screens/TrainerChooseDates";
 
 const Drawer = DrawerNavigator(
   {
     Landing: { screen: Landing },
+    OnlineStore : { screen : OnlineStore },
+    AddToCart : { screen : AddToCart },
+    ProductDetails : { screen : ProductDetails },
+    Payment: { screen: Payment},
+    Notifications: { screen: Notifications},
+    NotificationMessages: { screen: NotificationMessages},
+    UpcomingSessions: { screen: UpcomingSessions},
+    OrderHistory: { screen: OrderHistory},
+    TrackFriends: { screen: TrackFriends},
     ClientHome: { screen: ClientHome },
+    ClientLogin : { screen : ClientLogin },
+    ClientSignup : { screen : ClientSignup },
+    ClientProfile : { screen : ClientProfile },
+    ClientRating : { screen : ClientRating },
     BrowseTrainers: { screen: BrowseTrainers },
     ViewTrainer: { screen: ViewTrainer },
     TrainerLogin : { screen : TrainerLogin },
@@ -167,14 +187,7 @@ const Drawer = DrawerNavigator(
     TrainerHome : { screen : TrainerHome },
     TrainerFinancialDetails : { screen : TrainerFinancialDetails },
     TrainerPersonalPage : { screen : TrainerPersonalPage },
-    OnlineStore : { screen : OnlineStore },
-    AddToCart : { screen : AddToCart },
-    ProductDetails : { screen : ProductDetails },
-    TrainerChooseDates : { screen : TrainerChooseDates},
-    ClientLogin : { screen : ClientLogin },
-    ClientSignup : { screen : ClientSignup },
-    ClientProfile : { screen : ClientProfile },
-    Payment: { screen: Payment}
+    TrainerChooseDates : { screen : TrainerChooseDates}
   },
   {
     initialRouteName: "Landing",

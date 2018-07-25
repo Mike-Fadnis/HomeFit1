@@ -20,10 +20,11 @@ import {
   Label,
   Input
 } from "native-base";
-import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-input";
+import { CreditCardInput } from "react-native-credit-card-input";
 import styles from './styles'
 import Images from "@theme/images/images";
-import API from "@utils/ApiUtils";
+import API from "@utils/ApiUtils"; 
+// var CryptoJS = require("crypto-js");
 
 var creditCardArray = [
   {
@@ -81,7 +82,7 @@ class Payment extends Component {
         this.setState({
           userData:get_user
         })
-         console.log("COMPONENTWILLMOUNT: "+JSON.stringify(this.state.userData))
+
      }).done()
   }
   _onChange(values) {
@@ -94,67 +95,110 @@ class Payment extends Component {
   onRadioButtonPressed(item){
     this.setState({itemId: item.id})
   }
+
   addingCreditCard() {
-     console.log("adding card: "+JSON.stringify(this.state.userData))
-      if (this.state.user_cardDetails.values === undefined) {
-        alert('Please enter card details')
-      } else {
-        this.setState({spinner: true})
-        var cardNumber = this.state.user_cardDetails.values.number
-        var cardNumberDetails = cardNumber.replace(/\s/g, '')
-        var expiry = this.state.user_cardDetails.values.expiry
-        var cardExpiryDate = expiry.split('/')
-        var expiryMonth = cardExpiryDate[0]
-        var expiryYear = '20' + cardExpiryDate[1]
-        var expiryDate= expiryMonth+'/'+expiryYear
-        var cardDetailsObject = {
-          user_id:this.state.userData.id,
-          cardNumber:cardNumberDetails,
-          expiryDate:expiryDate,
-          cvc:this.state.user_cardDetails.values.cvc,
-          cardType:this.state.user_cardDetails.values.type,
-          cardHolderName:this.state.user_cardDetails.values.name,
-          billingAddress:this.state.address,
-          city:this.state.city,
-          state:this.state.stateValue,
-          zipCode:this.state.user_cardDetails.values.postalCode,
-        }
-        API.addCardDetails(cardDetailsObject).then(async (response) => {
-          this.setState({spinner: false},()=> {
-            Alert.alert("Payment",response.message)
-          })
-        }).catch((error)=>{
-        this.setState({spinner:false})
-          console.log("Console Error",error);
-        });
+   console.log("adding card: "+JSON.stringify(this.state.userData))
+    if (this.state.user_cardDetails.values === undefined) {
+      alert('Please enter card details')
+    } else {
+      this.setState({spinner: true})
+      var cardNumber = this.state.user_cardDetails.values.number
+      var cardNumberDetails = cardNumber.replace(/\s/g, '')
+      var expiry = this.state.user_cardDetails.values.expiry
+      var cardExpiryDate = expiry.split('/')
+      var expiryMonth = cardExpiryDate[0]
+      var expiryYear = '20' + cardExpiryDate[1]
+      var expiryDate= expiryMonth+'/'+expiryYear
+      var cardDetailsObject = {
+        user_id:this.state.userData.id,
+        cardNumber:cardNumberDetails,
+        expiryDate:expiryDate,
+        cvc:this.state.user_cardDetails.values.cvc,
+        cardType:this.state.user_cardDetails.values.type,
+        cardHolderName:this.state.user_cardDetails.values.name,
+        billingAddress:this.state.address,
+        city:this.state.city,
+        state:this.state.stateValue,
+        zipCode:this.state.user_cardDetails.values.postalCode,
       }
+      API.addCardDetails(cardDetailsObject).then(async (response) => {
+        this.setState({spinner: false},()=> {
+          Alert.alert("Payment",response.message)
+        })
+      }).catch((error)=>{
+      this.setState({spinner:false})
+        console.log("Console Error",error);
+      });
+    }
   }
+
+
+
+  // addingCreditCard() {
+  //    console.log("adding card: "+JSON.stringify(this.state.userData))
+  //     if (this.state.user_cardDetails.values === undefined) {
+  //       alert('Please enter card details')
+  //     } else {
+  //       this.setState({spinner: true})
+  //       var cardNumber = this.state.user_cardDetails.values.number
+  //       var cardNumberDetails = cardNumber.replace(/\s/g, '')
+  //       var expiry = this.state.user_cardDetails.values.expiry
+  //       var cardExpiryDate = expiry.split('/')
+  //       var expiryMonth = cardExpiryDate[0]
+  //       var expiryYear = '20' + cardExpiryDate[1]
+  //       var expiryDate= expiryMonth+'/'+expiryYear
+  //       var cardNumberCiphertext = CryptoJS.AES.encrypt(cardNumberDetails, 'secret key');
+  //       var expiryCiphertext = CryptoJS.AES.encrypt(expiryDate, 'secret key');
+  //       var CvcCiphertext = CryptoJS.AES.encrypt(this.state.user_cardDetails.values.cvc, 'secret key');
+  //       console.log("cardnumber text "+cardNumberCiphertext.toString()+" expiryCiphertext "+expiryCiphertext.toString()+" CvcCiphertext "+CvcCiphertext.toString());
+  //       // var cardDetailsObject = {
+  //       //   user_id:this.state.userData.id,
+  //       //   cardNumber:cardNumberDetails,
+  //       //   expiryDate:expiryDate,
+  //       //   cvc:this.state.user_cardDetails.values.cvc,
+  //       //   cardType:this.state.user_cardDetails.values.type,
+  //       //   cardHolderName:this.state.user_cardDetails.values.name,
+  //       //   billingAddress:this.state.address,
+  //       //   city:this.state.city,
+  //       //   state:this.state.stateValue,
+  //       //   zipCode:this.state.user_cardDetails.values.postalCode,
+  //       // }
+  //       // API.addCardDetails(cardDetailsObject).then(async (response) => {
+  //       //   this.setState({spinner: false},()=> {
+  //       //     Alert.alert("Payment",response.message)
+  //       //   })
+  //       // }).catch((error)=>{
+  //       // this.setState({spinner:false})
+  //       //   console.log("Console Error",error);
+  //       // });
+  //     }
+  // }
 
   renderData(item){
       var item = item.item
       return(
           <TouchableOpacity onPress={this.onRadioButtonPressed.bind(this,item)}>
-            <View style={{flexDirection:"row",margin:5,padding:5, height:70,backgroundColor:"#f9f9f9",borderRadius:5,borderColor:this.state.itemId === item.id ? ("#34ace0"):("#f9f9f9"), borderWidth:2, alignItems:'center'}}>
-                <View style={{flex:0.1,alignItems:"center",justifyContent:"center"}}>
+            <View style={[styles.rowView,{borderColor:this.state.itemId === item.id ? ("#34ace0"):("#f9f9f9")}]}>
+                <View style={styles.mainRowView}>
                   {this.state.itemId === item.id ? (
-                    <Image source={Images.success} style={{height:20,width:20}} />
+                    <Image source={Images.success} style={styles.rowImageStyle} />
                   ): (
-                    <Image source={Images.emptyCircle} style={{height:20,width:20}} />
+                    <Image source={Images.emptyCircle} style={styles.rowImageStyle} />
                   )}
                 </View>
-                <View style={{flex:0.2,backgroundColor:"white",alignItems:"center",justifyContent:"center"}}>
-                  {item.cardType === "master" ? (<Image source={Images.masterCard} style={{height:40,width:50}} />) : item.cardType === "visa" ? (<Image source={Images.visaCard} style={{height:40,width:50}} />) : (<Image source={Images.amexpCard} style={{height:40,width:50}} />)}
+                <View style={styles.cardView}>
+                  {item.cardType === "master" ? (<Image source={Images.masterCard} style={styles.cardImgStyle} />) : item.cardType === "visa" ? (<Image source={Images.visaCard} style={styles.cardImgStyle} />) : (<Image source={Images.amexpCard} style={styles.cardImgStyle} />)}
                 </View>
-                <View style={{flex:0.5,paddingLeft:20,alignItems:"flex-start",justifyContent:"center"}}>
+                <View style={styles.rowDataView}>
                   <Text numberOfLines={1} style={styles.cardHolderNameStyle}>{item.name}</Text>
                   <View style={{flexDirection:"row"}}>
                     <Text> ....  ....  ....  </Text>
                     <Text>{item.last}</Text>
                   </View>
                 </View>
-                <View style={{flex:0.2,alignItems:"flex-end"}}>
-                  <Text style={{color:"#b3b3b3"}}>EXP. </Text>
-                  <Text style={{color:"#b3b3b3"}}>01/2018 </Text>
+                <View style={styles.rowTextView}>
+                  <Text style={styles.rowTextStyle}>EXP. </Text>
+                  <Text style={styles.rowTextStyle}>01/2018 </Text>
                 </View>
             </View>
           </TouchableOpacity>
@@ -198,7 +242,9 @@ class Payment extends Component {
        this.props.navigation.navigate("ViewTrainer")
     }
   }
+
   render() {
+
     return (
         <Container style={styles.container}>
             <Header style={styles.headerStyle}>
@@ -216,7 +262,7 @@ class Payment extends Component {
             </Header>
 
             <Content style={styles.content}>
-                <View style={{flex:1}}>
+                <View style={styles.contentView}>
                   <FlatList
                       data={creditCardArray}
                       keyExtractor={(x, i) => x.id}
@@ -225,19 +271,21 @@ class Payment extends Component {
                       style={{backgroundColor:'#FFFFFF'}}
                   />
                 </View>
-                <View style={{margin:10}}>
+                <View style={styles.cardView}>
                   <CreditCardInput
                     requiresName
                     requiresPostalCode
-                    inputStyle={{ fontSize: 16, color: 'black' }}
+                    // autoFocus={this.state.focusing}
+                    inputStyle={styles.cardInputStyle}
                     validColor={'green'}
                     invalidColor={'red'}
                     placeholderColor={'darkgray'}
                     cardImageFront={Images.cardFront}
                     cardImageBack={Images.cardBack}
+                    onFocus={this._onFocus}
                     onChange={this._onChange.bind(this)}/>
                 </View>
-                <View style={{marginLeft:20, marginRight:20}}>
+                <View style={styles.inputView}>
                   <Item stackedLabel>
                      <Label>Billing Address</Label>
                      <Input placeholder="321/A" value={this.state.address} onChangeText={this.onChangeAddress.bind(this)}/>
@@ -251,43 +299,43 @@ class Payment extends Component {
                      <Input placeholder="AP" value={this.state.stateValue} onChangeText={this.onChangeState.bind(this)}/>
                   </Item>
                  </View>
-                 <View style={{flex:1,flexDirection:'row', marginTop:10}}>
-                   <View style={{flex:0.15, alignItems:'center',justifyContent:'center'}}>
+                 <View style={styles.buttonView}>
+                   <View style={styles.checkBoxView}>
                      <TouchableOpacity onPress={this.onCheckedSame.bind(this)}>
                      {this.state.checkedSame === true?
-                       (<Image source={Images.checkedIcon} style={{height:20,width:20, marginLeft:20}} />):
-                       (<Image source={Images.unChecked} style={{height:20,width:20, marginLeft:20}} />
+                       (<Image source={Images.checkedIcon} style={styles.iconStyle} />):
+                       (<Image source={Images.unChecked} style={styles.iconStyle} />
                      )}
                      </TouchableOpacity>
                    </View>
-                   <View style={{flex:0.8}}>
-                      <Text style={{textAlign:'justify', fontSize:14}}>
+                   <View style={styles.textView}>
+                      <Text style={styles.textStyle}>
                       SHIPPING ADDRESS SAME AS BILLING ADDRESS. In admin panel we need to be able to see that they clicked on this.
                       </Text>
                   </View>
-                  <View style={{flex:0.05}}/>
+                  <View style={styles.emptyView}/>
                 </View>
 
-                <View style={{flex:1,flexDirection:'row', marginTop:10}}>
-                  <View style={{flex:0.15, alignItems:'center',justifyContent:'center'}}>
+                <View style={styles.buttonView}>
+                  <View style={styles.checkBoxView}>
                     <TouchableOpacity onPress={this.onCheckedDiff.bind(this)}>
                     {this.state.checkedDiff === true?
-                      (<Image source={Images.checkedIcon} style={{height:20,width:20, marginLeft:20}} />):
-                      (<Image source={Images.unChecked} style={{height:20,width:20, marginLeft:20}} />
+                      (<Image source={Images.checkedIcon} style={styles.iconStyle} />):
+                      (<Image source={Images.unChecked} style={styles.iconStyle} />
                     )}
                     </TouchableOpacity>
                   </View>
-                  <View style={{flex:0.8}}>
-                     <Text style={{textAlign:'justify', fontSize:14}}>
+                  <View style={styles.textView}>
+                     <Text style={styles.textStyle}>
                      ADD A DIFFERENT ADDRESS FOR SHIPPING (if they click this then open up 2 more fields one asking for address the other asking for city, state, zipcode).
                      </Text>
                  </View>
-                 <View style={{flex:0.05}}/>
+                 <View style={styles.emptyView}/>
                </View>
 
-                <Button block style={{backgroundColor:'#009FDB', margin:20}}
+                <Button block style={styles.confirmButtonView}
                   onPress={this.addingCreditCard.bind(this)}>
-                  <Text style={{fontWeight:'700'}}>CONFIRM PAYMENT</Text>
+                  <Text style={styles.confirmButtonText}>CONFIRM PAYMENT</Text>
                 </Button>
             </Content>
             {this.state.spinner === true ? (

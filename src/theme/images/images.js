@@ -14,7 +14,7 @@ const images = {
     visaCard:require('@images/visa.png'),
     amexpCard:require('@images/american-express.png'),
     emptyCircle:require('@images/emptyCircle.png'),
-    success:require('@images/success.png')
-
+    success:require('@images/success.png'),
+    noimage:require('@images/noimage.png')
 }
 export default images
