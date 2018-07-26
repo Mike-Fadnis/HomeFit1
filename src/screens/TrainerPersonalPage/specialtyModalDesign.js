@@ -23,13 +23,20 @@ export default class SpecialtyModalDesign extends Component {
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(this.state.specialtiesData)
     })
-    API.getSpecialties().then(async (response) => {
-      if(response){
-        this.setState({specialtiesData:response.data,spinner: false})
-      }else{
-        this.setState({spinner: false})
-        alert("Error")
-      }
+    API.getSpecialties(this.props.userData.id).then(async (response) => {
+      if(response.status === true){
+       this.setState({specialtiesData:response.data,spinner: false})
+     }else{
+       this.setState({spinner: false})
+       Alert.alert(
+           response.message,
+           '',
+           [
+             {text: 'OK', onPress: () => this.props.onClose()},
+           ],
+           { cancelable: false }
+         )
+     }
     })
   }
   onSpecialitiesSelected(item){
@@ -83,7 +90,7 @@ export default class SpecialtyModalDesign extends Component {
       <View style={{flex:1}}>
         <TouchableOpacity style={{flexGrow: 1, flexDirection: 'row', marginTop: 5, height: 55}} onPress={this.onSpecialitiesSelected.bind(this, item)}>
           <View style={{flex: 0.8,justifyContent: 'center',paddingLeft: 15}}>
-            <Text style={{fontWeight:"bold",fontSize:18}}>{item.item.speciality}</Text>
+            <Text style={{fontWeight:"bold",fontSize:18}}>{item.item.speciality_name}</Text>
           </View>
           <View style={{flex: 0.2,justifyContent: 'center',alignItems: 'flex-end',paddingRight: 20}}>
             {images}

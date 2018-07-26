@@ -121,7 +121,7 @@ class UpcomingSessions extends Component {
             </View>
             <Modal
               animationType="slide"
-              transparent={false}
+              transparent={true}
               visible={this.state.modalVisible}>
               <View style={styles.modalView}>
             <ModalDesign onClose={this.onModalClose.bind(this)} dataItem={this.state.dataItem}/>

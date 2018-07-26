@@ -15,6 +15,9 @@ const images = {
     amexpCard:require('@images/american-express.png'),
     emptyCircle:require('@images/emptyCircle.png'),
     success:require('@images/success.png'),
-    noimage:require('@images/noimage.png')
+    noimage:require('@images/noimage.png'),
+    productsinGrid:require('@images/grid.png'),
+    productsinList:require('@images/list-with-dots.png'),
+    addFriend:require('@images/addFriend.png')
 }
 export default images

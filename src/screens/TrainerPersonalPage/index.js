@@ -5,6 +5,7 @@ import { Calendar,CalendarList } from 'react-native-calendars'
 import moment from 'moment'
 import {Container,Header,Title,Content,Text,Icon,Footer,Button,FooterTab,Left,Right,Body,Spinner} from "native-base";
 var ImagePicker = require('react-native-image-picker');
+import RNFetchBlob from 'rn-fetch-blob'
 
 import { ButtonTwo, Card, CardSection } from '../common';
 import ButtonOne from './ButtonOne';
@@ -41,6 +42,7 @@ class TrainerPersonalPage extends Component {
       spinner:false,
       specialtyModal: false,
       selectedSpecialties: [],
+      selectedTimes:[],
       loading:false,
       userData: null
     }
@@ -66,24 +68,29 @@ class TrainerPersonalPage extends Component {
   onDaySelect = day => {
       const _selectedDay = moment(day.dateString).format(_format)
       this.setState({ _selectedDay: _selectedDay })
-      let selected = true
-      let markedDates = {}
-      if (this.state._markedDates[_selectedDay]) {
-        selected = !this.state._markedDates[_selectedDay].selected
-        markedDates = this.state._markedDates[_selectedDay]
-      }
-      markedDates = { ...markedDates, ...{ selected } }
-      const updatedMarkedDates = {
-        ...this.state._markedDates,
-        ...{ [_selectedDay]: markedDates }
-      }
-      this.setState({ _markedDates: updatedMarkedDates })
+      // let selected = true
+      // let markedDates = {}
+      // if (this.state._markedDates[_selectedDay]) {
+      //   selected = !this.state._markedDates[_selectedDay].selected
+      //   markedDates = this.state._markedDates[_selectedDay]
+      // }
+      // markedDates = { ...markedDates, ...{ selected } }
+      // const updatedMarkedDates = {
+      //   ...this.state._markedDates,
+      //   ...{ [_selectedDay]: markedDates }
+      // }
+      // this.setState({ _markedDates: updatedMarkedDates })
       let count = 0
       if (this.state.finalSelectedDates.length > 0) {
         this.state.finalSelectedDates.map((res, i) => {
           if (res.date === _selectedDay) {
-            this.state.finalSelectedDates.splice(i, 1);
-            count ++;
+            console.log('1456:  ', JSON.stringify(res.time))
+            this.setState({
+              selectedTimes: res.time
+            },()=>{
+              count = 0
+            })
+            count = 0
           } else {
             count = 0
           }
@@ -94,14 +101,15 @@ class TrainerPersonalPage extends Component {
       } else {
         this.onModalOpen(true)
       }
-      console.log('1456:  ', JSON.stringify(this.state.finalSelectedDates))
+
   }
 
   onModalOpen(visible) {
     this.setState({ modalVisible: visible })
   }
   onModalClose() {
-    this.setState({ modalVisible: false })
+    console.log("_markedDates",this.state._markedDates)
+    this.setState({ selectedTimes:[],modalVisible: false })
   }
   getDataObj(getSelectedTime) {
       var arr = [];
@@ -111,8 +119,14 @@ class TrainerPersonalPage extends Component {
       var record = {"date":this.state._selectedDay,"time":arr}
       this.state.getSelectedTime.push(record)
       this.setState({ finalSelectedDates: this.state.getSelectedTime  }, () => {
-        console.log("PICKED HOURS AND DATESdsdsdsd",this.state.finalSelectedDates)
-          this.setState({ modalVisible: false })
+        var subdata = {};
+        this.state.finalSelectedDates.map((res,i)=>{
+          var date = moment(res.date).format(_format);
+          subdata[date] = {selected: true};
+        })
+           this.setState({_markedDates:subdata})
+          console.log("PICKED HOURS AND DATESdsdsdsd",this.state.finalSelectedDates)
+          this.setState({ selectedTimes:[],modalVisible: false })
        })
       }
   selectPhotoTapped() {
@@ -155,6 +169,21 @@ class TrainerPersonalPage extends Component {
         this.setState({
           avatarSource: source,
           spinner:false
+        },()=>{
+          var key = moment().format('DDMMYYYYhhmmss')
+           RNFetchBlob.fetch("POST", "http://ajaypalsidhu.com/demo/HomeFit/Admin/base64.php", {
+              Authorization : "Bearer access-token",
+              otherHeader : "foo",
+              'Content-Type' : 'multipart/form-data',
+            }, [
+              // custom content type
+              { name : 'images-png', filename : key +'.png', type:'image/png', data: response.data},
+            ]).then((resp) => {
+               console.log("response",resp.json());
+                alert("response"+resp.json());
+            }).catch((err) => {
+              console.log("err",err);
+            })
         });
       }
     });
@@ -192,19 +221,69 @@ onAvailableDates(){
       }
   }
     onSpecialtyPressed(){
-      this.setState({specialtyModal: true})
+     this.setState({userData:this.state.userData},()=>{
+       this.setState({specialtyModal: true})
+     })
     }
     onSpecialtyModalClose(){
       this.setState({specialtyModal: false})
     }
     getPushedSpecialityData(getSpecialtyData){
-      this.setState({specialtyModal: false,selectedSpecialties:getSpecialtyData})
+      var finalSelectedSpecialties = []
+      this.setState({specialtyModal: false,selectedSpecialties:getSpecialtyData},()=>{
+        if (this.state.selectedSpecialties != undefined){
+          this.state.selectedSpecialties.map((res,i)=>{
+          var rec = {id: res.item.id, trainerId: res.item.trainer_id, speciality: res.item.speciality}
+            finalSelectedSpecialties.push(rec)
+          })
+          console.log("finaalllll:: ", JSON.stringify(finalSelectedSpecialties))
+          this.addingSpecialities(finalSelectedSpecialties)
+        }else {
+          console.log("elseeeeee :  ",JSON.stringify(this.state.selectedSpecialties))
+        }
+      })
     }
+  addingSpecialities(data){
+    var array = JSON.stringify(data)
+    var specialitiesData = {
+      id:this.state.userData.id,
+      dataArray:array
+    }
+    API.addingSpecialities(specialitiesData).then(async (response) => {
+      // alert("AADIEDDDDD!!! "+JSON.stringify(response))
+      if(response.status === true){
+        Alert.alert(response.message,'')
+        // this.setState({specialtiesData:response.data,spinner: false})
+      }else{
+        this.setState({spinner: false})
+        Alert.alert(response.message,'')
+      }
+    })
+  }
+  onRemoveTimeSlots(selectedDate){
+   this.state.finalSelectedDates.map((res,i)=>{
+     if (res.date === selectedDate){
+       this.state.finalSelectedDates.splice(i,1);
+       }
+     });
+     var subdata = {}
+     if(this.state.finalSelectedDates.length > 0){
+       this.state.finalSelectedDates.map((res,i)=>{
+         var date = moment(res.date).format(_format);
+         subdata[date] = {selected: true};
+       })
+       this.setState({ _markedDates:subdata})
+     }else{
+       this.setState({ _markedDates:{},modalVisible: false })
+     }
+     this.setState({ selectedTimes:[],modalVisible: false })
+ }
+
   renderData(item){
     return(
       <View style={{flex:1,margin: 5,backgroundColor: '#EDEEF0',height: 50,justifyContent:"center"}}>
         <View style={{alignItems:"flex-start",paddingLeft:10,justifyContent:"center"}}>
-          <Text>{item.item.item.speciality}</Text>
+          <Text>{item.item.item.speciality_name}</Text>
         </View>
       </View>
     )
@@ -268,6 +347,7 @@ onAvailableDates(){
                     onClose={this.onSpecialtyModalClose.bind(this)}
                     getPushedSpecialityData={this.getPushedSpecialityData.bind(this)}
                     sendSelectedData={this.state.selectedSpecialties}
+                    userData={this.state.userData}
                   />
                 </Modal>
   					</View>
@@ -333,6 +413,8 @@ onAvailableDates(){
             <ModalOpenDesign
               onClose={this.onModalClose}
               getDataObj={this.getDataObj.bind(this)}
+              selectedTimes={this.state.selectedTimes}
+              onRemoveTimeSlots={this.onRemoveTimeSlots.bind(this)}
               selectedDate={this.state._selectedDay}/>
           </Modal>
         </Content>

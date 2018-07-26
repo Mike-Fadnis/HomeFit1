@@ -43,6 +43,16 @@ import {
             borderRadius : 2,
             borderColor : '#fff',
             padding : 5, 
-    }
+    },
+    subModalContainerView: {
+      width: 300,
+      alignSelf: "center",
+      height: 400,
+      backgroundColor: "white",
+      borderWidth: 1,
+      borderColor: "white",
+      borderRadius: 10,
+      padding:10
+    },
   };
   

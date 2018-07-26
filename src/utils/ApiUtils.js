@@ -102,8 +102,8 @@ const AppUtils = {
       console.log("error", error);
     });
   },
-  getSpecialties: async function(data) {
-    return fetch("http://ajaypalsidhu.com/demo/HomeFit/api/api.php?action=specialities&id=18", {
+  getSpecialties: async function(id) {
+   return fetch(API_BASE_URL+"action=get_specialities&trainer_id="+id, {
       method: "Get"
     }).then((response) => {
       console.log("112233:  ", JSON.stringify(response))
@@ -114,27 +114,62 @@ const AppUtils = {
       console.log("error", error);
     });
   },
-  getAvailableSlots:async function (Id) {
-       return fetch(API_BASE_URL +"action=fetct_available_time_slots&id="+Id, {
-           method: "GET"
-       }).then((response) => {
-           return response.json();
-       }, function (error){
-           console.log("error", error);
-       }).catch((error) => {
-           console.log("error", error);
-       });
-   },
-   addCardDetails:async function (cardDetailsObject) {
-        return fetch(API_BASE_URL +"action=trainer_cards&primaryId="+cardDetailsObject.user_id+"&cardNumber="+cardDetailsObject.cardNumber+"&expiryDate="+cardDetailsObject.expiryDate+"&cvc="+cardDetailsObject.cvc+"&cardType="+cardDetailsObject.cardType+"&cardHolderName="+cardDetailsObject.cardHolderName+"&billingAddress="+cardDetailsObject.billingAddress+"&city="+cardDetailsObject.city+"&state="+cardDetailsObject.state+"&zipCode="+cardDetailsObject.zipCode, {
-            method: "POST"
-        }).then((response) => {
-            return response.json();
-        }, function (error){
-            console.log("error", error);
-        }).catch((error) => {
-            console.log("error", error);
-        });
-    }
+  getAvailableSlots: async function(Id) {
+    return fetch(API_BASE_URL + "action=fetct_available_time_slots&id=" + Id, {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  addCardDetails: async function(cardDetailsObject) {
+    return fetch(API_BASE_URL + "action=trainer_cards&primaryId=" + cardDetailsObject.user_id + "&cardNumber=" + cardDetailsObject.cardNumber + "&expiryDate=" + cardDetailsObject.expiryDate + "&cvc=" + cardDetailsObject.cvc + "&cardType=" + cardDetailsObject.cardType + "&cardHolderName=" + cardDetailsObject.cardHolderName + "&billingAddress=" + cardDetailsObject.billingAddress + "&city=" + cardDetailsObject.city + "&state=" + cardDetailsObject.state + "&zipCode=" + cardDetailsObject.zipCode, {
+      method: "POST"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  getTrainerList: async function() {
+    return fetch(API_BASE_URL + "action=get_trainers", {
+      method: "POST"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  getTrainersData: async function(trainerId) {
+    return fetch(API_BASE_URL + "action=trainer_detail&id=" + trainerId, {
+      method: "POST"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  addingSpecialities: async function(specialitiesData) {
+    // console.log("Specialties@@@@",specialitiesData.dataArray)
+    return fetch(API_BASE_URL + "action=save_specialities&id=" + specialitiesData.id + "&specialities=" + specialitiesData.dataArray, {
+      method: "POST"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+
 };
 export default AppUtils;

@@ -153,10 +153,10 @@ export default {
     alignItems: 'center',
     justifyContent: 'center'
   },
-  modalView:{
-     flex:1,
-     backgroundColor:'#000000c4',
-     justifyContent:'center',
-     alignItems:'center'
-   }
+  modalView: {
+    flex: 1,
+    backgroundColor: '#000000c4',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
 };

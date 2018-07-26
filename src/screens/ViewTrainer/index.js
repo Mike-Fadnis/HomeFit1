@@ -39,7 +39,9 @@ class ViewTrainer extends Component {
       showModal:false,
       spinner: false,
       afterBookSession: true,
-      trainersList: this.props.navigation.getParam("trainersList")
+      isLoading:true,
+      trainersList: this.props.navigation.getParam("trainersList"),
+      trainerData:{}
     }
     this.onModalOpen = this.onModalOpen.bind(this)
     this.onModalClose = this.onModalClose.bind(this)
@@ -160,7 +162,22 @@ class ViewTrainer extends Component {
  }
   componentWillMount(){
     console.log("ssssssssssssssss:  ", JSON.stringify(this.state.trainersList))
-    var Id="22";
+    this.getAvailableSlots()
+    this.getTrainersData()
+  }
+  getTrainersData(){
+    var Id=this.state.trainersList.item.id;
+    API.getTrainersData(Id).then(async (response) => {
+        this.setState({
+          isLoading:false,
+          trainerData:response.data
+        })
+     }).catch((error)=>{
+     this.setState({isLoading:false});
+     });
+  }
+  getAvailableSlots(){
+    var Id=this.state.trainersList.item.id;
      API.getAvailableSlots(Id).then(async (response) => {
        this.setState({
          slotsAlloted:response.data
@@ -174,7 +191,7 @@ class ViewTrainer extends Component {
        })
        this.setState({subdata:subdata})
         }).catch((error)=>{
-        this.setState({isLoading:false});
+          console.log(error)
         });
   }
   getNewResponse(){
@@ -222,15 +239,32 @@ class ViewTrainer extends Component {
       }
     })
   }
+  onBack(){
+    this.props.navigation.navigate("BrowseTrainers");
+  }
   render() {
+    if(this.state.trainerData.name != undefined){
+      var res =  this.state.trainerData.name.split(" ");
+    	var firstname = '';
+    	var lastname = '';
+    	if (res[1] === undefined) {
+    		firstname = res[0].charAt(0);
+    		lastname = '';
+    	} else {
+    		firstname = res[0].charAt(0);
+    		lastname = res[1].charAt(0);
+    	}
+    }else{
+      console.log("NAMING@@@@@: "+this.state.trainerData.name)
+    }
     return (
         <Container style={styles.container}>
           <Header style={styles.headerStyle}>
           <Left style={styles.ham}>
             <Button style={styles.ham}
               transparent
-              onPress={() => this.props.navigation.navigate("DrawerOpen")}>
-              <Icon name="ios-menu" style={{color: "white"}}/>
+              onPress={this.onBack.bind(this)}>
+              <Icon name="ios-arrow-back" style={{color: "white"}}/>
             </Button>
           </Left>
             <Body>
@@ -238,25 +272,20 @@ class ViewTrainer extends Component {
             </Body>
             <Right />
           </Header>
-          {this.state.spinner === true ? (
+          {this.state.isLoading === true ? (
+            <View style={styles.container_spinner}>
               <View style={styles.spinnerView}>
-                <Spinner color={"black"} style={styles.spinnerPosition} />
+                <Spinner size="large" color="black"/>
               </View>
+            </View>
             ):(
               <Content style={styles.content}>
                 <View style={styles.nameContainer}>
-                  <Text style={styles.name}>{this.state.trainersList.name}</Text>
+                  <Text style={styles.name}>{this.state.trainerData.name}</Text>
                 </View>
-                <CardSection style={styles.singleImageContainer}>
-                  <View style={styles.imageBig}>
-                    <Image style={{ height : 150, width : 175}}
-                      source={{uri : 'https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg'}} />
-                    </View>
-                  <View style={styles.imageBig}>
-                    <Image style={{ height : 150, width : 175}}
-                      source={{uri : 'https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg'}} />
-                  </View>
-                </CardSection>
+                <View style={styles.imageView}>
+                {this.state.trainerData.image === "" ? (<View style={styles.imageContainer}><Text style={styles.imageEmptyText}>{firstname.toUpperCase()}{lastname.toUpperCase()}</Text></View>):(<Image style={styles.trainerImage} source={{uri : 'https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg'}} />)}
+                </View>
                 <CardSection style={styles.singleImageContainer}>
                   <View style={styles.imageBig}>
                     <Image style={{ height : 150, width : 115 }}
@@ -285,7 +314,7 @@ class ViewTrainer extends Component {
                   </CardSection>
                 </Card>
                 <View style={styles.bioContainer}>
-                  <Text style={styles.bio}>{this.state.trainersList.text}</Text>
+                  <Text style={styles.bio}>{this.state.trainerData.review}</Text>
                 </View>
                 <View style={styles.calendarContainer}>
                 <Text style={styles.specialityTitle}>Available Slots :</Text>
@@ -345,6 +374,13 @@ class ViewTrainer extends Component {
                </Modal>
               </Content>
           )}
+          {this.state.spinner === true ? (
+                     <View style={styles.container_spinner}>
+                       <View style={styles.spinnerView}>
+                         <Spinner size="large" color="black"/>
+                       </View>
+                     </View>
+                   ) : null}
       </Container>
     );
   }

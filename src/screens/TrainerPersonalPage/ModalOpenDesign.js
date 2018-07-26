@@ -26,6 +26,7 @@ export default class ModalOpenDesign extends Component {
   }
   componentWillMount() {
   console.log("SELECTED_DATE",this.props.selectedDate)
+  console.log("SELECTED_TIMES",this.props.selectedTimes)
     selectedTime = []
     var times = []
     var periods = ['AM', 'PM']
@@ -52,44 +53,70 @@ export default class ModalOpenDesign extends Component {
             ' ' +
             periods[prop]
 
-        times.push(rec)
+        times.push(rec);
       }
     }
     this.setState({ timesData: times, selectedTime: [] }, () => {
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(this.state.timesData)
-      })
-    })
+      if (this.props.selectedTimes) {
+        this.props.selectedTimes.map((res,i)=>{
+          var record = {date:this.props.selectedDate,time:res.time}
+          this.state.selectedTime.push(record);
+        });
+      }
+    });
+  }
+  componentWillReceiveProps(newProps){
+    console.log("newprops",newProps)
   }
   onDatePressed(item) {
     let count = 0
     var record = {date:this.props.selectedDate,time:item.item}
      if (this.state.selectedTime.length === 0) {
        this.state.selectedTime.push(record)
+       console.log("comparism",  this.state.selectedTime)
      } else {
        this.state.selectedTime.map((res, i) => {
-         console.log("comparism", item , "    ",res)
          if (item.item === res.time) {
-           this.state.selectedTime.splice(i, 1)
-           count++
+            //
+             count++;
+             Alert.alert(
+              'Home FIt',
+              'Do you want to remove this Time slot ?',
+              [
+                {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                {text: 'YES', onPress: () =>{
+                   this.state.selectedTime.splice(i, 1);
+                   this.setState({selectedTime: this.state.selectedTime})
+                }},
+              ],
+              { cancelable: false }
+            )
          }
        })
        if (count === 0) {
-         this.state.selectedTime.push(record)
-       }
+          console.log("count ++000")
+          this.state.selectedTime.push(record);
+        }else{
+          console.log("count ++000")
+        }
      }
      this.setState({
        selectedTime: this.state.selectedTime
      })
   }
   onPropsModalClose() {
-    this.props.onClose()
+    this.props.onClose(this.state.selectedTime)
   }
   onPropsModalDone() {
     if (this.state.selectedTime.length > 0) {
       this.props.getDataObj(this.state.selectedTime)
     } else {
-      alert('please select atleast one time slot')
+      Alert.alert("Home Fit","You Did not select any timeslot do you want to close ?",[
+       {text: "NO", onPress: () => console.log("Cancel Pressed")},
+       {text: "YES", onPress: () =>{
+         this.props.onRemoveTimeSlots(this.props.selectedDate)
+       }},
+     ])
     }
   }
   renderData(item) {
@@ -142,8 +169,10 @@ export default class ModalOpenDesign extends Component {
         <View style={{ flex: 1 }}>
           <FlatList
             data={this.state.timesData}
+            removeClippedSubviews={true}
             renderItem={this.renderData.bind(this)}
             extraData={this.state}
+            keyExtractor={(item, index) => item + index}
           />
         </View>
       </View>

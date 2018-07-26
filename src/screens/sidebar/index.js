@@ -72,7 +72,7 @@ const dataUser = [
 ];
 
 
-const dataTrainer = [  
+const dataTrainer = [
   {
     name: "Profile",
     route: "TrainerPersonalPage",
@@ -93,7 +93,7 @@ const dataTrainer = [
   },
   {
     name: "Billing Information",
-  //  route: "OnlineStore",
+    route: "TrainerFinancialDetails",
     icon: "navigate",
     bg: "#BE6F50"
   },
@@ -203,11 +203,28 @@ class SideBar extends Component {
   componentWillReceiveProps(newProps){
     this.fetchData();
   }
+  onLogoutOk(){
+    AsyncStorage.removeItem('@getUserData:key')
+    AsyncStorage.removeItem('@getUserType:key')
+    this.props.navigation.navigate("Landing")
+  }
   onClicking(data){
     if(data.name === "Logout"){
-      AsyncStorage.removeItem('@getUserData:key')
-      AsyncStorage.removeItem('@getUserType:key')
-      this.props.navigation.navigate("Landing")
+      Alert.alert(
+        "Log-Out",
+        "Are you sure you want to Log-out ?", [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed")
+          },
+          {
+            text: "OK",
+            onPress: () => this.onLogoutOk()
+          },
+        ], {
+          cancelable: false
+        }
+      );
     }else{
       if(data.route){
         this.props.navigation.navigate(data.route)

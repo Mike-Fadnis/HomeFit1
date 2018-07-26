@@ -22,12 +22,11 @@ import styles from "./styles";
 class TrainerFinancialDetails extends Component {
   render() {
     return (
-      <ScrollView>
       <Container style={styles.container}>
          <Header style={styles.headerStyle}>
           <Left style={styles.ham}>
-            <Button transparent onPress={() => this.props.navigation.goBack()}>
-                <Icon style={{color: "white"}} name="ios-arrow-back" />
+            <Button transparent onPress={() => this.props.navigation.navigate("DrawerOpen")}>
+              <Icon name="ios-menu" style={{color: "white"}}/>
             </Button>
           </Left>
           <Body>
@@ -40,13 +39,13 @@ class TrainerFinancialDetails extends Component {
         <TouchableOpacity>
           <Text style={styles.titleText}>Please provide billing info : </Text>
           <Text style={styles.subTitleText}>
-            ( Please provide your debit card/billing information where the 
+            ( Please provide your debit card/billing information where the
             payments can be sent to. )
           </Text>
           <View style={styles.imputBoxContainer}>
             <Form>
               <Text style={styles.billingAddressTitle}>
-                Billing address : 
+                Billing address :
               </Text>
               <Item fixedLabel>
                 <Label>Address</Label>
@@ -64,7 +63,7 @@ class TrainerFinancialDetails extends Component {
                 <Label>Zip</Label>
                 <Input />
               </Item>
-              
+
               <Text style={styles.billingAddressTitle}>Card Info : </Text>
               <Item fixedLabel>
                 <Label>Card Number</Label>
@@ -88,23 +87,16 @@ class TrainerFinancialDetails extends Component {
                 <Label>Routing Number</Label>
                 <Input />
               </Item>
-              
+
               <Button block
-                onPress={() => this.props.navigation.navigate("TrainerPersonalPage")} 
                 style={{ marginBottom : 20, backgroundColor :  "#009FDB" }}>
-                <Text>Next</Text>
-              </Button>
-              <Button block light
-                onPress={() => this.props.navigation.navigate("TrainerPersonalPage")}>
-                <Text>Skip For Now</Text>
+                <Text>Done</Text>
               </Button>
             </Form>
           </View>
         </TouchableOpacity>
         </Content>
-
       </Container>
-      </ScrollView>
     );
   }
 }

@@ -46,7 +46,7 @@ class TrainerLogin extends Component {
      return email.test(Email)
    }
   onLogin(){
-        dismissKeyboard();
+      dismissKeyboard();
       if(this.state.email === ""|| this.state.email=== null){
         Alert.alert('Email','Email should not be empty')
       }
@@ -57,42 +57,39 @@ class TrainerLogin extends Component {
           Alert.alert('Password','Password should not be empty')
         }
        else{
-         this.setState({
-           spinner:true
-         })
-    AsyncStorage.getItem('@token:key', (err, token) => {
+        this.setState({spinner:true})
+        AsyncStorage.getItem('@token:key', (err, token) => {
         let getToken = JSON.parse(token)
-           var login={
-               email:this.state.email,
-               password:this.state.password,
-               deviceType:getToken === null? "":getToken.os,
-               deviceToken:getToken === null? "":getToken.token
-           }
-           API.trainerLogin(login).then(async (response) => {
-              // alert(JSON.stringify(response))
-             if(response.status === true){
-             console.log("TRAINERUSERDTAAAA!@@@@: ", response)
-               this.setState({
+        var login={
+         email:this.state.email,
+         password:this.state.password,
+         deviceType:getToken === null? "":getToken.os,
+         deviceToken:getToken === null? "":getToken.token
+        }
+        API.trainerLogin(login).then(async (response) => {
+           if(response.status === true){
+            console.log("TRAINERUSERDTAAAA!@@@@: ", response)
+              this.setState({
                  userData:response.data,
                  spinner:false
                },()=>{
                  var getUserData = this.state.userData
-                 AsyncStorage.setItem('@getUserType:key', "Trainer")
+                  AsyncStorage.setItem('@getUserType:key', "Trainer")
                   AsyncStorage.setItem('@getUserData:key', JSON.stringify(getUserData))
-                 this.props.navigation.navigate("TrainerPersonalPage")
-               })
-             }else{
-               this.setState({
-                 spinner:false
-               },()=>{
-                 Alert.alert(response.message,"")
-               })
-             }
-           }).catch((error)=>{
-           this.setState({spinner:false})
-             console.log("Console Error",error);
-           });
-          }).done()
+                  this.props.navigation.navigate("TrainerPersonalPage")
+                })
+           }else{
+             this.setState({
+               spinner:false
+             },()=>{
+               Alert.alert(response.message,"")
+             })
+           }
+         }).catch((error)=>{
+         this.setState({spinner:false})
+           console.log("Console Error",error);
+         });
+        }).done()
        }
     }
   render() {

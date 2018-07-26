@@ -1,6 +1,7 @@
 import {
   Dimensions
 } from 'react-native';
+import colors from "@colors/myColor";
 const window = Dimensions.get('window');
 export default {
   container: {
@@ -34,11 +35,13 @@ export default {
   },
   singleImageContainer: {
     //alignSelf : 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    marginTop:10
   },
   imageBig: {
-    marginLeft: 5
+    marginLeft: 5,
+    marginTop:10
   },
   specialityTitle: {
     marginTop: 10,
@@ -115,7 +118,7 @@ export default {
     alignItems: "center",
     justifyContent: "center"
   },
-  spinnerView: {
+  spinner_View: {
     alignSelf: 'center',
     justifyContent: 'center'
   },
@@ -128,5 +131,36 @@ export default {
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.2)',
     justifyContent: 'center',
+  },
+  container_spinner: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.2)'
+  },
+  spinnerView: {
+    height: window.width / 3,
+    width: window.width / 3,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  imageContainer:{height:window.width / 4, width:window.width / 4, backgroundColor:colors.blue, marginLeft:5, alignItems:'center', justifyContent:'center', borderRadius:window.width/2},
+  trainerImage: {
+    justifyContent:'center'
+  },
+  imageView:{
+    alignItems:'center',
+    margin:10
+  },
+  imageEmptyText:{
+    fontSize:20,
+    fontWeight:'800',
+    color:'white'
   }
 };
