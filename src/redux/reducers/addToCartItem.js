@@ -6,7 +6,6 @@ const cart = {
     totalPrice: 0
 };
 const compareCartItem = (cartItem, action) => {
-
     return cartItem.id === action.product.id && cartItem.size_id === action.product.size_id && cartItem.flavour_id === action.product.flavour_id ;
 };
 export default function addTocart(state = cart, action) {

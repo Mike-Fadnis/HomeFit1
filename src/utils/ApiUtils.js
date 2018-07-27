@@ -102,11 +102,22 @@ const AppUtils = {
       console.log("error", error);
     });
   },
-  getSpecialties: async function(id) {
-   return fetch(API_BASE_URL+"action=get_specialities&trainer_id="+id, {
-      method: "Get"
+  getAllSpecialties: async function() {    
+    return fetch(API_BASE_URL + "action=get_all_specialities", {
+      method: "GET"
     }).then((response) => {
       console.log("112233:  ", JSON.stringify(response))
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  getSpecialitiesById: async function(id) {
+    return fetch(API_BASE_URL + "action=get_specialities&trainer_id=" + id, {
+      method: "GET"
+    }).then((response) => {
       return response.json();
     }, function(error) {
       console.log("error", error);
@@ -159,7 +170,6 @@ const AppUtils = {
     });
   },
   addingSpecialities: async function(specialitiesData) {
-    // console.log("Specialties@@@@",specialitiesData.dataArray)
     return fetch(API_BASE_URL + "action=save_specialities&id=" + specialitiesData.id + "&specialities=" + specialitiesData.dataArray, {
       method: "POST"
     }).then((response) => {

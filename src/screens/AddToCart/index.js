@@ -279,7 +279,7 @@ class Cart extends React.Component < Props, State > {
                 <Left style={styles.headerLeftStyle}>
                   <Button transparent onPress={this.onBackPressed.bind(this)}>
                       <Icon style={{color: "white"}} name="ios-arrow-back" />
-                  </Button>                  
+                  </Button>
                 </Left>
                 <Body>
                   <Title style={styles.title}>Cart</Title>
@@ -293,7 +293,7 @@ class Cart extends React.Component < Props, State > {
                     )}
                   </Button>
                 </Right>
-            </Header>
+              </Header>
 
             {this.state.cartItems === [] || this.state.cartItems.length === 0 ? (
                 <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>

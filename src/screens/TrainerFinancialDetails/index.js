@@ -25,8 +25,8 @@ class TrainerFinancialDetails extends Component {
       <Container style={styles.container}>
          <Header style={styles.headerStyle}>
           <Left style={styles.ham}>
-            <Button transparent onPress={() => this.props.navigation.navigate("DrawerOpen")}>
-              <Icon name="ios-menu" style={{color: "white"}}/>
+            <Button transparent onPress={() => this.props.navigation.navigate("TrainerPersonalPage")}>
+                <Icon name="ios-arrow-back" style={{color: "white"}}/>
             </Button>
           </Left>
           <Body>
