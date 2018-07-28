@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity,Alert,AsyncStorage,ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity,Alert,AsyncStorage,ActivityIndicator,TouchableWithoutFeedback } from 'react-native';
 import {Container,Header,Title,Content,Text,ListItem,CheckBox,Button,Icon,Footer,FooterTab,Left,Right,Body,Spinner} from "native-base";
 import { Input, Card, CardSection, ButtonTwo } from '../common';
 import dismissKeyboard from 'dismissKeyboard'
@@ -89,6 +89,7 @@ class ClientLogin extends Component {
 
   render() {
     return (
+      <TouchableWithoutFeedback onPress={() => dismissKeyboard()}>
         <View style={styles.container}>
           <View style={styles.title}>
             <Text style={styles.titleText}>Client Login</Text>
@@ -151,8 +152,8 @@ class ClientLogin extends Component {
         </View>
         ) : null}
         </View>
-
-      );
+      </TouchableWithoutFeedback>
+      )
   }
 }
 

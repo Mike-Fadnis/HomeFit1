@@ -9,7 +9,7 @@ import RNFetchBlob from 'rn-fetch-blob'
 
 import { ButtonTwo, Card, CardSection } from '../common';
 import ButtonOne from './ButtonOne';
-import ModalOpenDesign from './ModalOpenDesign'
+import CalendarModalOpenDesign from './CalendarModalOpenDesign'
 import styles from "./styles";
 import Images from "@theme/images/images";
 import API from "@utils/ApiUtils";
@@ -46,7 +46,8 @@ class TrainerPersonalPage extends Component {
   loading:false,
   userData: null,
   specialtiesDataById:[],
-  duplicateSpecialities:[]
+  duplicateSpecialities:[],
+  availableDatesss:[]
   }
   this.onModalOpen = this.onModalOpen.bind(this)
   this.onModalClose = this.onModalClose.bind(this)
@@ -61,34 +62,67 @@ async componentWillMount(){
         console.log("userData",get_user)
         this.setState({userData:get_user},()=>{
           this.getSpecialitiesById(this.state.userData.id);
+          this.getAvailableSlots()
         })
       }).done()
     }
   })
   this.getPushedSpecialityData();
 }
+getAvailableSlots(){
+  var Id = this.state.userData.id;
+   API.getAvailableSlots(Id).then(async (response) => {
+        console.log("Response",response.data)
+        var subdata = {};
+        if(response.status){
+          this.setState({
+            availableDatesss: response.data
+          })
+          response.data.map((res,i)=>{
+            var date = moment(res.date).format(_format);
+            subdata[date] = {selected: true};
+          })
+        this.setState({_markedDates:subdata})
+        }
+      }).catch((error)=>{
+        console.log(error)
+      });
+}
 onDaySelect = day => {
+  console.log("avaialbledtae",this.state.availableDatesss)
   const _selectedDay = moment(day.dateString).format(_format)
   this.setState({ _selectedDay: _selectedDay })
-  let count = 0
-  if (this.state.finalSelectedDates.length > 0) {
-    this.state.finalSelectedDates.map((res, i) => {
+  this.onModalOpen(true)
+  var times =[]
+  if (this.state.availableDatesss.length > 0) {
+
+    this.state.availableDatesss.map((res, i) => {
       if (res.date === _selectedDay) {
-      console.log('1456:  ', JSON.stringify(res.time))
-      this.setState({selectedTimes: res.time},()=>{
-        count = 0
-      })
-      count = 0
-      } else {
-        count = 0
+       times.push({"time":res.time_slot})
       }
     })
-    if(count === 0){
-    this.onModalOpen(true)
-    }
-  } else {
-    this.onModalOpen(true)
+    console.log("times",times)
+    this.setState({selectedTimes :times })
   }
+  // let count = 0
+  // if (this.state.finalSelectedDates.length > 0) {
+  //   this.state.finalSelectedDates.map((res, i) => {
+  //     if (res.date === _selectedDay) {
+  //     console.log('1456:  ', JSON.stringify(res.time))
+  //     this.setState({selectedTimes: res.time},()=>{
+  //       count = 0
+  //     })
+  //     count = 0
+  //     } else {
+  //       count = 0
+  //     }
+  //   })
+  // if (count === 0){
+  //     this.onModalOpen(true)
+  //   }
+  // } else {
+  //    this.onModalOpen(true)
+  // }
 }
 
 onModalOpen(visible) {
@@ -99,22 +133,26 @@ onModalClose() {
   this.setState({ selectedTimes:[],modalVisible: false })
 }
 getDataObj(getSelectedTime) {
-  var arr = [];
-  getSelectedTime.map((res,i)=>{
-    arr.push({"time": res.time})
-  })
-  var record = {"date":this.state._selectedDay,"time":arr}
-  this.state.getSelectedTime.push(record)
-  this.setState({ finalSelectedDates: this.state.getSelectedTime  }, () => {
-    var subdata = {};
-    this.state.finalSelectedDates.map((res,i)=>{
-      var date = moment(res.date).format(_format);
-      subdata[date] = {selected: true};
-    })
-    this.setState({_markedDates:subdata})
-    console.log("PICKED HOURS AND DATESdsdsdsd",this.state.finalSelectedDates)
-    this.setState({ selectedTimes:[],modalVisible: false })
-  })
+  this.setState({ modalVisible: false })
+  this.getAvailableSlots()
+  var subdata = {};
+  // getSelectedTime.map((res,i)=>{
+  //   var date = moment(res.date).format(_format);
+  //       subdata[date] = {selected: true};
+  //   })
+  //   this.setState({_markedDates:subdata})
+  // var arr = [];
+  // getSelectedTime.map((res,i)=>{
+  //   arr.push({"time": res.time})
+  // })
+  // var record = {"date":this.state._selectedDay,"time":arr}
+  // this.state.getSelectedTime.push(record)
+  // this.setState({ finalSelectedDates: this.state.getSelectedTime  }, () => {
+  //   var subdata = {};
+  //
+  //   console.log("PICKED HOURS AND DATESdsdsdsd",this.state.finalSelectedDates)
+  //   this.setState({ selectedTimes:[],modalVisible: false })
+  // })
 }
 selectPhotoTapped() {
   this.setState({spinner:true})
@@ -201,38 +239,6 @@ onSpecialtyPressed(){
 onSpecialtyModalClose(){
   this.setState({specialtyModal: false})
 }
-
-// getPushedSpecialityData(getSpecialtyData){
-//   var finalSelectedSpecialties = []
-//   this.setState({specialtyModal: false,selectedSpecialties:getSpecialtyData},()=>{
-//     if (this.state.selectedSpecialties != undefined){
-//       this.state.selectedSpecialties.map((res,i)=>{
-//         var rec = {id: res.id, trainerId: res.trainer_id, speciality: res.speciality}
-//         finalSelectedSpecialties.push(rec)
-//       })
-//       console.log("finaalllll:: ", JSON.stringify(finalSelectedSpecialties))
-//       this.addingSpecialities(finalSelectedSpecialties)
-//     }else {
-//       console.log("elseeeeee :  ",JSON.stringify(this.state.selectedSpecialties))
-//     }
-//   })
-// }
-// addingSpecialities(data){
-//   var array = JSON.stringify(data)
-//   var specialitiesData = {
-//     id:this.state.userData.id,
-//     dataArray:array
-//   }
-//   API.addingSpecialities(specialitiesData).then(async (response) => {
-//     if(response.status === true){
-//     Alert.alert(response.message,'')
-//     }else{
-//       this.setState({spinner: false})
-//       Alert.alert(response.message,'')
-//     }
-//   })
-// }
-
 getPushedSpecialityData(getSpecialtyData){
   var finalSelectedSpecialties = []
   this.setState({specialtyModal: false,selectedSpecialties:getSpecialtyData},()=>{
@@ -435,7 +441,7 @@ render() {
         </View>
        <View style={styles.onlineStore}>
           <View style={styles.buttonContainerStyle1}>
-              <ButtonTwo style={styles.buttonStyle} onPress={this.onAvailableDates}>
+              <ButtonTwo style={styles.buttonStyle}>
                   UPDATE AVAILABLE DATES
               </ButtonTwo>
             </View>
@@ -444,9 +450,10 @@ render() {
             animationType="slide"
             transparent={false}
             visible={this.state.modalVisible}>
-          <ModalOpenDesign
+          <CalendarModalOpenDesign
             onClose={this.onModalClose}
             getDataObj={this.getDataObj.bind(this)}
+            userData={this.state.userData}
             selectedTimes={this.state.selectedTimes}
             onRemoveTimeSlots={this.onRemoveTimeSlots.bind(this)}
             selectedDate={this.state._selectedDay}/>

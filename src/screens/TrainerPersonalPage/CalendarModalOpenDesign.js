@@ -11,10 +11,12 @@ import {
 } from 'react-native'
 import moment from 'moment'
 import Images from "@theme/images/images";
+import API from "@utils/ApiUtils";
 
 var rowData = []
 var selectedTime = []
-export default class ModalOpenDesign extends Component {
+
+export default class CalendarModalOpenDesign extends Component {
   constructor() {
     super()
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
@@ -25,8 +27,8 @@ export default class ModalOpenDesign extends Component {
     }
   }
   componentWillMount() {
-  console.log("SELECTED_DATE",this.props.selectedDate)
-  console.log("SELECTED_TIMES",this.props.selectedTimes)
+    console.log("SELECTED_DATE",this.props.selectedDate)
+    console.log("SELECTED_TIMES",this.props.selectedTimes)
     selectedTime = []
     var times = []
     var periods = ['AM', 'PM']
@@ -77,7 +79,6 @@ export default class ModalOpenDesign extends Component {
      } else {
        this.state.selectedTime.map((res, i) => {
          if (item.item === res.time) {
-            //
              count++;
              Alert.alert(
               'Home FIt',
@@ -96,6 +97,7 @@ export default class ModalOpenDesign extends Component {
        if (count === 0) {
           console.log("count ++000")
           this.state.selectedTime.push(record);
+          console.log("checkkkk selected:  ", JSON.stringify(this.state.selectedTime))
         }else{
           console.log("count ++000")
         }
@@ -108,8 +110,24 @@ export default class ModalOpenDesign extends Component {
     this.props.onClose(this.state.selectedTime)
   }
   onPropsModalDone() {
-    if (this.state.selectedTime.length > 0) {
-      this.props.getDataObj(this.state.selectedTime)
+    if (this.state.selectedTime.length > 0) {      
+      var availableDates = {
+        id:this.props.userData.id,
+        availableSlot:JSON.stringify(this.state.selectedTime)
+      }
+      API.availableDates(availableDates,this.props.selectedDate).then(async (response) => {
+        // console.log("getDataObjresponse",response)
+        if(response.status) {
+          // console.log("getDataObjresponse",response)
+          Alert.alert("HomeFit",response.message,[
+            {text: 'OK', onPress: () => this.props.getDataObj(this.state.selectedTime)},
+          ])
+        }else{
+          Alert.alert("HomeFit",response.message)
+        }}).catch((error)=>{
+       this.setState({spinner:false})
+       console.log("Console Error",error);
+     });
     } else {
       Alert.alert("Home Fit","You Did not select any timeslot do you want to close ?",[
        {text: "NO", onPress: () => console.log("Cancel Pressed")},

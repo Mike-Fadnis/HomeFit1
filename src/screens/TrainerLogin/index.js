@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity,AsyncStorage,ActivityIndicator,Alert } from 'react-native';
+import { View, TouchableOpacity,AsyncStorage,ActivityIndicator,Alert,TouchableWithoutFeedback } from 'react-native';
 import {
   Container,
   Header,
@@ -94,6 +94,7 @@ class TrainerLogin extends Component {
     }
   render() {
     return (
+        <TouchableWithoutFeedback onPress={() => dismissKeyboard()}>
         <View style={styles.container}>
           <View style={styles.title}>
             <Text style={styles.titleText}>Login</Text>
@@ -156,6 +157,7 @@ class TrainerLogin extends Component {
           </View>
           ) : null}
         </View>
+        </TouchableWithoutFeedback>
       );
   }
 }

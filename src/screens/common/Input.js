@@ -37,7 +37,7 @@ const styles=StyleSheet.create({
       paddingRight : 5,
       paddingLeft : 5,
       fontSize : 16,
-      lineHeight : 23,
+      //lineHeight : 23,
       flex  : 0.6,
 
     }

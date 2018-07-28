@@ -91,8 +91,8 @@ const AppUtils = {
       console.log("error", error);
     });
   },
-  availableDates: async function(dates) {
-    return fetch(API_BASE_URL + "action=save_tainer_dates&id=" + dates.id + "&date_time=" + dates.availableSlot, {
+  availableDates: async function(dates,date) {
+    return fetch(API_BASE_URL + "action=save_tainer_dates&id=" + dates.id + "&date="+date +"&date_time=" + dates.availableSlot, {
       method: "POST"
     }).then((response) => {
       return response.json();
@@ -102,7 +102,7 @@ const AppUtils = {
       console.log("error", error);
     });
   },
-  getAllSpecialties: async function() {    
+  getAllSpecialties: async function() {
     return fetch(API_BASE_URL + "action=get_all_specialities", {
       method: "GET"
     }).then((response) => {
