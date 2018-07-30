@@ -23,7 +23,7 @@ import {
 import { CreditCardInput } from "react-native-credit-card-input";
 import styles from './styles'
 import Images from "@theme/images/images";
-import API from "@utils/ApiUtils"; 
+import API from "@utils/ApiUtils";
 // var CryptoJS = require("crypto-js");
 
 var creditCardArray = [
@@ -236,9 +236,9 @@ class Payment extends Component {
     })
   }
   onBack(){
-    if(this.state.backFromPayment){
+    if (this.state.backFromPayment){
       this.props.navigation.navigate("TrainerPersonalPage")
-    }else{
+    } else {
        this.props.navigation.navigate("ViewTrainer")
     }
   }

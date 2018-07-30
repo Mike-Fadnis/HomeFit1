@@ -5,24 +5,19 @@ export default {
     backgroundColor: "#009FDB",
     flex: 1,
     justifyContent: 'center',
-   // alignItems: 'center',
-    //paddingLeft : 20
   },
   contentContainer : {
-    //marginTop : 50,
     marginLeft : 10,
     marginRight : 10
   },
   title : {
     paddingBottom : 20
-
   },
   titleText : {
     color : '#fff',
     fontSize : 24,
     textAlign : 'center',
-    fontWeight : 'bold',
-
+    fontWeight : 'bold'
   },
   imputBoxContainer : {
     paddingLeft : 10,
@@ -46,7 +41,15 @@ export default {
     bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor:'rgba(0,0,0,0.2)'
+    backgroundColor:'rgba(0,0,0,0.72)'
   },
-  spinnerView:{height:window.width/3, width:window.width/3, backgroundColor:'white', borderRadius:20, alignItems:'center', justifyContent:'center'}
+  spinnerView:{height:window.width/3, width:window.width/3, backgroundColor:'white', borderRadius:20, alignItems:'center', justifyContent:'center'},
+  inputContainer:{ marginBottom : 10 },
+  radioButtonContainerView:{  marginTop : 20, flexDirection:'row'},
+  radioButtonHeadingContainer:{flex:0.25,  alignItems:'flex-start', justifyContent:'center'},
+  textStyle:{color:'white',fontWeight:'600', fontSize:18},
+  radioButtonContainer:{flex:0.6,  alignItems:'flex-start',justifyContent:'center', marginTop:5},
+  lableStyle:{color:'white',marginRight: 10, fontWeight:'600', fontSize:18},
+  emptyView:{flex:0.15,  alignItems:'flex-start', justifyContent:'center'},
+  buttonView:{ paddingLeft : 10, paddingRight : 10, marginTop : 20}
 };

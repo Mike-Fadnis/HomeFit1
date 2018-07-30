@@ -1,7 +1,7 @@
 import {
   Dimensions
-} from 'react-native';
-const window = Dimensions.get('window');
+} from "react-native";
+const window = Dimensions.get("window");
 
 export default {
   container: {
@@ -11,33 +11,33 @@ export default {
     backgroundColor: "#009FDB",
   },
   title: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   ham: {
     backgroundColor: "#009FDB",
   },
   searchBar: {
-    backgroundColor: '#fff'
+    backgroundColor: "#fff"
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 150
   },
   cardTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5
   },
   card: {
     marginLeft: 10,
     marginRight: 10,
     marginTop: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     borderBottomWidth: 1,
-    backgroundColor: '#fff',
-    borderColor: '#ddd',
+    backgroundColor: "#fff",
+    borderColor: "#ddd",
     shadowOffset: {
       width: 0,
       height: 2
@@ -51,13 +51,13 @@ export default {
   },
   separator: {
     borderWidth: 1,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2
     },
     shadowOpacity: 0.1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     padding: 10,
     marginTop: 10,
   },
@@ -70,20 +70,20 @@ export default {
     justifyContent: "space-between",
     alignItems: "center",
     borderWidth: 1,
-    shadowColor: '#ccc',
+    shadowColor: "#ccc",
     shadowOffset: {
       width: 0,
       height: 2
     },
     shadowOpacity: 0.8,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     marginTop: 10
   },
   storeItems: {
-    backgroundColor: '#dce2ef',
-    alignItems: 'center',
+    backgroundColor: "#dce2ef",
+    alignItems: "center",
     borderWidth: 1,
-    borderColor: '#ccc'
+    borderColor: "#ccc"
   },
   storeProducts: {
     backgroundColor: "#FFFFFF",
@@ -91,7 +91,7 @@ export default {
     margin: 5,
     width: window.width / 2.15,
     borderWidth: 1,
-    borderColor: '#ccc'
+    borderColor: "#ccc"
   },
   productsHeader: {
     display: "flex",
@@ -102,7 +102,7 @@ export default {
   productCount: {
     marginLeft: 10,
     padding: 5,
-    backgroundColor: '#009FDB',
+    backgroundColor: "#009FDB",
     width: 30,
     display: "flex",
     justifyContent: "center",
@@ -148,7 +148,7 @@ export default {
     width: window.width / 1,
     margin: 5,
     borderWidth: 1,
-    borderColor: '#ccc'
+    borderColor: "#ccc"
   },
   colOneContent: {
     flex: 1,
@@ -178,7 +178,7 @@ export default {
     justifyContent: "center",
     alignItems: "center",
     padding: 5,
-    backgroundColor: '#009FDB'
+    backgroundColor: "#009FDB"
   },
   colOneImageView: {
     flex: 0.8,
@@ -189,7 +189,7 @@ export default {
     backgroundColor: "green"
   },
   colOneProductDescription: {
-    flex: 0.6,    
+    flex: 0.6,
     padding: 10
   },
   colOnetype: {
@@ -213,17 +213,17 @@ export default {
     lineHeight: 15
   },
   spinnerView: {
-    alignItems: 'center',
-    justifyContent: 'center'
+    alignItems: "center",
+    justifyContent: "center"
   },
   spinnerPosition: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    justifyContent: 'center',
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.72)",
+    justifyContent: "center",
   }
 };

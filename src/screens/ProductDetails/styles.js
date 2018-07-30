@@ -1,6 +1,8 @@
 import {
-  StyleSheet
+  StyleSheet,
+  Dimensions
 } from "react-native";
+const window = Dimensions.get("window");
 
 const styles: any = StyleSheet.create({
   container: {
@@ -187,7 +189,7 @@ const styles: any = StyleSheet.create({
     // display: "flex",
     flex:1,
     backgroundColor: "#5aaadf",
-    alignItems: "center",    
+    alignItems: "center",
     margin:1
   },
   addCartButton: {
@@ -237,6 +239,60 @@ const styles: any = StyleSheet.create({
     width: 20,
     height: 20
   },
+  storeProducts: {
+    backgroundColor: "#FFFFFF",
+    height: 290,
+    margin: 5,
+    width: window.width / 2.15,
+    borderWidth: 1,
+    borderColor: "#ccc"
+  },
+  productsHeader: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center"
+  },
+  productCount: {
+    marginLeft: 10,
+    padding: 5,
+    backgroundColor: '#009FDB',
+    width: 30,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  cardImage: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#C8C8C8",
+    minHeight: 130
+  },
+  cardContent: {
+    marginTop: 16,
+    paddingLeft: 10,
+    paddingRight: 10
+  },
+  container_spinner: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor:'rgba(0,0,0,0.72)'
+  },
+  spinnerView:{
+    height:window.width/3,
+    width:window.width/3,
+    backgroundColor:'white',
+    borderRadius:20,
+    alignItems:'center',
+    justifyContent:'center'
+  }
 });
 
 export default styles;

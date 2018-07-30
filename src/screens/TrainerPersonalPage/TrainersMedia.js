@@ -1,10 +1,12 @@
 import React ,{ Component } from "react";
 import { View ,Text,FlatList,Modal, TouchableOpacity,Alert,Platform, Image } from "react-native";
-var ImagePicker = require('react-native-image-picker');
-import RNThumbnail from 'react-native-thumbnail';
+var ImagePicker = require("react-native-image-picker");
+import RNThumbnail from "react-native-thumbnail";
+import API from "@utils/ApiUtils";
 import Images from "@theme/images/images";
 import VideoPlayer from "./VideoPlayer";
 import styles from "./styles";
+
 const data = []
 class TrainersMedia extends Component{
   constructor(props){
@@ -14,13 +16,25 @@ class TrainersMedia extends Component{
       MediaData:[],
       videoavatarSource:"",
       modalVisible:false,
-      videoUrl:'',
+      videoUrl:"",
       isModalVisible:false,
+      charges:""
     };
     this.onAddMedia = this.onAddMedia.bind(this);
     this.renderItem = this.renderItem.bind(this);
     this.onVideoIcon = this.onVideoIcon.bind(this);
     this.onModalClose = this.onModalClose.bind(this);
+  }
+  componentWillMount(){
+    this.fetchVideoUploadCharges()
+  }
+  fetchVideoUploadCharges(){
+    API.getVideoUploadCharges().then(async (response) => {
+        this.setState({
+          isLoading:false,
+          charges:response.data.charges
+        })
+     })
   }
 
   onVideoIcon(item){
@@ -215,7 +229,7 @@ class TrainersMedia extends Component{
                <View style={{width: 300, alignSelf:"center", marginTop:window.height/3,height: 120,backgroundColor:"white",borderWidth:1,borderColor:"white",borderRadius:10}}>
 
                  <View style={{flex:0.5,justifyContent:"center",alignItems:"center",margin:10}}>
-                   <Text style={{textAlign:"center",fontSize:16,fontWeight:"700"}}>Do you want to pay  $1.00 to upload this video?</Text>
+                   <Text style={{textAlign:"center",fontSize:16,fontWeight:"700"}}>Do you want to pay  $ {this.state.charges} to upload this video?</Text>
                  </View>
 
                  <View style={{flex:0.5,marginBottom:10,flexDirection:"row"}}>

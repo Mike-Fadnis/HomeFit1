@@ -6,21 +6,17 @@ import {
   Container,
   Header,
   Title,
-  Content,
   Icon,
   Button,
-  Footer,
-  FooterTab,
   Left,
   Right,
   Body
 } from "native-base";
-//import BrowseTrainers from '../BrowseTrainers';
 import styles from "./styles";
 
 class ClientHome extends Component {
   render(){
-      return(
+      return (
         <Container style={styles.container}>
             <Header style={styles.headerStyle}>
           <Left style={styles.ham}>
@@ -50,11 +46,17 @@ class ClientHome extends Component {
                    </Text>
                </View>
                <View style={styles.browseTrainersContainer}>
-                   <View style={styles.buttonContainerStyle}>
-                       <ButtonThree onPress={() => this.props.navigation.navigate("BrowseTrainers")}
+                  <View style={styles.buttonContainerStyle}>
+                       <ButtonThree onPress={() => this.props.navigation.navigate("FeaturedTrainers")}
                         style={styles.buttonStyle}>
-                           View Our Personal Trainers
+                           View Our Featured Trainers
                        </ButtonThree>
+                   </View>
+                   <View style={[styles.buttonContainerStyle,{marginTop:5}]}>
+                     <ButtonThree onPress={() => this.props.navigation.navigate("BrowseTrainers")}
+                      style={styles.buttonStyle}>
+                         View Our Personal Trainers
+                     </ButtonThree>
                    </View>
                     <View style={styles.trainerSliderStyle}>
                        <ImageSlider autoPlayWithInterval={2500}
@@ -88,7 +90,7 @@ class ClientHome extends Component {
                <View style={styles.onlineStore}>
                    <View style={styles.buttonContainerStyle1}>
                        <ButtonThree style={styles.buttonStyle}
-                        onPress={() => this.props.navigation.navigate("OnlineStore")}>
+                        onPress={() => this.props.navigation.navigate("OnlineStore",{forBack:true})}>
                            ORDER ONLINE
                        </ButtonThree>
                    </View>

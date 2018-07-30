@@ -4,17 +4,15 @@ import {
   View,
   Alert,
   TouchableOpacity,
-  Modal,
   ListView,
   FlatList,
   Image
 } from 'react-native'
-import moment from 'moment'
+// import moment from "moment"
 import Images from "@theme/images/images";
 import API from "@utils/ApiUtils";
 
-var rowData = []
-var selectedTime = []
+var selectedTime = [];
 
 export default class CalendarModalOpenDesign extends Component {
   constructor() {
@@ -110,7 +108,7 @@ export default class CalendarModalOpenDesign extends Component {
     this.props.onClose(this.state.selectedTime)
   }
   onPropsModalDone() {
-    if (this.state.selectedTime.length > 0) {      
+    if (this.state.selectedTime.length > 0) {
       var availableDates = {
         id:this.props.userData.id,
         availableSlot:JSON.stringify(this.state.selectedTime)

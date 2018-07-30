@@ -1,125 +1,121 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity,AsyncStorage,Alert,ActivityIndicator,TouchableWithoutFeedback } from 'react-native';
-import {
-  Container,
-  Header,
-  Title,
-  Content,
-  Text,
-  ListItem,
-  CheckBox,
-  Button,
-  Icon,
-  Footer,
-  FooterTab,
-  Left,
-  Right,
-  Body,
-  Spinner
-} from "native-base";
-
-import { Input, Card, CardSection, ButtonTwo } from '../common';
+import { View,Text,TouchableOpacity,AsyncStorage,Alert,ActivityIndicator,TouchableWithoutFeedback } from "react-native";
+import { Button } from "native-base";
+import { Input,CardSection } from "../common";
 import API from "@utils/ApiUtils";
 import styles from "./styles";
-var dismissKeyboard = require('dismissKeyboard');
+var dismissKeyboard = require("dismissKeyboard");
+import RadioForm from "react-native-simple-radio-button";
+
+var radio_props = [
+ {label: "Male", value: 0 },
+ {label: "Female", value: 1 }
+];
 
 class TrainerSignUp extends Component {
   constructor(props){
    super(props);
-   this.state={
-      name:'',
-      email:'',
-      password:'',
-      confirmPassword:'',
-      spinner:false
-   }
+   this.state = {
+      name:"",
+      email:"",
+      password:"",
+      confirmPassword:"",
+      spinner:false,
+      radioButton:0
+   };
  }
  onChangeName(text){
    this.setState({
      name:text
-   })
+   });
  }
  onChangeEmail(text){
    this.setState({
      email:text
-   })
+   });
  }
  onChangePassword(text){
    this.setState({
      password:text
-   })
+   });
  }
  onChangeConfirmPassword(text){
    this.setState({
      confirmPassword:text
-   })
+   });
  }
  validEmail = Email => {
-    var email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/
-    return email.test(Email)
+    var email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    return email.test(Email);
   }
+  onRadioFormPressed(value){
+   this.setState({
+     radioButton: value
+   });
+ }
  onRegister(){
       dismissKeyboard();
-      if(this.state.name === "" || this.state.name === null){
-        Alert.alert('Name','Name should not be empty')
+      if (this.state.name === "" || this.state.name === null){
+        Alert.alert("Name","Name should not be empty");
       }
-      else if(this.state.email === "" || this.state.email === null){
-        Alert.alert('Email','Email should not be empty')
+      else if (this.state.email === "" || this.state.email === null){
+        Alert.alert("Email","Email should not be empty");
       }
-      else if(!this.validEmail(this.state.email)) {
-        Alert.alert('Email','Please enter correct Email-id')
+      else if (!this.validEmail(this.state.email)) {
+        Alert.alert("Email","Please enter correct Email-id");
       }
-      else if(this.state.password === "" || this.state.password === null){
-        Alert.alert('Password','Password should not be empty')
+      else if (this.state.password === "" || this.state.password === null){
+        Alert.alert("Password","Password should not be empty");
       }
-      else if(this.state.confirmPassword === "" || this.state.confirmPassword === null){
-        Alert.alert('Verify Password','Verify password should not be empty')
+      else if (this.state.confirmPassword === "" || this.state.confirmPassword === null){
+        Alert.alert("Verify Password","Verify password should not be empty");
       }
-      else if(this.state.password != this.state.confirmPassword){
-        Alert.alert('Password',"Password and Confirm Password fields do not match")
+      else if (this.state.password != this.state.confirmPassword){
+        Alert.alert("Password","Password and Confirm Password fields do not match");
       }
-      else{
+      else {
         this.setState({
           spinner:true
-        })
-        var getToken = {}
-            AsyncStorage.getItem('@token:key', (err, token) => {
-              let getToken = JSON.parse(token)
+        });
+        var getToken = {};
+            AsyncStorage.getItem("@token:key", (err, token) => {
+              let getToken = JSON.parse(token);
                 // alert("token@@@@@@ "+JSON.stringify(getToken))
-                var signUp={
+                var signUp = {
                   name:this.state.name,
                   email:this.state.email,
                   password:this.state.password,
-                  deviceType:getToken === null? "":getToken.os,
-                  deviceToken:getToken === null? "":getToken.token
-                  }
+                  deviceType:getToken === null ? "" : getToken.os,
+                  deviceToken:getToken === null ? "" : getToken.token,
+                  gender:this.state.radioButton
+                  };
                   API.trainerSignUp(signUp).then(async (response) => {
-                    if(response.status === true){
-                    console.log("USERDTAAAA!@@@@: ", response)
+                    if (response.status === true){
+                    console.log("USERDTAAAA!@@@@: ", response);
                       this.setState({
                         userData:response.data,
                         spinner:false
                       },()=>{
-                        var getUserData = this.state.userData
-                        AsyncStorage.setItem('@getUserType:key', "Trainer")
-                        AsyncStorage.setItem('@getUserData:key', JSON.stringify(getUserData))
-                        this.props.navigation.navigate("TrainerPersonalPage")
-                      })
-                    }else{
+                        var getUserData = this.state.userData;
+                        AsyncStorage.setItem("@getUserType:key", "Trainer");
+                        AsyncStorage.setItem("@getUserData:key", JSON.stringify(getUserData));
+                        this.props.navigation.navigate("TrainerPersonalPage");
+                      });
+                    } else {
                       this.setState({
                         spinner:false
                       },()=>{
-                          Alert.alert(response.message,"")
-                      })
+                          Alert.alert(response.message,"");
+                      });
 
                     }
                   }).catch((error)=>{
                     this.setState({
                       spinner:false
-                    })
+                    });
 
                   });
-             }).done()
+             }).done();
       }
    // this.props.navigation.navigate("TrainerHome")
  }
@@ -178,7 +174,31 @@ class TrainerSignUp extends Component {
              />
            </CardSection>
          </View>
+        <View style={styles.radioButtonContainerView}>
+          <View style={styles.radioButtonHeadingContainer}>
+            <Text style={styles.textStyle}> Gender: </Text>
+          </View>
+          <View style={styles.radioButtonContainer}>
+            <RadioForm
+              radio_props={radio_props}
+              initial={0}
+              labelColor={"white"}
+              buttonColor={"white"}
+              selectedButtonColor={"white"}
+              buttonInnerColor={"white"}
+              buttonOuterColor={"white"}
+              buttonSize={15}
+              buttonOuterSize={25}
+              borderWidth={0.5}
+              onPress={this.onRadioFormPressed.bind(this)}
+              formHorizontal={true}
+              labelStyle={styles.lableStyle}
+              animation={false}
+            />
+          </View>
+          <View style={styles.emptyView}/>
         </View>
+      </View>
       <View style={{ paddingLeft : 10, paddingRight : 10, marginTop : 20}}>
         <Button block light
           onPress={this.onRegister.bind(this)}>

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, ScrollView, Image ,Modal, TouchableOpacity,AsyncStorage} from 'react-native';
+import { View, Image ,Modal, TouchableOpacity,AsyncStorage, Alert} from "react-native";
 import {
   Container,
   Header,
@@ -13,22 +13,22 @@ import {
   Right,
   Body
 } from "native-base";
-import { Calendar } from 'react-native-calendars';
-import { Card, CardSection } from '../common';
+import { Calendar } from "react-native-calendars";
+import { Card, CardSection } from "../common";
 import styles from "./styles";
-import moment from 'moment';
+import moment from "moment";
 import API from "@utils/ApiUtils";
-const _format = 'YYYY-MM-DD';
+const _format = "YYYY-MM-DD";
 import ModalDesign from "./ModalDesign";
 
 class ViewTrainer extends Component {
   initialState = {}
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       _markedDates: this.initialState,
       getSelectedTime: [],
-      _selectedDay: '',
+      _selectedDay: "",
       modalVisible: false,
       finalSelectedDates: [],
       slotsAlloted:[],
@@ -38,39 +38,49 @@ class ViewTrainer extends Component {
       getSelectedTimedata:[],
       showModal:false,
       spinner: false,
+      availableslotsspinner:true,
       afterBookSession: true,
       isLoading:true,
       trainersList: this.props.navigation.getParam("trainersList"),
-      trainerData:{}
-    }
-    this.onModalOpen = this.onModalOpen.bind(this)
-    this.onModalClose = this.onModalClose.bind(this)
+      trainerData:{},
+      noslots:false,
+      keyValue: this.props.navigation.getParam("keyValue")
+    };
+    this.onModalOpen = this.onModalOpen.bind(this);
+    this.onModalClose = this.onModalClose.bind(this);
     this.onShowModalClose = this.onShowModalClose.bind(this);
-    this.onShowModalContinue = this.onShowModalContinue.bind(this)
-    this.onBookSessionPressed = this.onBookSessionPressed.bind(this)
+    this.onShowModalContinue = this.onShowModalContinue.bind(this);
+    this.onBookSessionPressed = this.onBookSessionPressed.bind(this);
+  }
+  componentWillMount(){
+    this.getAvailableSlots();
+    this.getTrainersData();
   }
   onDaySelect = day => {
-    this.setState({spinner: true})
+    this.setState({spinner: true});
     AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
-      var showUserData = JSON.parse(getUserData)
+      var showUserData = JSON.parse(getUserData);
+      if (err) {
+        Alert.alert("","Can't get data");
+      }
       if (showUserData === null){
-        this.setState({spinner: false})
-        this.props.navigation.navigate("ClientLogin",{afterBookSession : this.state.afterBookSession })
-      }else{
-        const _selectedDay = moment(day.dateString).format(_format)
-        this.setState({ _selectedDay: _selectedDay })
+        this.setState({spinner: false});
+        this.props.navigation.navigate("ClientLogin",{afterBookSession : this.state.afterBookSession });
+      } else {
+        const _selectedDay = moment(day.dateString).format(_format);
+        this.setState({ _selectedDay: _selectedDay });
         let selected = true;
-        let markedDates = {}
+        let markedDates = {};
         if (this.state._markedDates[_selectedDay]) {
           selected = !this.state._markedDates[_selectedDay].selected;
-          markedDates = this.state._markedDates[_selectedDay]
+          markedDates = this.state._markedDates[_selectedDay];
         }
-        markedDates = { ...markedDates, ...{ selected } }
+        markedDates = { ...markedDates, ...{ selected } };
         const updatedMarkedDates = {
           ...this.state._markedDates,
           ...{ [_selectedDay]: markedDates }
-        }
-        this.setState({ _markedDates: updatedMarkedDates })
+        };
+        this.setState({ _markedDates: updatedMarkedDates });
         if (this.state.finalSelectedDates.length > 0) {
           this.state.finalSelectedDates.map((res, i) => {
             if (res.date === _selectedDay) {
@@ -78,21 +88,19 @@ class ViewTrainer extends Component {
               this.state.finalSelectedDates.splice(i, 1);
               this.setState({
                 finalSelectedDates: this.state.finalSelectedDates
-              },()=>{
-               // alert('1456:kajkdklcfkadsjnk'+ JSON.stringify(this.state.finalSelectedDates))
               });
             } else {
-              this.setState({spinner: false})
+              this.setState({spinner: false});
               this.onModalOpen(true);
             }
           });
         } else {
-          this.setState({spinner: false})
+          this.setState({spinner: false});
           this.onModalOpen(true);
         }
 
       }
-    })
+    });
   }
   onShow(res){
     var self = this;
@@ -110,22 +118,20 @@ class ViewTrainer extends Component {
     });
   }
   onModalOpen(visible) {
-    this.setState({ modalVisible: visible })
+    this.setState({ modalVisible: visible });
   }
   onModalClose() {
-    this.setState({ modalVisible: false })
+    this.setState({ modalVisible: false });
   }
   getDataObj(getSelectedTime) {
      this.setState({ getSelectedTimedata:getSelectedTime,modalVisible:false},()=>{
-       this.setState({showModal: true})
-     })
+       this.setState({showModal: true});
+     });
   }
   onShowModalClose(){
      this.setState({
        showModal: false
-     },()=>{
-       console.log("getselected temas: ",this.state.finalSelectedDates)
-     })
+     });
   }
  onShowModalContinue(){
    this.setState({
@@ -158,40 +164,42 @@ class ViewTrainer extends Component {
        //     subdata:obj
        //   });
      });
-   })
+   });
  }
-  componentWillMount(){
-    console.log("ssssssssssssssss:  ", JSON.stringify(this.state.trainersList))
-    this.getAvailableSlots()
-    this.getTrainersData()
-  }
   getTrainersData(){
-    var Id=this.state.trainersList.item.id;
+    var Id = this.state.trainersList.item.id;
     API.getTrainersData(Id).then(async (response) => {
         this.setState({
           isLoading:false,
           trainerData:response.data
-        })
+        });
      }).catch((error)=>{
      this.setState({isLoading:false});
      });
   }
   getAvailableSlots(){
-    var Id=this.state.trainersList.item.id;
+    var Id = this.state.trainersList.item.id;
+      this.setState({
+      availableslotsspinner: true
+    });
      API.getAvailableSlots(Id).then(async (response) => {
-       this.setState({
-         slotsAlloted:response.data
-       },()=>{
-         this.getNewResponse()
-       })
-       var subdata = {};
-       response.data.map((res,i)=>{
-         var date = moment(res.date).format(_format);
-         subdata[date] = {selected: true};
-       })
-       this.setState({subdata:subdata})
+        if (response.status) {
+          this.setState({
+            slotsAlloted:response.data,
+          },()=>{
+            this.getNewResponse();
+          });
+          var subdata = {};
+          response.data.map((res,i)=>{
+            var date = moment(res.date).format(_format);
+            subdata[date] = {selected: true};
+          });
+          this.setState({subdata:subdata,availableslotsspinner:false});
+        } else {
+            this.setState({noslots:true,availableslotsspinner:false,noslotsText:response.message});
+        }
         }).catch((error)=>{
-          console.log(error)
+        Alert.alert("Error",error);
         });
   }
   getNewResponse(){
@@ -201,24 +209,24 @@ class ViewTrainer extends Component {
 		responseArray.map((res, key) => {
 			let date = res.date;
 			if (finalResponseArray.length === 0) {
-				let listArray = []
-				listArray.push({time_slot:res.time_slot})
-				var record = { id: res.id,date: date, time_slot: listArray }
+				let listArray = [];
+				listArray.push({time_slot:res.time_slot});
+				var record = { id: res.id,date: date, time_slot: listArray };
 				finalResponseArray.push(record);
 			} else {
 				finalResponseArray.map((finalres, index) => {
 					if (finalres.date === date) {
-						finalres.time_slot.push({time_slot:res.time_slot})
+						finalres.time_slot.push({time_slot:res.time_slot});
 						count++;
 					} else {
 						count = 0;
 					}
-				})
+				});
 				if (count === 0) {
 					let listArray = [];
 					listArray.push({time_slot:res.time_slot});
-					let record = { id: res.id,date: date, time_slot: listArray  };
-					finalResponseArray.push(record);
+					let rec = { id: res.id,date: date, time_slot: listArray  };
+					finalResponseArray.push(rec);
 				}
 			}
 		});
@@ -227,35 +235,40 @@ class ViewTrainer extends Component {
     });
   }
   onBookSessionPressed(){
-    this.setState({spinner: true})
+    this.setState({spinner: true});
     AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
-      var showUserData = JSON.parse(getUserData)
+      var showUserData = JSON.parse(getUserData);
+      if (err){
+        Alert.alert("","Can't get data");
+      }
       if (showUserData === null){
-        this.setState({spinner: false})
-        this.props.navigation.navigate("ClientLogin",{afterBookSession : this.state.afterBookSession })
-      } else{
-        this.setState({spinner: false})
+        this.setState({spinner: false});
+        this.props.navigation.navigate("ClientLogin",{afterBookSession : this.state.afterBookSession });
+      } else {
+        this.setState({spinner: false});
         this.props.navigation.navigate("Payment");
       }
-    })
+    });
   }
-  onBack(){
-    this.props.navigation.navigate("BrowseTrainers");
+   onBack(){
+    if (this.state.keyValue === true){
+      this.props.navigation.navigate("FeaturedTrainers");
+    } else if (this.state.keyValue === false){
+      this.props.navigation.navigate("BrowseTrainers");
+    }
   }
   render() {
-    if(this.state.trainerData.name != undefined){
+    if (this.state.trainerData.name !== undefined){
       var res =  this.state.trainerData.name.split(" ");
-    	var firstname = '';
-    	var lastname = '';
-    	if (res[1] === undefined) {
-    		firstname = res[0].charAt(0);
-    		lastname = '';
-    	} else {
-    		firstname = res[0].charAt(0);
-    		lastname = res[1].charAt(0);
-    	}
-    }else{
-      console.log("NAMING@@@@@: "+this.state.trainerData.name)
+      var firstname = "";
+      var lastname = "";
+      if (res[1] === undefined) {
+        firstname = res[0].charAt(0);
+        lastname = "";
+      } else {
+        firstname = res[0].charAt(0);
+        lastname = res[1].charAt(0);
+      }
     }
     return (
         <Container style={styles.container}>
@@ -278,26 +291,26 @@ class ViewTrainer extends Component {
                 <Spinner size="large" color="black"/>
               </View>
             </View>
-            ):(
+            ) : (
               <Content style={styles.content}>
                 <View style={styles.nameContainer}>
                   <Text style={styles.name}>{this.state.trainerData.name}</Text>
                 </View>
                 <View style={styles.imageView}>
-                {this.state.trainerData.image === "" ? (<View style={styles.imageContainer}><Text style={styles.imageEmptyText}>{firstname.toUpperCase()}{lastname.toUpperCase()}</Text></View>):(<Image style={styles.trainerImage} source={{uri : 'https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg'}} />)}
+                {this.state.trainerData.image === "" ? (<View style={styles.imageContainer}><Text style={styles.imageEmptyText}>{firstname.toUpperCase()}{lastname.toUpperCase()}</Text></View>) : (<Image style={styles.trainerImage} source={{uri : "https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg"}} />)}
                 </View>
                 <CardSection style={styles.singleImageContainer}>
                   <View style={styles.imageBig}>
                     <Image style={{ height : 150, width : 115 }}
-                      source={{uri : 'https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg'}} />
+                      source={{uri : "https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg"}} />
                     </View>
                   <View style={styles.imageBig}>
                     <Image style={{ height : 150, width : 115}}
-                      source={{uri : 'https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg'}} />
+                      source={{uri : "https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg"}} />
                   </View>
                   <View style={styles.imageBig}>
                     <Image style={{ height : 150, width : 115}}
-                      source={{uri : 'https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg'}} />
+                      source={{uri : "https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg"}} />
                   </View>
                 </CardSection>
 
@@ -318,11 +331,16 @@ class ViewTrainer extends Component {
                 </View>
                 <View style={styles.calendarContainer}>
                 <Text style={styles.specialityTitle}>Available Slots :</Text>
-                {Object.keys(this.state.subdata).length > 0 ? (
+                {this.state.availableslotsspinner ? (
+                  <Spinner color="black" />
+                ) :
+                 this.state.noslots ? (
+                    <Text style={{textAlign:"center",padding:10}}>{this.state.noslotsText}</Text>
+                 ) :
                   <Calendar
                     onDayPress={this.onDaySelect}
                     markedDates={this.state.subdata}/>
-                ) : <Spinner color="black" />}
+                }
                 </View>
                 <View style={{marginTop:10,alignSelf:"center"}}>
                   <Button full style={styles.bookSessionView} onPress={this.onBookSessionPressed}>
@@ -351,7 +369,7 @@ class ViewTrainer extends Component {
                  transparent={true}
                  visible={this.state.showModal}>
                  <View style={styles.modalView}>
-                   <View style={{width: 300, alignSelf:"center", marginTop:window.height/3,height: 120,backgroundColor:"white",borderWidth:1,borderColor:"white",borderRadius:10}}>
+                   <View style={{width: 300, alignSelf:"center", marginTop:window.height / 3,height: 120,backgroundColor:"white",borderWidth:1,borderColor:"white",borderRadius:10}}>
 
                      <View style={{flex:0.5,justifyContent:"center",alignItems:"center",margin:10}}>
                        <Text style={{textAlign:"center",fontSize:16,fontWeight:"700"}}>{"Do you want to book this Date and time ? It costs $1.00"}</Text>
@@ -360,12 +378,12 @@ class ViewTrainer extends Component {
                      <View style={{flex:0.5,marginBottom:10,flexDirection:"row"}}>
                       <View style={{flex:0.5,justifyContent:"center",alignItems:"center"}}>
                         <TouchableOpacity onPress={this.onShowModalContinue}>
-                           <Text style={{textAlign:"center",fontSize:18,fontWeight:"800", color:'#009FDB'}}>Continue</Text>
+                           <Text style={{textAlign:"center",fontSize:18,fontWeight:"800", color:"#009FDB"}}>Continue</Text>
                         </TouchableOpacity>
                       </View>
                       <View style={{flex:0.5,justifyContent:"center",alignItems:"center"}}>
                         <TouchableOpacity onPress={this.onShowModalClose}>
-                           <Text style={{textAlign:"center",fontSize:18,fontWeight:"800", color:'#009FDB'}}>Cancel</Text>
+                           <Text style={{textAlign:"center",fontSize:18,fontWeight:"800", color:"#009FDB"}}>Cancel</Text>
                         </TouchableOpacity>
                       </View>
                      </View>
@@ -375,12 +393,12 @@ class ViewTrainer extends Component {
               </Content>
           )}
           {this.state.spinner === true ? (
-                     <View style={styles.container_spinner}>
-                       <View style={styles.spinnerView}>
-                         <Spinner size="large" color="black"/>
-                       </View>
-                     </View>
-                   ) : null}
+           <View style={styles.container_spinner}>
+             <View style={styles.spinnerView}>
+               <Spinner size="large" color="black"/>
+             </View>
+           </View>
+         ) : null}
       </Container>
     );
   }

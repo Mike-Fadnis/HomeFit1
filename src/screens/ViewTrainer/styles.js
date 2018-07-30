@@ -129,7 +129,7 @@ export default {
     top: 0,
     bottom: 0,
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: 'rgba(0,0,0,0.72)',
     justifyContent: 'center',
   },
   container_spinner: {
@@ -140,7 +140,7 @@ export default {
     bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.2)'
+    backgroundColor: 'rgba(0,0,0,0.72)'
   },
   spinnerView: {
     height: window.width / 3,

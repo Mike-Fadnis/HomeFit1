@@ -8,7 +8,7 @@ import {
     },
     headerStyle: {
       backgroundColor: "#009FDB",
-      
+
     },
     title: {
       color: '#fff',
@@ -31,18 +31,18 @@ import {
       top: 0,
       bottom: 0,
       alignItems: 'center',
-      backgroundColor: 'rgba(0,0,0,0.2)',
+      backgroundColor: 'rgba(0,0,0,0.72)',
       justifyContent: 'center',
     },
     friendText : {
         color : '#fff',
         fontSize : 16
     },
-    friendsTextContainer : { 
+    friendsTextContainer : {
         borderWidth : 1,
             borderRadius : 2,
             borderColor : '#fff',
-            padding : 5, 
+            padding : 5,
     },
     subModalContainerView: {
       width: 300,
@@ -55,4 +55,3 @@ import {
       padding:10
     },
   };
-  

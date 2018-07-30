@@ -6,7 +6,7 @@ import { Col, Grid } from "react-native-easy-grid";
 
 import styles from "./styles";
 import API from "@utils/ApiUtils";
-import {IMAGE_PATH} from "@common/global";0
+import {IMAGE_PATH} from "@common/global";
 import Images from "@theme/images/images";
 
 class OnlineStore extends Component {
@@ -16,10 +16,11 @@ class OnlineStore extends Component {
       allProducts: [],
       onlineProductsArray: [],
       spinner:true,
-      backfromOnlinestore:this.props.navigation.getParam('backfromOnlinestore'),
-      onChangeColumn: false
+      fromTrainerPersonalPage:this.props.navigation.getParam("toOnlineStore"),
+      onChangeColumn: false,
+      fromClientHome:this.props.navigation.getParam("forBack")
     };
-    this.onGrid = this.onGrid.bind(this)
+    this.onGrid = this.onGrid.bind(this);
   }
   async componentWillMount(){
     API.getProducts().then(async (response) => {
@@ -29,30 +30,31 @@ class OnlineStore extends Component {
           spinner:false
         });
       } else {
-        this.setState({spinner:false})
+        this.setState({spinner:false});
         alert("Error getting product details | Check Network ");
       }
     }).catch((error)=> {
-      this.setState({spinner:false})
+      this.setState({spinner:false});
       console.log("Console Error", error);
     });
   }
 
   onBackPressed(){
-    //this.props.navigation.navigate("ClientHome");
-      if(this.state.backfromOnlinestore){
-        this.props.navigation.navigate("TrainerPersonalPage")
-      }else{
-        this.props.navigation.navigate("ClientHome")
-      }
+    if (this.state.fromTrainerPersonalPage){
+      this.props.navigation.navigate("TrainerPersonalPage");
+    } else if (this.state.fromTrainerPersonalPage){
+      this.props.navigation.navigate("ClientHome");
+    } else {
+      this.props.navigation.navigate("ClientHome");
     }
+  }
   onGrid(){
-    this.setState({onChangeColumn: !this.state.onChangeColumn})
+    this.setState({onChangeColumn: !this.state.onChangeColumn});
   }
   renderData = ({item, index}) => {
     return (
       this.state.onChangeColumn === true ? (
-        <TouchableOpacity  style={styles.colOnestoreProducts} onPress = {() => {this.props.navigation.navigate("ProductDetails",(user = { productId: item.id}))}}>
+        <TouchableOpacity  style={styles.colOnestoreProducts} onPress = {() => {this.props.navigation.navigate("ProductDetails",(user = { productId: item.id}));}}>
           <View style={styles.colOneContent}>
             <View style={styles.colOneImageinRow}>
               <View style={styles.colOneIndexLabelView}>
@@ -71,8 +73,8 @@ class OnlineStore extends Component {
             </View>
           </View>
         </TouchableOpacity>
-        ): (
-        <TouchableOpacity  style={styles.storeProducts} onPress = {() => {this.props.navigation.navigate("ProductDetails",(user = { productId: item.id}))}}>
+        ) : (
+        <TouchableOpacity  style={styles.storeProducts} onPress = {() => {this.props.navigation.navigate("ProductDetails",(user = { productId: item.id}));}}>
             <View style={styles.productsHeader}>
               <View style={styles.productCount}>
                   <Text style={{color: "#FFFFFF", fontFamily: "Arial",}}>
@@ -97,11 +99,18 @@ class OnlineStore extends Component {
       <Container style={styles.container}>
          <Header style={styles.headerStyle}>
           <Left style={[styles.ham,{flexDirection:"row"}]}>
+            {this.state.fromTrainerPersonalPage || this.state.fromClientHome ? (
+            <Button style={styles.ham}
+              transparent
+              onPress={this.onBackPressed.bind(this)}>
+                <Icon name="ios-arrow-back" style={{color: "white"}}/>
+            </Button>) : (
             <Button style={styles.ham}
               transparent
               onPress = {() => this.props.navigation.navigate("DrawerOpen")}>
-              < Icon name = "ios-menu" style={{color: "white"}}/ >
+                <Icon name = "ios-menu" style={{color: "white"}}/>
             </Button>
+            )}
           </Left>
           <Body>
             <Title style={styles.title}>Store</Title>
@@ -137,7 +146,7 @@ class OnlineStore extends Component {
                   <TouchableOpacity onPress={this.onGrid} style={{flex:1,borderLeftColor: "#C8C8C8", borderLeftWidth: 1,justifyContent: "center", alignItems: "center" }}>
                     {this.state.onChangeColumn === false ? (
                       <Image source = {Images.productsinList} style = {{width: 25,height: 25}}/>
-                      ): (
+                      ) : (
                       <Image source = {Images.productsinGrid} style = {{width: 25,height: 25}}/>
                     )}
                   </TouchableOpacity>
@@ -150,15 +159,15 @@ class OnlineStore extends Component {
                   <View style={styles.spinnerView}>
                     <Spinner color={"black"} style={styles.spinnerPosition} />
                   </View>
-                ):
+                ) :
                 <FlatList
                   data={this.state.allProducts}
                   keyExtractor={(x, i) => x.id}
                   renderItem={this.renderData.bind(this)}
                   removeClippedSubViews={true}
                   numColumns={this.state.onChangeColumn === true ? 1 : 2}
-                  key = {( this.state.onChangeColumn ) ? 'ONE COLUMN' : 'TWO COLUMN' }
-                  style={{backgroundColor:'#dce2ef'}}
+                  key = {( this.state.onChangeColumn ) ? "ONE COLUMN" : "TWO COLUMN" }
+                  style={{backgroundColor:"#dce2ef"}}
                   />
               }
             </List>

@@ -1,6 +1,4 @@
-import {
-  API_BASE_URL
-} from "@common/global";
+import {API_BASE_URL} from "@common/global";
 
 const AppUtils = {
   getProducts: async function(data) {
@@ -70,7 +68,7 @@ const AppUtils = {
     });
   },
   trainerSignUp: async function(signUp) {
-    return fetch(API_BASE_URL + "action=trainer_sign_up&name=" + signUp.name + "&email=" + signUp.email + "&password=" + signUp.password + "&deviceType=" + signUp.deviceType + "&deviceToken=" + signUp.deviceToken, {
+    return fetch(API_BASE_URL + "action=trainer_sign_up&name=" + signUp.name + "&email=" + signUp.email + "&password=" + signUp.password + "&deviceType=" + signUp.deviceType + "&gender=" + signUp.gender + "&deviceToken=" + signUp.deviceToken, {
       method: "POST"
     }).then((response) => {
       return response.json();
@@ -92,7 +90,7 @@ const AppUtils = {
     });
   },
   availableDates: async function(dates,date) {
-    return fetch(API_BASE_URL + "action=save_tainer_dates&id=" + dates.id + "&date="+date +"&date_time=" + dates.availableSlot, {
+    return fetch(API_BASE_URL + "action=save_tainer_dates&id=" + dates.id + "&date=" + date + "&date_time=" + dates.availableSlot, {
       method: "POST"
     }).then((response) => {
       return response.json();
@@ -106,7 +104,7 @@ const AppUtils = {
     return fetch(API_BASE_URL + "action=get_all_specialities", {
       method: "GET"
     }).then((response) => {
-      console.log("112233:  ", JSON.stringify(response))
+      console.log("112233:  ", JSON.stringify(response));
       return response.json();
     }, function(error) {
       console.log("error", error);
@@ -149,7 +147,7 @@ const AppUtils = {
   },
   getTrainerList: async function() {
     return fetch(API_BASE_URL + "action=get_trainers", {
-      method: "POST"
+      method: "GET"
     }).then((response) => {
       return response.json();
     }, function(error) {
@@ -180,6 +178,60 @@ const AppUtils = {
       console.log("error", error);
     });
   },
-
+  getFeaturedProducts: async function(){
+    return fetch(API_BASE_URL + "action=fetch_featured_products", {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  getHighestRatedTrainerList: async function() {
+    return fetch(API_BASE_URL + "action=search_for_highest_rated_trainers", {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  getFeaturedTrainersList: async function() {
+    return fetch(API_BASE_URL + "action=fetch_featured_trainers", {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  getVideoUploadCharges: async function() {
+      return fetch(API_BASE_URL + "action=fetch_video_upload_charges", {
+        method: "GET"
+      }).then((response) => {
+        return response.json();
+      }, function(error) {
+        console.log("error", error);
+      }).catch((error) => {
+        console.log("error", error);
+      });
+    },
+    getLandingPageImages: async function() {
+        return fetch(API_BASE_URL + "action=fetch_landing_page_images", {
+          method: "GET"
+        }).then((response) => {
+          return response.json();
+        }, function(error) {
+          console.log("error", error);
+        }).catch((error) => {
+          console.log("error", error);
+        });
+      },
 };
 export default AppUtils;

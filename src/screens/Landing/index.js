@@ -1,107 +1,108 @@
 import React, { Component } from "react";
-import { ImageBackground, View, AsyncStorage, StyleSheet } from "react-native";
-//import { createStackNavigator } from 'react-navigation';
-import { Container, H3, Text, Footer } from "native-base";
-import ImageSlider from 'react-native-image-slider';
-import { connect } from 'react-redux';
+import { View, AsyncStorage, StyleSheet,Alert } from "react-native";
+import { Container, Text, Footer } from "native-base";
+import ImageSlider from "react-native-image-slider";
+import { Button, Header } from "../common";
+import API from "@utils/ApiUtils";
+import {IMAGE_PATH} from "@common/global";
 
-//import ClientHome from "../ClientHome/";
-import { Button, Header } from '../common';
-var PushNotification = require('react-native-push-notification');
-state = {
-
-};
-
-const libraries  = [
-  {
-      "id" : 3,
-      "image" : "https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/image4.jpeg"
-  },
-  {
-      "id" : 2,
-      "image" : "https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/image3.jpeg"
-  },
-  {
-      "id" : 1,
-      "image" : "https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/image2.jpeg"
-  },
-  {
-      "id" : 0,
-      "image" : "https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/image1.jpeg"
-  }
-];
+var PushNotification = require("react-native-push-notification");
 
 class Landing extends Component {
-    static navigationOptions = {
-        title: 'Landing',
-      };
-componentWillMount(){
-  PushNotification.configure({
+  constructor(){
+    super();
+    this.state = {
+      libraries: []
+    };
+  }
+  static navigationOptions = {
+      title: "Landing",
+    };
+  componentWillMount(){
+    this.onPushNotification();
+    this.getLandingPageImages();
+  }
+  onPushNotification(){
+      PushNotification.configure({
+        // (optional) Called when Token is generated (iOS and Android)
+        onRegister: function(token) {
+            console.log( "TOKEN@@@@@@:",token);
+             AsyncStorage.setItem("@token:key", JSON.stringify(token));
+        },
 
-    // (optional) Called when Token is generated (iOS and Android)
-    onRegister: function(token) {
-        console.log( 'TOKEN@@@@@@:',token);
-         AsyncStorage.setItem('@token:key', JSON.stringify(token))
-    },
+        // (required) Called when a remote or local notification is opened or received
+        onNotification: function(notification) {
+            console.log( "NOTIFICATION:", notification );
 
-    // (required) Called when a remote or local notification is opened or received
-    onNotification: function(notification) {
-        console.log( 'NOTIFICATION:', notification );
+            // process the notification
 
-        // process the notification
+            // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
+            notification.finish(PushNotificationIOS.FetchResult.NoData);
+        },
 
-        // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
-        notification.finish(PushNotificationIOS.FetchResult.NoData);
-    },
+        // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications)
+        senderID: "YOUR GCM SENDER ID",
 
-    // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications)
-    senderID: "YOUR GCM SENDER ID",
+        // IOS ONLY (optional): default: all - Permissions to register.
+        permissions: {
+            alert: true,
+            badge: true,
+            sound: true
+        },
 
-    // IOS ONLY (optional): default: all - Permissions to register.
-    permissions: {
-        alert: true,
-        badge: true,
-        sound: true
-    },
+        // Should the initial notification be popped automatically
+        // default: true
+        popInitialNotification: true,
 
-    // Should the initial notification be popped automatically
-    // default: true
-    popInitialNotification: true,
+        /**
+          * (optional) default: true
+          * - Specified if permissions (ios) and token (android and ios) will requested or not,
+          * - if not, you must call PushNotificationsHandler.requestPermissions() later
+          */
+        requestPermissions: true,
+    });
+  }
+  getLandingPageImages(){
+    API.getLandingPageImages().then(async (response) => {
+      this.setState({loading : false});
+      if (response.status) {
+        this.setState({libraries: response.data});
+      } else {
 
-    /**
-      * (optional) default: true
-      * - Specified if permissions (ios) and token (android and ios) will requested or not,
-      * - if not, you must call PushNotificationsHandler.requestPermissions() later
-      */
-    requestPermissions: true,
-});
-}
-onEnter(){
-  AsyncStorage.getItem('@getUserType:key', (err, type) => {
-    if(type){
-      this.setState({
-        userType:type
-      },()=>{
-        if(type === 'Trainer'){
-          this.props.navigation.navigate("TrainerPersonalPage")
-        }else{
-          this.props.navigation.navigate("ClientHome")
-        }
-      })
-    }else{
-      this.props.navigation.navigate("ClientHome")
-    }
-  })
-}
+      }
+    }).catch((error)=>{
+      this.setState({spinner:false});
+      console.log("Console Error",error);
+    });
+  }
+  onEnter(){
+    AsyncStorage.getItem("@getUserType:key", (err, type) => {
+      if (err){
+        Alert.alert("HomeFit", "Can't Fetch the Data");
+      }
+      if (type){
+        this.setState({
+          userType:type
+        },()=>{
+          if (type === "Trainer"){
+            this.props.navigation.navigate("TrainerPersonalPage");
+          } else {
+            this.props.navigation.navigate("ClientHome");
+          }
+        });
+      } else {
+        this.props.navigation.navigate("ClientHome");
+      }
+    });
+  }
   render() {
-
     return (
       <Container style={styles.container}>
         <Header headerText="HomeFit" />
         <View>
           <View style={styles.sliderStyle}>
               <ImageSlider autoPlayWithInterval={3000}
-                  images={libraries.map((album) => album.image) }/>
+                  images={this.state.libraries.map((album) => IMAGE_PATH + album.image) }/>
           </View>
           <View style={styles.lowerContainer}>
               <View style={styles.cardStyle}>
@@ -140,26 +141,26 @@ onEnter(){
 
 
 
-const styles=StyleSheet.create({
+const styles = StyleSheet.create({
   container : {
-    backgroundColor : '#fff'
+    backgroundColor : "#fff"
   },
   sliderStyle : {
-      width: '100%',
+      width: "100%",
       height: 315 ,
       marginTop: 10
   },
   subTitle : {
-      color : '#fff',
+      color : "#fff",
       fontSize : 18,
       lineHeight : 60,
-      alignItems : 'center',
+      alignItems : "center",
       fontWeight : "800",
-      shadowColor : '#000',
+      shadowColor : "#000",
       shadowOffset : { width : 0, height : 2 },
       shadowOpacity : 0.8,
       elevation : 2,
-      position : 'relative'
+      position : "relative"
   },
   lowerContainer : {
     //height : '100%'
@@ -168,26 +169,26 @@ const styles=StyleSheet.create({
       marginTop : 10,
       height : 60,
       borderRadius : 5,
-      justifyContent : 'center',
+      justifyContent : "center",
       marginLeft : 5,
       marginRight : 5,
-      alignItems : 'center',
-      backgroundColor  : '#009FDB',
-      shadowColor : '#000',
+      alignItems : "center",
+      backgroundColor  : "#009FDB",
+      shadowColor : "#000",
       shadowOffset : { width : 0, height : 2 },
       shadowOpacity : 0.8,
       elevation : 2,
-      position : 'relative'
+      position : "relative"
   },
   lowerTextContainer : {
       paddingTop : 10,
-      alignItems : 'center',
-      justifyContent : 'center',
-      backgroundColor : '#fff'
+      alignItems : "center",
+      justifyContent : "center",
+      backgroundColor : "#fff"
   },
   lowerText : {
       fontSize : 17,
-      color : '#009FDB',
+      color : "#009FDB",
       fontWeight : "600",
 
   }

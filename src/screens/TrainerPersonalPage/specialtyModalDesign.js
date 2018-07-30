@@ -85,7 +85,7 @@ renderData(item) {
       }
     }
   return (
-    <View style={{flex:1}}>      
+    <View style={{flex:1}}>
       <TouchableOpacity style={{flexGrow: 1, flexDirection: 'row', marginTop: 5, height: 55}} onPress={this.onSpecialitiesSelected.bind(this, item)}>
         <View style={{flex: 0.8,justifyContent: 'center',paddingLeft: 15}}>
           <Text style={{fontWeight:"bold",fontSize:18}}>{item.item.speciality}</Text>
@@ -110,7 +110,7 @@ render() {
         </TouchableOpacity>
       </View>
       {this.state.spinner === true ? (
-        <View style={{position: 'absolute',left: 0,right: 0,top: 0,bottom: 0,alignItems: 'center',justifyContent: 'center',backgroundColor:'rgba(0,0,0,0.2)'}}>
+        <View style={{position: 'absolute',left: 0,right: 0,top: 0,bottom: 0,alignItems: 'center',justifyContent: 'center',backgroundColor:'rgba(0,0,0,0.72)'}}>
           <View style={{height:window.width/3, width:window.width/3, backgroundColor:'white', borderRadius:20, alignItems:'center', justifyContent:'center'}}>
             <ActivityIndicator size="large" color="black"/>
           </View>

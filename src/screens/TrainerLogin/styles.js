@@ -46,7 +46,14 @@ export default {
     bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor:'rgba(0,0,0,0.2)'
+    backgroundColor:'rgba(0,0,0,0.72)'
   },
-  spinnerView:{height:window.width/3, width:window.width/3, backgroundColor:'white', borderRadius:20, alignItems:'center', justifyContent:'center'}
+  spinnerView:{
+    height:window.width/3,
+    width:window.width/3,
+    backgroundColor:'white',
+    borderRadius:20,
+    alignItems:'center',
+    justifyContent:'center'
+  }
 };

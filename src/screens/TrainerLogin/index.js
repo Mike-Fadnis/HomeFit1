@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity,AsyncStorage,ActivityIndicator,Alert,TouchableWithoutFeedback } from 'react-native';
+import { View, TouchableOpacity,AsyncStorage,ActivityIndicator,Alert,TouchableWithoutFeedback } from "react-native";
 import {
   Container,
   Header,
@@ -16,80 +16,80 @@ import {
   Right,
   Body
 } from "native-base";
-import { Input, Card, CardSection, ButtonTwo } from '../common';
+import { Input, Card, CardSection, ButtonTwo } from "../common";
 import API from "@utils/ApiUtils";
 import styles from "./styles";
-var dismissKeyboard = require('dismissKeyboard');
+var dismissKeyboard = require("dismissKeyboard");
 
 class TrainerLogin extends Component {
   constructor(props){
     super(props);
-    this.state={
-      email:'',
-      password:'',
+    this.state = {
+      email:"",
+      password:"",
       spinner:false
-    }
+    };
   }
 
   onChangeEmail(text){
     this.setState({
       email:text
-    })
+    });
   }
   onChangePassword(text){
     this.setState({
       password:text
-    })
+    });
   }
   validEmail = Email => {
-     var email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/
-     return email.test(Email)
+     var email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+     return email.test(Email);
    }
   onLogin(){
       dismissKeyboard();
-      if(this.state.email === ""|| this.state.email=== null){
-        Alert.alert('Email','Email should not be empty')
+      if (this.state.email === "" || this.state.email === null){
+        Alert.alert("Email","Email should not be empty");
       }
       else if (!this.validEmail(this.state.email)) {
-         Alert.alert('Email','Please enter correct Email-id')
+         Alert.alert("Email","Please enter correct Email-id");
        }
-       else if (this.state.password === ""|| this.state.password=== null) {
-          Alert.alert('Password','Password should not be empty')
+       else if (this.state.password === "" || this.state.password === null) {
+          Alert.alert("Password","Password should not be empty");
         }
-       else{
-        this.setState({spinner:true})
-        AsyncStorage.getItem('@token:key', (err, token) => {
-        let getToken = JSON.parse(token)
-        var login={
+       else {
+        this.setState({spinner:true});
+        AsyncStorage.getItem("@token:key", (err, token) => {
+        let getToken = JSON.parse(token);
+        var login = {
          email:this.state.email,
          password:this.state.password,
-         deviceType:getToken === null? "":getToken.os,
-         deviceToken:getToken === null? "":getToken.token
-        }
+         deviceType:getToken === null ? "" : getToken.os,
+         deviceToken:getToken === null ? "" : getToken.token
+        };
         API.trainerLogin(login).then(async (response) => {
-           if(response.status === true){
-            console.log("TRAINERUSERDTAAAA!@@@@: ", response)
+           if (response.status === true){
+            console.log("TRAINERUSERDTAAAA!@@@@: ", response);
               this.setState({
                  userData:response.data,
                  spinner:false
                },()=>{
-                 var getUserData = this.state.userData
-                  AsyncStorage.setItem('@getUserType:key', "Trainer")
-                  AsyncStorage.setItem('@getUserData:key', JSON.stringify(getUserData))
-                  this.props.navigation.navigate("TrainerPersonalPage")
-                })
-           }else{
+                 var getUserData = this.state.userData;
+                  AsyncStorage.setItem("@getUserType:key", "Trainer");
+                  AsyncStorage.setItem("@getUserData:key", JSON.stringify(getUserData));
+                  this.props.navigation.navigate("TrainerPersonalPage");
+                });
+           } else {
              this.setState({
                spinner:false
              },()=>{
-               Alert.alert(response.message,"")
-             })
+               Alert.alert(response.message,"");
+             });
            }
          }).catch((error)=>{
-         this.setState({spinner:false})
+         this.setState({spinner:false});
            console.log("Console Error",error);
          });
-        }).done()
+        }).done();
        }
     }
   render() {
@@ -129,7 +129,7 @@ class TrainerLogin extends Component {
           <ListItem style={{ marginBottom : 20}}>
             <CheckBox checked={false} color="white" />
             <Body>
-              <Text style={{ color : '#fff'}}>Remember Me!</Text>
+              <Text style={{ color : "#fff"}}>Remember Me!</Text>
             </Body>
           </ListItem>
           <View style={{ paddingLeft : 10, paddingRight : 10,

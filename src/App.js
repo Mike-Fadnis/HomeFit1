@@ -162,6 +162,7 @@ import TrainerSignUp from "./screens/TrainerSignUp";
 import TrainerFinancialDetails from "./screens/TrainerFinancialDetails";
 import TrainerPersonalPage from "./screens/TrainerPersonalPage";
 import TrainerChooseDates from "./screens/TrainerChooseDates";
+import FeaturedTrainers from "./screens/FeaturedTrainers";
 
 const Drawer = DrawerNavigator(
   {
@@ -187,7 +188,8 @@ const Drawer = DrawerNavigator(
     TrainerHome : { screen : TrainerHome },
     TrainerFinancialDetails : { screen : TrainerFinancialDetails },
     TrainerPersonalPage : { screen : TrainerPersonalPage },
-    TrainerChooseDates : { screen : TrainerChooseDates}
+    TrainerChooseDates : { screen : TrainerChooseDates},
+    FeaturedTrainers : { screen : FeaturedTrainers}
   },
   {
     initialRouteName: "Landing",
