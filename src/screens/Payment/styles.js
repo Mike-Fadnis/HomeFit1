@@ -19,11 +19,8 @@ export default {
     backgroundColor: "#fff",
     flex: 1
   },
-  cardHolderNameStyle: {
-    fontSize: window.width / 21
-  },
   contentView:{flex:1},
-  cardView:{margin:10},
+  // cardView:{margin:10},
   cardInputStyle:{ fontSize: 16, color: 'black' },
   inputView:{marginLeft:20, marginRight:20},
   buttonView:{flex:1,flexDirection:'row', marginTop:10},
@@ -36,6 +33,7 @@ export default {
   confirmButtonText:{fontWeight:'700'},
   rowView:{flexDirection:"row",margin:5,padding:5, height:70,backgroundColor:"#f9f9f9",borderRadius:5, borderWidth:2, alignItems:'center'},
   rowImageStyle:{height:20,width:20},
+  cardHolderNameStyle: {fontSize: window.width / 21},
   cardView:{flex:0.2,backgroundColor:"white",alignItems:"center",justifyContent:"center"},
   cardImgStyle:{height:40,width:50},
   rowDataView:{flex:0.5,paddingLeft:20,alignItems:"flex-start",justifyContent:"center"},

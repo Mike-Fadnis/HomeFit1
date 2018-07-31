@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity,Alert,AsyncStorage,ActivityIndicator,FlatList,Image } from 'react-native';
+import { View, TouchableOpacity,Alert,AsyncStorage,ActivityIndicator,FlatList,Image } from "react-native";
 import {
   Container,
   Header,
@@ -21,114 +21,160 @@ import {
   Input
 } from "native-base";
 import { CreditCardInput } from "react-native-credit-card-input";
-import styles from './styles'
+import styles from "./styles";
 import Images from "@theme/images/images";
 import API from "@utils/ApiUtils";
 // var CryptoJS = require("crypto-js");
 
-var creditCardArray = [
-  {
-    id:'1',
-    name:'ABCDABCD ABCD JOHN',
-    last:'4242',
-    cardType: "visa"
-  },
-  {
-    id:'2',
-    name:'EFGHEFGH EFGH JOHN',
-    last:'3222',
-    cardType: "master"
-  },
-  {
-    id:'3',
-    name:'IJKLIJKL IJKL JOHN',
-    last:'0005',
-    cardType: "american-express"
-  },
-  {
-    id:'4',
-    name:'MNOPMNOP MNOP JOHN',
-    last:'5554',
-    cardType: "visa"
-  },
-  {
-    id:'5',
-    name:'QRSTQRST QRST JOHN',
-    last:'4444',
-    cardType: "master"
-  }
-]
+
 class Payment extends Component {
   constructor(props){
     super(props);
-    this.state={
+    this.state = {
       user_cardDetails:{},
-      address:'',
-      city:'',
-      stateValue:'',
-      zipcode:'',
+      address:"",
+      city:"",
+      stateValue:"",
+      zipcode:"",
       checkedSame:false,
       checkedDiff:false,
       userData:{},
-      radioValue:'1',
-      itemId: '1',
+      radioValue:"1",
+      itemId: "1",
       spinner: false,
-      backFromPayment:this.props.navigation.getParam('backFromPayment')
-    }
+      isLoading:true,
+      backFromPayment:this.props.navigation.getParam("backFromPayment"),
+      userType:null,
+      cardArray:[]
+    };
   }
   componentWillMount(){
-    AsyncStorage.getItem('@getUserData:key', (err, getUserData) => {
-        var get_user = JSON.parse(getUserData)
+    AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
+      AsyncStorage.getItem("@getUserType:key", (err, user_Type) => {
+          if (user_Type === "User"){
+            this.setState({
+              userType:0
+            });
+          }
+          else {
+            this.setState({
+              userType:1
+            });
+          }
+          var get_user = JSON.parse(getUserData);
+          this.setState({
+            userData:get_user
+          },()=>{
+            this.getCardsList(this.state.userData.id);
+          });
+       }).done();
+     }).done();
+  }
+  getCardsList(Id){
+    API.getCards(Id).then(async (response) => {
+      if (response){
+        if (response.status === true){
+          this.setState({
+              cardArray:response.data,
+              isLoading: false
+          });
+        } else {
+          this.setState({
+              isLoading: false
+            });
+            Alert.alert("Error","");
+        }
+      } else {
         this.setState({
-          userData:get_user
-        })
+            isLoading: false
+          });
+        Alert.alert("Error","");
+      }
 
-     }).done()
+    });
   }
   _onChange(values) {
     this.setState({
       user_cardDetails: values
     },()=>{
-      console.log("CREDITCARDDETAILS@@@@ ",this.state.user_cardDetails)
-    })
+      console.log("CREDITCARDDETAILS@@@@ ",this.state.user_cardDetails);
+    });
   }
-  onRadioButtonPressed(item){
-    this.setState({itemId: item.id})
+  onRadioButtonPressed(item, index){
+    // console.log("INDEX@@@@: ",index)
+    this.setState({itemId: index});
   }
 
   addingCreditCard() {
-   console.log("adding card: "+JSON.stringify(this.state.userData))
     if (this.state.user_cardDetails.values === undefined) {
-      alert('Please enter card details')
+      Alert.alert("Please enter card details","");
     } else {
-      this.setState({spinner: true})
-      var cardNumber = this.state.user_cardDetails.values.number
-      var cardNumberDetails = cardNumber.replace(/\s/g, '')
-      var expiry = this.state.user_cardDetails.values.expiry
-      var cardExpiryDate = expiry.split('/')
-      var expiryMonth = cardExpiryDate[0]
-      var expiryYear = '20' + cardExpiryDate[1]
-      var expiryDate= expiryMonth+'/'+expiryYear
-      var cardDetailsObject = {
-        user_id:this.state.userData.id,
-        cardNumber:cardNumberDetails,
-        expiryDate:expiryDate,
-        cvc:this.state.user_cardDetails.values.cvc,
-        cardType:this.state.user_cardDetails.values.type,
-        cardHolderName:this.state.user_cardDetails.values.name,
-        billingAddress:this.state.address,
-        city:this.state.city,
-        state:this.state.stateValue,
-        zipCode:this.state.user_cardDetails.values.postalCode,
-      }
-      API.addCardDetails(cardDetailsObject).then(async (response) => {
-        this.setState({spinner: false},()=> {
-          Alert.alert("Payment",response.message)
+      var cardNumber = this.state.user_cardDetails.values.number;
+      var cardNumberDetails = cardNumber.replace(/\s/g, "");
+      // var expiry = this.state.user_cardDetails.values.expiry
+        if (cardNumber == "" || cardNumber == null) {
+          Alert.alert("Card Number","Please enter card number");
+        } else if (cardNumber.length < 16) {
+          Alert.alert("Card Number","Please enter 16 digits");
+        } else if (this.state.user_cardDetails.values.expiry == "" || this.state.user_cardDetails.values.expiry == null) {
+          Alert.alert("Exipry Date","Please enter expiry date");
+        } else if (this.state.user_cardDetails.values.expiry.length < 5) {
+          Alert.alert("Exipry Date","Please enter correct expiry date");
+        } else if (this.state.user_cardDetails.values.cvc == "" || this.state.user_cardDetails.values.cvc == null) {
+          Alert.alert("CVC","Please enter cvc");
+        } else if (this.state.user_cardDetails.values.cvc.length < 3) {
+          Alert.alert("CVC","Please enter 3 digits");
+        } else if (this.state.user_cardDetails.values.name == "" || this.state.user_cardDetails.values.name == null) {
+          Alert.alert("Name","Please enter Name");
+        } else if (this.state.user_cardDetails.values.postalCode == "" || this.state.user_cardDetails.values.postalCode == null) {
+          Alert.alert("Postal-Code","Please enter Postal-Code");
+        }  else if (this.state.address == "" || this.state.address == null) {
+          Alert.alert("Address","Please enter Address");
+        } else if (this.state.city == "" || this.state.city == null) {
+          Alert.alert("City","Please enter City");
+        } else if (this.state.stateValue == "" || this.state.stateValue == null) {
+          Alert.alert("State","Please enter State");
+        } else {
+        this.setState({spinner: true});
+        var cardDetails = {
+          user_id:this.state.userData.id,
+          user_type:this.state.userType,
+          cardNumber:cardNumberDetails,
+          expiryDate:this.state.user_cardDetails.values.expiry,//06/20
+          cvc:this.state.user_cardDetails.values.cvc,
+          cardType:this.state.user_cardDetails.values.type,
+          cardHolderName:this.state.user_cardDetails.values.name,
+          billingAddress:this.state.address,
+          city:this.state.city,
+          state:this.state.stateValue,
+          zipCode:this.state.user_cardDetails.values.postalCode,
+        };
+        var cardDetailsObject = JSON.stringify(cardDetails);
+        API.addCardDetails(cardDetailsObject).then(async (response) => {
+          if(response){
+            if (response.status=== true){
+              this.setState({
+                  spinner: false,
+                  user_cardDetails:{}
+              },()=>{
+                Alert.alert(response.message,'')
+                this.getCardsList(this.state.userData.id);
+              })
+            }else{
+              this.setState({
+                  spinner: false
+                })
+                Alert.alert('Error','')
+            }
+          }else{
+            this.setState({
+                spinner: false
+              })
+            Alert.alert('Error','')
+          }
+
         })
-      }).catch((error)=>{
-      this.setState({spinner:false})
-        console.log("Console Error",error);
-      });
+      }
     }
   }
 
@@ -174,72 +220,72 @@ class Payment extends Component {
   //     }
   // }
 
-  renderData(item){
-      var item = item.item
-      return(
-          <TouchableOpacity onPress={this.onRadioButtonPressed.bind(this,item)}>
-            <View style={[styles.rowView,{borderColor:this.state.itemId === item.id ? ("#34ace0"):("#f9f9f9")}]}>
+  renderData = ({item,index}) => {
+
+      // var item = item.item
+      return (
+          <TouchableOpacity onPress={this.onRadioButtonPressed.bind(this,item, index)}>
+            <View style={[styles.rowView,{borderColor:this.state.itemId === index ? ("#34ace0") : ("#f9f9f9")}]}>
                 <View style={styles.mainRowView}>
-                  {this.state.itemId === item.id ? (
+                  {this.state.itemId === index ? (
                     <Image source={Images.success} style={styles.rowImageStyle} />
-                  ): (
+                  ) : (
                     <Image source={Images.emptyCircle} style={styles.rowImageStyle} />
                   )}
                 </View>
                 <View style={styles.cardView}>
-                  {item.cardType === "master" ? (<Image source={Images.masterCard} style={styles.cardImgStyle} />) : item.cardType === "visa" ? (<Image source={Images.visaCard} style={styles.cardImgStyle} />) : (<Image source={Images.amexpCard} style={styles.cardImgStyle} />)}
+                  {item.card_type === "master-card" ? (<Image source={Images.masterCard} style={styles.cardImgStyle} />) : item.card_type === "visa" ? (<Image source={Images.visaCard} style={styles.cardImgStyle} />) : (<Image source={Images.amexpCard} style={styles.cardImgStyle} />)}
                 </View>
                 <View style={styles.rowDataView}>
-                  <Text numberOfLines={1} style={styles.cardHolderNameStyle}>{item.name}</Text>
-                  <View style={{flexDirection:"row"}}>
-                    <Text> ....  ....  ....  </Text>
-                    <Text>{item.last}</Text>
+                  <Text numberOfLines={1} style={styles.cardHolderNameStyle}>{item.card_holder_name}</Text>
+                  <View>
+                    <Text>{item.card_number}</Text>
                   </View>
                 </View>
                 <View style={styles.rowTextView}>
                   <Text style={styles.rowTextStyle}>EXP. </Text>
-                  <Text style={styles.rowTextStyle}>01/2018 </Text>
+                  <Text style={styles.rowTextStyle}>{item.expiry_date} </Text>
                 </View>
             </View>
           </TouchableOpacity>
-          )
+          );
   }
   onChangeAddress(text){
     this.setState({
       address:text
-    })
+    });
   }
   onChangeCity(text){
     this.setState({
       city:text
-    })
+    });
   }
   onChangeState(text){
     this.setState({
       stateValue:text
-    })
+    });
   }
   onChangeZipcode(text){
     this.setState({
       zipcode:text
-    })
+    });
   }
   onCheckedSame(){
     // alert(this.state.checked)
     this.setState({
       checkedSame:!this.state.checkedSame
-    })
+    });
   }
   onCheckedDiff(){
     this.setState({
       checkedDiff:!this.state.checkedDiff
-    })
+    });
   }
   onBack(){
     if (this.state.backFromPayment){
-      this.props.navigation.navigate("TrainerPersonalPage")
+      this.props.navigation.navigate("TrainerPersonalPage");
     } else {
-       this.props.navigation.navigate("ViewTrainer")
+       this.props.navigation.navigate("ViewTrainer");
     }
   }
 
@@ -263,23 +309,27 @@ class Payment extends Component {
 
             <Content style={styles.content}>
                 <View style={styles.contentView}>
-                  <FlatList
-                      data={creditCardArray}
-                      keyExtractor={(x, i) => x.id}
-                      extraData={this.state}
-                      renderItem={this.renderData.bind(this)}
-                      style={{backgroundColor:'#FFFFFF'}}
-                  />
+                {this.state.isLoading === true ? (
+                  <Spinner size="large" color="black"/>
+                )
+                  : (<FlatList
+                        data={this.state.cardArray}
+                        keyExtractor={(x, i) => x.id}
+                        extraData={this.state}
+                        renderItem={this.renderData.bind(this)}
+                        style={{backgroundColor:"#FFFFFF"}}
+                    />)}
+
                 </View>
                 <View style={styles.cardView}>
                   <CreditCardInput
                     requiresName
                     requiresPostalCode
-                    // autoFocus={this.state.focusing}
+                    autoFocus={true}
                     inputStyle={styles.cardInputStyle}
-                    validColor={'green'}
-                    invalidColor={'red'}
-                    placeholderColor={'darkgray'}
+                    validColor={"green"}
+                    invalidColor={"red"}
+                    placeholderColor={"darkgray"}
                     cardImageFront={Images.cardFront}
                     cardImageBack={Images.cardBack}
                     onFocus={this._onFocus}
@@ -302,8 +352,8 @@ class Payment extends Component {
                  <View style={styles.buttonView}>
                    <View style={styles.checkBoxView}>
                      <TouchableOpacity onPress={this.onCheckedSame.bind(this)}>
-                     {this.state.checkedSame === true?
-                       (<Image source={Images.checkedIcon} style={styles.iconStyle} />):
+                     {this.state.checkedSame === true ?
+                       (<Image source={Images.checkedIcon} style={styles.iconStyle} />) :
                        (<Image source={Images.unChecked} style={styles.iconStyle} />
                      )}
                      </TouchableOpacity>
@@ -319,8 +369,8 @@ class Payment extends Component {
                 <View style={styles.buttonView}>
                   <View style={styles.checkBoxView}>
                     <TouchableOpacity onPress={this.onCheckedDiff.bind(this)}>
-                    {this.state.checkedDiff === true?
-                      (<Image source={Images.checkedIcon} style={styles.iconStyle} />):
+                    {this.state.checkedDiff === true ?
+                      (<Image source={Images.checkedIcon} style={styles.iconStyle} />) :
                       (<Image source={Images.unChecked} style={styles.iconStyle} />
                     )}
                     </TouchableOpacity>

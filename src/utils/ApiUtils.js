@@ -134,17 +134,17 @@ const AppUtils = {
       console.log("error", error);
     });
   },
-  addCardDetails: async function(cardDetailsObject) {
-    return fetch(API_BASE_URL + "action=trainer_cards&primaryId=" + cardDetailsObject.user_id + "&cardNumber=" + cardDetailsObject.cardNumber + "&expiryDate=" + cardDetailsObject.expiryDate + "&cvc=" + cardDetailsObject.cvc + "&cardType=" + cardDetailsObject.cardType + "&cardHolderName=" + cardDetailsObject.cardHolderName + "&billingAddress=" + cardDetailsObject.billingAddress + "&city=" + cardDetailsObject.city + "&state=" + cardDetailsObject.state + "&zipCode=" + cardDetailsObject.zipCode, {
-      method: "POST"
-    }).then((response) => {
-      return response.json();
-    }, function(error) {
-      console.log("error", error);
-    }).catch((error) => {
-      console.log("error", error);
-    });
-  },
+  // addCardDetails: async function(cardDetailsObject) {
+  //   return fetch(API_BASE_URL + "action=trainer_cards&primaryId=" + cardDetailsObject.user_id + "&cardNumber=" + cardDetailsObject.cardNumber + "&expiryDate=" + cardDetailsObject.expiryDate + "&cvc=" + cardDetailsObject.cvc + "&cardType=" + cardDetailsObject.cardType + "&cardHolderName=" + cardDetailsObject.cardHolderName + "&billingAddress=" + cardDetailsObject.billingAddress + "&city=" + cardDetailsObject.city + "&state=" + cardDetailsObject.state + "&zipCode=" + cardDetailsObject.zipCode, {
+  //     method: "POST"
+  //   }).then((response) => {
+  //     return response.json();
+  //   }, function(error) {
+  //     console.log("error", error);
+  //   }).catch((error) => {
+  //     console.log("error", error);
+  //   });
+  // },
   getTrainerList: async function() {
     return fetch(API_BASE_URL + "action=get_trainers", {
       method: "GET"
@@ -233,5 +233,60 @@ const AppUtils = {
           console.log("error", error);
         });
       },
+    getCategories:async function() {
+        return fetch(API_BASE_URL + "action=fetch_categories", {
+          method: "GET"
+        }).then((response) => {
+          return response.json();
+        }, function(error) {
+          console.log("error", error);
+        }).catch((error) => {
+          console.log("error", error);
+        });
+    },
+    getProductsByCategory: async function(id){
+      return fetch(API_BASE_URL + "action=search_product_by_category&category="+id , {
+        method: "GET"
+      }).then((response) => {
+        return response.json();
+      }, function(error) {
+        console.log("error", error);
+      }).catch((error) => {
+        console.log("error", error);
+      });
+    },
+  getCards: async function(id){    
+    return fetch(API_BASE_URL + "action=fetch_card_info&user_id="+id , {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  addCardDetails: async function(cardDetailsObject) {
+    return fetch(API_BASE_URL + "action=save_card_info&cardDetailsObject=["+cardDetailsObject+"]", {
+      method: "POST"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  getImages:async function() {
+    return fetch(API_BASE_URL + "action=fetch_client_home_page_images", {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
 };
 export default AppUtils;

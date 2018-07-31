@@ -12,17 +12,17 @@ import {
   Right,
   View
 } from "native-base";
-import { AsyncStorage, FlatList, Alert ,Text, Dimensions, TouchableOpacity, Modal,Image } from 'react-native';
-import { Input, Card, CardSection } from '../common';
+import { AsyncStorage, FlatList, Alert ,Text, Dimensions, TouchableOpacity, Modal,Image } from "react-native";
+import { Input, Card, CardSection } from "../common";
 import styles from "./styles";
-import { filter } from 'ramda'
-import ModalShowFriends from './ModalShowFriends';
+import { filter } from "ramda";
+import ModalShowFriends from "./ModalShowFriends";
 import ModalFriendDetails from "./ModalFriendDetails";
 import Images from "@theme/images/images";
 
 
-const windowSize = Dimensions.get('window');
-const friends=[
+const windowSize = Dimensions.get("window");
+const friends = [
     {
         "name":"John",
         "id":1,
@@ -65,7 +65,7 @@ const friends=[
         "image":Images.noimage,
         "description":"description description description"
     }
-]
+];
 class TrackFriends extends Component {
     constructor(props){
         super(props);
@@ -77,7 +77,7 @@ class TrackFriends extends Component {
             FriendModal:false,
             FriendAdded:[],
             friendDetailsModal:false
-        }
+        };
     }
     componentWillMount(){
         AsyncStorage.getItem("@getUserData:key", (err,getUserData) => {
@@ -85,51 +85,50 @@ class TrackFriends extends Component {
             //alert(JSON.stringify(showUserData))
             if (showUserData){
               this.setState({clientDetails: showUserData},()=>{
-                  console.log("userdetails",this.state.clientDetails)
-                  this.setState({spinner: false})
-              })
+                  console.log("userdetails",this.state.clientDetails);
+                  this.setState({spinner: false});
+              });
             } else {
-              this.setState({spinner: false})
+              this.setState({spinner: false});
             }
             if (err) {
 
             }
-          })
+          });
     }
     onUsername(item,index){
-        
         if (this.state.FriendAdded.includes(item)) {
-           this.setState({friendDetailsModal:true})
+           this.setState({friendDetailsModal:true});
         } else {
             Alert.alert(
                 "Home Fit",
                 "Do You Want to add him as friend?",
                 [
-                  {text: 'NO', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                  {text: 'YES', onPress: () => {
-                      this.onAddFriend(item)
+                  {text: "NO", onPress: () => console.log("Cancel Pressed"), style: "cancel"},
+                  {text: "YES", onPress: () => {
+                      this.onAddFriend(item);
                   }},
                 ],
                 { cancelable: false }
-              )
+              );
         }
-       
+
     }
     onAddFriend(item){
         let count = 0;
         if (this.state.FriendAdded.length > 0 ) {
             this.state.FriendAdded.map((res,i)=>{
-                if(res.id === item.id){
-                    count ++ ;
+                if (res.id === item.id){
+                    count++;
                 }
-            })
+            });
         } else {
             this.state.FriendAdded.push(item);
         }
-        console.log("FRiendadded",this.state.FriendAdded)
+        console.log("FRiendadded",this.state.FriendAdded);
         this.setState({
             FriendAdded  : this.state.FriendAdded
-        })
+        });
     }
     renderData = ({item,index,section}) => {
         let data1;
@@ -137,30 +136,30 @@ class TrackFriends extends Component {
         let count = 0;
         this.state.FriendAdded.map((res1, j) => {
         if (res1.id === item.id) {
-            data1 = 'true'
+            data1 = "true";
             count = count + 1;
         }
         if (count === 0) {
-            data1 = '';
+            data1 = "";
         }
-        })
-        if (data1 === 'true') {
+        });
+        if (data1 === "true") {
         images.push(
             <Image source={Images.checked} style={{height:20,width:20}} />
-        )
+        );
         } else {
-        images.push( <Image source={Images.addFriend} style={{height:20,width:20}} />)
+        images.push( <Image source={Images.addFriend} style={{height:20,width:20}} />);
         }
         return (
             <TouchableOpacity onPress={this.onUsername.bind(this,item,index)}  style={{flex:1,flexDirection:"row"}}>
                 <View style={{flex:0.8,flexDirection:"row",paddingBottom:15,paddingTop:15,paddingLeft:15}}>
                 <Text style={{fontSize:18,fontWeight:"500"}}>{item.name}</Text>
                 </View>
-                <View style={{flex: 0.2,justifyContent: 'center',paddingLeft: 15}}>
+                <View style={{flex: 0.2,justifyContent: "center",paddingLeft: 15}}>
                     {images}
                 </View>
             </TouchableOpacity>
-        )
+        );
       }
     onChangeText(text){
         this.setState({text},()=>{
@@ -180,19 +179,19 @@ class TrackFriends extends Component {
     onFriends(){
         this.setState({
             FriendModal: true
-        })
+        });
     }
     onClose(){
         this.setState({
             FriendModal: false
-        })
+        });
     }
     onCloseDeatils(){
         this.setState({
             friendDetailsModal : false
-        })
+        });
     }
-    
+
    render() {
     return (
         <Container style={styles.container}>
@@ -228,7 +227,7 @@ class TrackFriends extends Component {
                   <FlatList
                         renderItem={this.renderData.bind(this)}
                         data={this.state.friendsArray}
-                        ItemSeparatorComponent={ () => <View style={{marginLeft:10,width:windowSize.width,height: 1.5, backgroundColor: 'grey' } } /> }
+                        ItemSeparatorComponent={ () => <View style={{marginLeft:10,width:windowSize.width,height: 1.5, backgroundColor: "grey" } } /> }
                         keyExtractor={(item, index) => item + index}
                     />
             </Content>

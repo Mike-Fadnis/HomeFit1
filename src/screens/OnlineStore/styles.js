@@ -18,8 +18,8 @@ export default {
   ham: {
     backgroundColor: "#009FDB",
   },
-  searchBar: {
-    backgroundColor: "#fff"
+  search: {
+    backgroundColor: "#FFF"
   },
   image: {
     width: "100%",
@@ -81,7 +81,6 @@ export default {
   },
   storeItems: {
     backgroundColor: "#dce2ef",
-    alignItems: "center",
     borderWidth: 1,
     borderColor: "#ccc"
   },
@@ -223,7 +222,7 @@ export default {
     top: 0,
     bottom: 0,
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.72)",
+    backgroundColor: "transparent",
     justifyContent: "center",
   }
 };

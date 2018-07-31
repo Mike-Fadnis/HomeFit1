@@ -1,9 +1,11 @@
 import React, { Component } from "react";
-import {Image,View,TouchableOpacity,FlatList} from "react-native";
+import {Image,View,TouchableOpacity,FlatList,TextInput} from "react-native";
 import {Container,Header,Title,Content,Text,Button,Card,CardItem,Icon,Item,Input,Spinner,Left,Right,Body} from "native-base";
 import { List } from "react-native-elements";
 import { Col, Grid } from "react-native-easy-grid";
+import { Dropdown } from "react-native-material-dropdown";
 
+import { filter } from "ramda";
 import styles from "./styles";
 import API from "@utils/ApiUtils";
 import {IMAGE_PATH} from "@common/global";
@@ -18,17 +20,30 @@ class OnlineStore extends Component {
       spinner:true,
       fromTrainerPersonalPage:this.props.navigation.getParam("toOnlineStore"),
       onChangeColumn: false,
-      fromClientHome:this.props.navigation.getParam("forBack")
+      fromClientHome:this.props.navigation.getParam("forBack"),
+      searchedvalue:"",
+      categoryvalue:"",
+      allCategories:[],
+      newCategoryarry:[],
+      text:""
     };
     this.onGrid = this.onGrid.bind(this);
+    this.onChangeDropdown = this.onChangeDropdown.bind(this);
+    this.onCategoryChangeDropdown = this.onCategoryChangeDropdown.bind(this);
   }
   async componentWillMount(){
+    this.getProducts();
+    this.getCategories();
+  }
+  getProducts(){
     API.getProducts().then(async (response) => {
       if (response){
-        this.setState({
-          allProducts: response.data,
-          spinner:false
-        });
+        if(response.status){
+          this.setState({allProducts: response.data,spinner:false});
+        } else {
+          this.setState({spinner:false});
+          alert("Error")
+        }
       } else {
         this.setState({spinner:false});
         alert("Error getting product details | Check Network ");
@@ -36,6 +51,42 @@ class OnlineStore extends Component {
     }).catch((error)=> {
       this.setState({spinner:false});
       console.log("Console Error", error);
+    });
+  }
+  getCategories(){
+    API.getCategories().then(async (response) => {
+      if (response){
+        if (response.status) {
+          this.setState({
+            allCategories: response.data,
+            spinner:false
+          },()=>{
+            var categoryarray = [];
+             this.state.allCategories.map((res,i)=>{
+               var rec = {
+                 "id":res.id,
+                 "value": res.name,
+                 "status":res.status
+               }
+               categoryarray.push(rec)
+             })
+             this.setState({
+               newCategoryarry : categoryarray
+             })
+          });
+        }
+        else {
+          this.setState({spinner:false});
+          Alert.alert("",response.message);
+        }
+
+      } else {
+        this.setState({spinner:false});
+        Alert.alert("Error getting product details | Check Network ");
+      }
+    }).catch((error)=> {
+      this.setState({spinner:false});
+        Alert.alert("Console Error", error);
     });
   }
 
@@ -50,6 +101,72 @@ class OnlineStore extends Component {
   }
   onGrid(){
     this.setState({onChangeColumn: !this.state.onChangeColumn});
+  }
+  onChangeDropdown(item,index){
+    this.setState({
+      searchedvalue : item
+    },()=>{
+      if(this.state.searchedvalue === "Search by None" || this.state.searchedvalue === "Search by Name"){
+        this.getProducts();
+      }
+    });
+  }
+  onCategoryChangeDropdown(item,index){
+    this.setState({categoryvalue : item},()=>{
+      let me = this.refs["categoryref"];
+      var selectedItem =  me.selectedItem();
+      this.setState({spinner: true})
+      this.getProductsByCategory(selectedItem.id);
+    })
+  }
+  getProductsByCategory(id){
+        API.getProductsByCategory(id).then(async (response) => {
+          if (response){
+            if (response.status) {
+              this.setState({allProducts: response.data,spinner:false})
+            }
+            else {
+              this.setState({spinner:false});
+            }
+          } else {
+            this.setState({spinner:false});
+            Alert.alert("Error getting product details | Check Network ");
+          }
+        }).catch((error)=> {
+          this.setState({spinner:false});
+            Alert.alert("Console Error", error);
+        });
+  }
+
+  // SearchFilterFunction(text){
+  //    const newData = this.state.allProducts.filter(function(item){
+  //        const itemData = item.name.toUpperCase()
+  //        const textData = text.toUpperCase()
+  //        return itemData.indexOf(textData) > -1
+  //    })
+  //    this.setState({
+  //        allProducts: newData,
+  //        text: text
+  //    })
+  // }
+
+  onChangeSearchText(text){
+    this.setState({text},()=>{
+      if (this.state.text.length > 2) {
+        let products = this.state.allProducts;
+        let searchArray = filter(this.filterProducts, products);
+         this.setState({allProducts:searchArray});
+      } else if(this.state.text.length === 0 ){
+          this.getProducts();
+        }
+    });
+  }
+  filterProducts = item => {
+    let name = item.name;
+    let text = this.state.text;
+    if (name.toLowerCase().indexOf(text.toLowerCase()) !== -1) {
+      return item;
+    }
   }
   renderData = ({item, index}) => {
     return (
@@ -95,6 +212,17 @@ class OnlineStore extends Component {
       );
   }
   render() {
+    let data = [
+      {
+        value: "Search by Name",
+       }, {
+        value: "Search by Category",
+       }, {
+        value: "Search by None",
+       }
+    ];
+    //containerStyle={{borderWidth:1,borderColor:"#009FDB",height:50,justifyContent:"center",paddingBottom:10,paddingLeft:10,marginLeft:5,marginRight:5,marginTop:10}}
+    // <TextInput placeholder="Search" style={{fontSize:18,marginLeft:10}} onChangeText={this.onChangeSearchText.bind(this)} value={this.state.text}/>
     return (
       <Container style={styles.container}>
          <Header style={styles.headerStyle}>
@@ -118,13 +246,41 @@ class OnlineStore extends Component {
           <Right />
         </Header>
         <Content>
-          <Item style={styles.search}>
-            <Icon active name="search" style={styles.inputIcon}/>
-            <Input placeholder="Search" />
-          </Item>
-          <Image source={{uri: "https://www.t-nation.com/system/publishing/articles/10003259/original/The-Single-Best-Muscle-Building-Method.jpg?1451932310"}} style={{ width: "100%", height: 200 }}  />
+          <View style={{flex:1,marginTop:5,paddingTop:10}}>
+            <Dropdown
+              label={this.state.searchedvalue === "" ? "Select Search Type.." : ""}
+              data={data}
+              value={this.state.searchedvalue}
+              dropdownPosition={0}
+              onChangeText={this.onChangeDropdown}
+              inputContainerStyle={{borderBottomColor:"transparent"}}
+              containerStyle={{borderWidth:1,borderColor:"#009FDB",height:50,justifyContent:"center",margin:5,padding:10}}
+             />
+          </View>
 
-          <Card style={styles.card}>
+          {this.state.searchedvalue === "Search by Name" ? (
+            <View style={{flex:1,flexDirection:"row",borderWidth:1,borderColor:"#009FDB",height:50,margin:5}}>
+              <View style={{flex:0.15,justifyContent:"center",alignItems:"center"}}>
+                <Icon active name="search" style={styles.inputIcon}/>
+              </View>
+              <View style={{flex:0.85,justifyContent:"center",alignItems:"flex-start"}}>
+                <TextInput placeholder="Search" style={{flex:1,fontSize:18,marginLeft:10}} onChangeText={this.onChangeSearchText.bind(this)}  value={this.state.text}/>
+              </View>
+            </View>
+          ) : this.state.searchedvalue === "Search by Category" ? (
+            <Dropdown
+              label={this.state.categoryvalue === "" ? "Select Categories.." : ""}
+              data={this.state.newCategoryarry}
+              value={this.state.categoryvalue}
+              dropdownPosition={0}
+              ref={"categoryref"}
+              onChangeText={this.onCategoryChangeDropdown}
+              inputContainerStyle={{borderBottomColor:"transparent"}}
+              containerStyle={{borderWidth:1,borderColor:"#009FDB",height:50,justifyContent:"center",margin:5,padding:10}}
+             />
+            ):(<View/>)}
+          <Card style={[styles.card,{marginTop:10}]}>
+            <Image source={{uri: "https://www.t-nation.com/system/publishing/articles/10003259/original/The-Single-Best-Muscle-Building-Method.jpg?1451932310"}} style={{ width: "100%", height: 200 }}  />
             <CardItem>
               <Body>
                 <Text style={styles.cardTitle}>
@@ -139,38 +295,37 @@ class OnlineStore extends Component {
           </Card>
           <View style={styles.storeHeader}>
             <Grid>
-                <Col size={4} style={{ backgroundColor: "#FFFFFF", height: 50, display: "flex", justifyContent: "center", alignItems: "flex-start", paddingLeft: 16 }}>
-                   <Text>Products</Text>
-                </Col>
-                <Col size={1} style={{flex:1, backgroundColor: "#FFFFFF"}} >
-                  <TouchableOpacity onPress={this.onGrid} style={{flex:1,borderLeftColor: "#C8C8C8", borderLeftWidth: 1,justifyContent: "center", alignItems: "center" }}>
-                    {this.state.onChangeColumn === false ? (
-                      <Image source = {Images.productsinList} style = {{width: 25,height: 25}}/>
-                      ) : (
-                      <Image source = {Images.productsinGrid} style = {{width: 25,height: 25}}/>
-                    )}
-                  </TouchableOpacity>
-                </Col>
-              </Grid>
+              <Col size={4} style={{ backgroundColor: "#FFFFFF", height: 50, display: "flex", justifyContent: "center", alignItems: "flex-start", paddingLeft: 16 }}>
+                 <Text>Products</Text>
+              </Col>
+              <Col size={1} style={{flex:1, backgroundColor: "#FFFFFF"}} >
+                <TouchableOpacity onPress={this.onGrid} style={{flex:1,borderLeftColor: "#C8C8C8", borderLeftWidth: 1,justifyContent: "center", alignItems: "center" }}>
+                  {this.state.onChangeColumn === false ? (
+                    <Image source = {Images.productsinList} style = {{width: 25,height: 25}}/>
+                    ) : (
+                    <Image source = {Images.productsinGrid} style = {{width: 25,height: 25}}/>
+                  )}
+                </TouchableOpacity>
+              </Col>
+            </Grid>
           </View>
           <View style={styles.storeItems}>
-            <List>
               {this.state.spinner === true ? (
                   <View style={styles.spinnerView}>
                     <Spinner color={"black"} style={styles.spinnerPosition} />
                   </View>
-                ) :
+                ) : this.state.allProducts === [] || this.state.allProducts.length === 0 ? (<View style={{justifyContent:"center",alignItems:"center"}}><Text>No Products</Text></View>):
                 <FlatList
                   data={this.state.allProducts}
                   keyExtractor={(x, i) => x.id}
+                  extraData={this.state}
                   renderItem={this.renderData.bind(this)}
                   removeClippedSubViews={true}
-                  numColumns={this.state.onChangeColumn === true ? 1 : 2}
+                  numColumns={ this.state.onChangeColumn === true ? 1 : 2 }
                   key = {( this.state.onChangeColumn ) ? "ONE COLUMN" : "TWO COLUMN" }
                   style={{backgroundColor:"#dce2ef"}}
                   />
               }
-            </List>
           </View>
         </Content>
       </Container>

@@ -10,11 +10,45 @@ import {
   Button,
   Left,
   Right,
-  Body
+  Body,
+  Spinner
 } from "native-base";
+
 import styles from "./styles";
+import API from "@utils/ApiUtils";
+import {IMAGE_PATH} from "@common/global";
+
 
 class ClientHome extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      images:[],
+      spinner:true
+    }
+  }
+  componentWillMount(){
+   this.getImagesList()
+ }
+  getImagesList(){
+     API.getImages().then(async (response) => {
+      if(response){
+          if (response.status) {
+            this.setState({images: response.data,spinner:false});
+          } else {
+            this.setState({
+              spinner:false
+            })
+              alert("Error")
+          }
+        }else{
+          this.setState({
+            spinner:false
+          })
+          alert("Error")
+        }
+     })
+   }
   render(){
       return (
         <Container style={styles.container}>
@@ -100,9 +134,13 @@ class ClientHome extends Component {
                            and all your supplement and equipment needs.
                        </Text>
                     </View>
-                    <View style={styles.trainerSliderStyle}>
-                       <ImageSlider
-                           images={trainerImages.map((album) => album.image) }/>
+                    <View style={[styles.trainerSliderStyle,{height: 200}]}>
+                      {this.state.spinner ==true ? (
+                        <Spinner size="large" color="black"/>
+                      )
+                        :(<ImageSlider autoPlayWithInterval={3000}
+                            images={this.state.images.map((album) => IMAGE_PATH + album.image) }/>
+                          )}
                     </View>
                </View>
                <View style={styles.request}>

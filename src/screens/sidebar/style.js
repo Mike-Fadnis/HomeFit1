@@ -27,7 +27,7 @@ export default {
     fontWeight: Platform.OS === "ios" ? "400" : "400",
     fontSize: 18,
     marginLeft: 10,
-    color: '#fff'
+    color: "#fff"
   },
   badgeText: {
     fontSize: Platform.OS === "ios" ? 13 : 11,
@@ -37,9 +37,9 @@ export default {
   },
   modalView: {
     flex:1,
-    backgroundColor:'#000000c4',
-    justifyContent:'center',
-    alignItems:'center'
+    backgroundColor:"#000000c4",
+    justifyContent:"center",
+    alignItems:"center"
   },
   modalInnerView: {
     backgroundColor: "white",
@@ -76,7 +76,7 @@ export default {
   modalRadioButtonStyles: {
     flex: 1,
     alignItems: "flex-start",
-    justifyContent: "space-between"    
+    justifyContent: "space-between"
   },
   modalBotomButtonView: {
     alignSelf: "center"
