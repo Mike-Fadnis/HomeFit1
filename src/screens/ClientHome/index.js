@@ -1,23 +1,12 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { ButtonTwo, ButtonThree, Card, CardSection } from '../common';
-import ImageSlider from 'react-native-image-slider';
-import {
-  Container,
-  Header,
-  Title,
-  Icon,
-  Button,
-  Left,
-  Right,
-  Body,
-  Spinner
-} from "native-base";
+import { Text, View, ScrollView, TouchableOpacity } from "react-native";
+import { ButtonThree } from "../common";
+import ImageSlider from "react-native-image-slider";
+import { Container,Header,Title,Icon,Button,Left,Right,Body,Spinner} from "native-base";
 
 import styles from "./styles";
 import API from "@utils/ApiUtils";
 import {IMAGE_PATH} from "@common/global";
-
 
 class ClientHome extends Component {
   constructor(props){
@@ -25,29 +14,29 @@ class ClientHome extends Component {
     this.state = {
       images:[],
       spinner:true
-    }
+    };
   }
   componentWillMount(){
-   this.getImagesList()
+   this.getImagesList();
  }
   getImagesList(){
      API.getImages().then(async (response) => {
-      if(response){
+      if (response){
           if (response.status) {
             this.setState({images: response.data,spinner:false});
           } else {
             this.setState({
               spinner:false
-            })
-              alert("Error")
+            });
+              alert("Error");
           }
-        }else{
+        } else {
           this.setState({
             spinner:false
-          })
-          alert("Error")
+          });
+          alert("Error");
         }
-     })
+     });
    }
   render(){
       return (
@@ -135,10 +124,10 @@ class ClientHome extends Component {
                        </Text>
                     </View>
                     <View style={[styles.trainerSliderStyle,{height: 200}]}>
-                      {this.state.spinner ==true ? (
+                      {this.state.spinner == true ? (
                         <Spinner size="large" color="black"/>
                       )
-                        :(<ImageSlider autoPlayWithInterval={3000}
+                        : (<ImageSlider autoPlayWithInterval={3000}
                             images={this.state.images.map((album) => IMAGE_PATH + album.image) }/>
                           )}
                     </View>

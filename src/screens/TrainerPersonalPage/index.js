@@ -48,11 +48,13 @@ class TrainerPersonalPage extends Component {
   specialtiesDataById:[],
   duplicateSpecialities:[],
   availableDatesss:[],
-  isLoading:true
+  isLoading:true,
+  sessionValue:true,
+  sessionId:null
   };
   this.onModalOpen = this.onModalOpen.bind(this);
   this.onModalClose = this.onModalClose.bind(this);
-  this.onAvailableDates = this.onAvailableDates.bind(this);
+  // this.onAvailableDates = this.onAvailableDates.bind(this);
   this.onViewourOnlineStore = this.onViewourOnlineStore.bind(this);
   }
 async componentWillMount(){
@@ -164,38 +166,38 @@ selectPhotoTapped() {
     }
   });
 }
-onAvailableDates(){
-  this.setState({loading : true});
-  if (this.state.finalSelectedDates === [] || this.state.finalSelectedDates.length === 0){
-    alert("Please select atleast one day");
-    this.setState({loading : false});
-  } else {
-    var finararray = [];
-    this.state.finalSelectedDates.map((res,i)=>{
-      res.time.map((res1,k)=>{
-        var record = {"date":res.date,"time":res1.time};
-        finararray.push(record);
-      });
-    });
-    console.log("hfklfkfjl;djflad",finararray);
-    console.log("id",this.state.userData.id,);
-    var availableDates = {
-      id:this.state.userData.id,
-      availableSlot:JSON.stringify(finararray)
-    };
-    API.availableDates(availableDates).then(async (response) => {
-      this.setState({loading : false});
-      if (response.status === "true") {
-        Alert.alert("HomeFit",response.message);
-      } else {
-        Alert.alert("HomeFit",response.message);
-      }
-    }).catch((error)=>{
-      this.setState({spinner:false});
-      console.log("Console Error",error);
-    });
-  }
-}
+// onAvailableDates(){
+//   this.setState({loading : true});
+//   if (this.state.finalSelectedDates === [] || this.state.finalSelectedDates.length === 0){
+//     alert("Please select atleast one day");
+//     this.setState({loading : false});
+//   } else {
+//     var finararray = [];
+//     this.state.finalSelectedDates.map((res,i)=>{
+//       res.time.map((res1,k)=>{
+//         var record = {"date":res.date,"time":res1.time};
+//         finararray.push(record);
+//       });
+//     });
+//     console.log("hfklfkfjl;djflad",finararray);
+//     console.log("id",this.state.userData.id,);
+//     var availableDates = {
+//       id:this.state.userData.id,
+//       availableSlot:JSON.stringify(finararray)
+//     };
+//     API.availableDates(availableDates).then(async (response) => {
+//       this.setState({loading : false});
+//       if (response.status === "true") {
+//         Alert.alert("HomeFit",response.message);
+//       } else {
+//         Alert.alert("HomeFit",response.message);
+//       }
+//     }).catch((error)=>{
+//       this.setState({spinner:false});
+//       console.log("Console Error",error);
+//     });
+//   }
+// }
 onSpecialtyPressed(){
   this.setState({userData:this.state.userData},()=>{
     this.setState({specialtyModal: true});
@@ -285,6 +287,58 @@ getSpecialitiesById(id) {
     }
   });
 }
+
+onStartSession(){
+  this.setState({
+    sessionValue:false,
+    loading:true
+  },()=>{
+    API.startSession(this.state.userData.id).then(async (response) => {
+      if(response){
+        if(response.status=== true){
+            this.setState({loading : false, sessionId:data},()=>{
+              Alert.alert(response.message,'');
+            });
+
+        }else{
+          this.setState({loading : false},()=>{
+            Alert.alert(response.message,'');
+          });
+        }
+      }else{
+        this.setState({loading : false},()=>{
+          Alert.alert("HomeFit","Error");
+        });
+      }
+    })
+  })
+}
+onStopSession(){
+  // alert("kjahfjdfh"+this.state.sessionId)
+  this.setState({
+    sessionValue:true,
+    loading:true
+  },()=>{
+    API.stopSession(this.state.sessionId).then(async (response) => {
+      if(response){
+        if(response.status=== true){
+            this.setState({loading : false},()=>{
+              Alert.alert(response.message,'');
+            });
+        }else{
+          this.setState({loading : false},()=>{
+            Alert.alert(response.message,'');
+          });
+        }
+      }else{
+        this.setState({loading : false},()=>{
+          Alert.alert("HomeFit","Error");
+        });
+      }
+    })
+  })
+}
+
 renderData(item){
   return (
     <View style={{flex:1,margin: 5,backgroundColor: "#EDEEF0",height: 50,justifyContent:"center"}}>
@@ -378,9 +432,14 @@ render() {
         </View>
         <View style={styles.hostLiveGrpSession}>
           <View style={styles.buttonContainerStyle1}>
-            <ButtonOne style={styles.buttonStyle}>
-              HOST A LIVE GROUP SESSION
-            </ButtonOne>
+            {this.state.sessionValue === true ?
+            (<ButtonOne style={styles.buttonStyle} onPress={this.onStartSession.bind(this)}>
+              LIVE GROUP SESSION START
+            </ButtonOne>)
+            :(<ButtonOne style={styles.buttonStyle} onPress={this.onStopSession.bind(this)}>
+              LIVE GROUP SESSION STOP
+              </ButtonOne>
+            )}
           </View>
         </View>
         <View style={styles.hostLiveGrpSessionTextContainer}>

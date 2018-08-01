@@ -134,17 +134,6 @@ const AppUtils = {
       console.log("error", error);
     });
   },
-  // addCardDetails: async function(cardDetailsObject) {
-  //   return fetch(API_BASE_URL + "action=trainer_cards&primaryId=" + cardDetailsObject.user_id + "&cardNumber=" + cardDetailsObject.cardNumber + "&expiryDate=" + cardDetailsObject.expiryDate + "&cvc=" + cardDetailsObject.cvc + "&cardType=" + cardDetailsObject.cardType + "&cardHolderName=" + cardDetailsObject.cardHolderName + "&billingAddress=" + cardDetailsObject.billingAddress + "&city=" + cardDetailsObject.city + "&state=" + cardDetailsObject.state + "&zipCode=" + cardDetailsObject.zipCode, {
-  //     method: "POST"
-  //   }).then((response) => {
-  //     return response.json();
-  //   }, function(error) {
-  //     console.log("error", error);
-  //   }).catch((error) => {
-  //     console.log("error", error);
-  //   });
-  // },
   getTrainerList: async function() {
     return fetch(API_BASE_URL + "action=get_trainers", {
       method: "GET"
@@ -255,7 +244,7 @@ const AppUtils = {
         console.log("error", error);
       });
     },
-  getCards: async function(id){    
+  getCards: async function(id){
     return fetch(API_BASE_URL + "action=fetch_card_info&user_id="+id , {
       method: "GET"
     }).then((response) => {
@@ -288,5 +277,62 @@ const AppUtils = {
       console.log("error", error);
     });
   },
+  addingSlotsForUser:async function(data) {
+    return fetch(API_BASE_URL + "action=save_user_appt&user_id="+data.user_id+"&trainer_id="+data.trainer_id+"&date="+data.date+"&time="+data.time, {
+      method: "POST"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  getUpcomingSessions:async function(id) {
+    return fetch(API_BASE_URL + "action=fetch_upcoming_appointments&user_id="+id, {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  getParticularAppointments: async function(primaryId){
+    return fetch(API_BASE_URL + "action=fetch_particular_upcoming_appointments&user_id="+ primaryId.userId +"&trainer_id="+ primaryId.trainerId , {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+   startSession:async function(id) {
+  // action=start_free_session&trainer_id=16
+    return fetch(API_BASE_URL + "action=start_free_session&trainer_id="+id, {
+      method: "POST"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  stopSession:async function(id) {
+  // action=stop_free_session&session_id=115
+    return fetch(API_BASE_URL + "action=stop_free_session&session_id="+id, {
+      method: "POST"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  }
 };
 export default AppUtils;

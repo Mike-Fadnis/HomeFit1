@@ -42,7 +42,7 @@ class BrowseTrainers extends Component {
         lastname = res[1].charAt(0);
     }
     return (
-    <Card onPress={() => this.props.navigation.navigate("ViewTrainer",{trainersList: item,keyValue:false})}>
+    <Card onPress={() => this.props.navigation.navigate("ViewTrainer",{trainersList: item,keyValue:false,keyViewTrainer:"undefined"})}>
       <CardSection>
           <View style={styles.trainerImage}>
             {item.item.image === "" ? (

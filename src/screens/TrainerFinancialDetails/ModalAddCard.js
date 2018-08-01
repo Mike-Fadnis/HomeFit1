@@ -60,7 +60,7 @@ export default class ModalAddCard extends Component {
       var cardNumber = this.state.user_cardDetails.values.number;
       var cardNumberDetails = cardNumber.replace(/\s/g, "");
       // var expiry = this.state.user_cardDetails.values.expiry
-        if (cardNumber == "" || cardNumber == null) {
+        if (cardNumber === "" || cardNumber === null) {
           Alert.alert("Card Number","Please enter card number");
         } else if (cardNumber.length < 16) {
           Alert.alert("Card Number","Please enter 16 digits");
@@ -121,22 +121,15 @@ export default class ModalAddCard extends Component {
       }
     }
   }
-
-
-
-
   render() {
     return (
       <View style={styles.container}>
-
         <View style={{ height: 20 }}/>
         <View style={{height: 44,backgroundColor: "white",justifyContent:"center",alignItems:"flex-end", paddingRight: 10, borderBottomWidth: 1, borderBottomColor: "grey"}}>
           <TouchableOpacity onPress={this.props.onClose}>
             <Text style={{fontSize:16, fontWeight:"800", color:"#009FDB"}}>Close</Text>
           </TouchableOpacity>
         </View>
-
-
         <View style={styles.mainView}>
           <View style={styles.cardView}>
             <CreditCardInput
@@ -151,7 +144,6 @@ export default class ModalAddCard extends Component {
               cardImageBack={Images.cardBack}
               onFocus={this._onFocus}
               onChange={this._onChange.bind(this)}/>
-
               <View style={styles.inputView}>
                 <Item stackedLabel>
                    <Label>Billing Address</Label>
@@ -166,21 +158,11 @@ export default class ModalAddCard extends Component {
                    <Input placeholder="AP" value={this.state.stateValue} onChangeText={this.onChangeState.bind(this)}/>
                 </Item>
               </View>
-
               <Button block style={styles.confirmButtonView}
                 onPress={this.addingCreditCard.bind(this)}>
                 <Text style={styles.confirmButtonText}>CONFIRM PAYMENT</Text>
               </Button>
-
           </View>
-
-
-
-
-
-
-
-
         </View>
         {this.state.spinner === true ? (
         <View style={styles.container_spinner}>

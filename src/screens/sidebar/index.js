@@ -285,6 +285,7 @@ onCancel(){
   this.onModalClose();
 }
 onRadioFormPressed(value){
+  console.log("radio value:  ", JSON.stringify(value))
   this.setState({
     radioButton: value
   })

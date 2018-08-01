@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import {Image,View,TouchableOpacity,FlatList,TextInput} from "react-native";
-import {Container,Header,Title,Content,Text,Button,Card,CardItem,Icon,Item,Input,Spinner,Left,Right,Body} from "native-base";
-import { List } from "react-native-elements";
+import {Image,View,TouchableOpacity,FlatList,TextInput,Alert} from "react-native";
+import {Container,Header,Title,Content,Text,Button,Card,CardItem,Icon,Spinner,Left,Right,Body} from "native-base";
 import { Col, Grid } from "react-native-easy-grid";
 import { Dropdown } from "react-native-material-dropdown";
 
@@ -38,11 +37,11 @@ class OnlineStore extends Component {
   getProducts(){
     API.getProducts().then(async (response) => {
       if (response){
-        if(response.status){
+        if (response.status){
           this.setState({allProducts: response.data,spinner:false});
         } else {
           this.setState({spinner:false});
-          alert("Error")
+          alert("Error");
         }
       } else {
         this.setState({spinner:false});
@@ -67,12 +66,12 @@ class OnlineStore extends Component {
                  "id":res.id,
                  "value": res.name,
                  "status":res.status
-               }
-               categoryarray.push(rec)
-             })
+               };
+               categoryarray.push(rec);
+             });
              this.setState({
                newCategoryarry : categoryarray
-             })
+             });
           });
         }
         else {
@@ -106,24 +105,24 @@ class OnlineStore extends Component {
     this.setState({
       searchedvalue : item
     },()=>{
-      if(this.state.searchedvalue === "Search by None" || this.state.searchedvalue === "Search by Name"){
+      if (this.state.searchedvalue === "Search by None" || this.state.searchedvalue === "Search by Name"){
         this.getProducts();
       }
     });
   }
   onCategoryChangeDropdown(item,index){
     this.setState({categoryvalue : item},()=>{
-      let me = this.refs["categoryref"];
+      let me = this.refs.categoryref;
       var selectedItem =  me.selectedItem();
-      this.setState({spinner: true})
+      this.setState({spinner: true});
       this.getProductsByCategory(selectedItem.id);
-    })
+    });
   }
   getProductsByCategory(id){
         API.getProductsByCategory(id).then(async (response) => {
           if (response){
             if (response.status) {
-              this.setState({allProducts: response.data,spinner:false})
+              this.setState({allProducts: response.data,spinner:false});
             }
             else {
               this.setState({spinner:false});
@@ -137,26 +136,13 @@ class OnlineStore extends Component {
             Alert.alert("Console Error", error);
         });
   }
-
-  // SearchFilterFunction(text){
-  //    const newData = this.state.allProducts.filter(function(item){
-  //        const itemData = item.name.toUpperCase()
-  //        const textData = text.toUpperCase()
-  //        return itemData.indexOf(textData) > -1
-  //    })
-  //    this.setState({
-  //        allProducts: newData,
-  //        text: text
-  //    })
-  // }
-
   onChangeSearchText(text){
     this.setState({text},()=>{
       if (this.state.text.length > 2) {
         let products = this.state.allProducts;
         let searchArray = filter(this.filterProducts, products);
          this.setState({allProducts:searchArray});
-      } else if(this.state.text.length === 0 ){
+      } else if (this.state.text.length === 0 ){
           this.getProducts();
         }
     });
@@ -221,8 +207,6 @@ class OnlineStore extends Component {
         value: "Search by None",
        }
     ];
-    //containerStyle={{borderWidth:1,borderColor:"#009FDB",height:50,justifyContent:"center",paddingBottom:10,paddingLeft:10,marginLeft:5,marginRight:5,marginTop:10}}
-    // <TextInput placeholder="Search" style={{fontSize:18,marginLeft:10}} onChangeText={this.onChangeSearchText.bind(this)} value={this.state.text}/>
     return (
       <Container style={styles.container}>
          <Header style={styles.headerStyle}>
@@ -278,7 +262,7 @@ class OnlineStore extends Component {
               inputContainerStyle={{borderBottomColor:"transparent"}}
               containerStyle={{borderWidth:1,borderColor:"#009FDB",height:50,justifyContent:"center",margin:5,padding:10}}
              />
-            ):(<View/>)}
+            ) : (<View/>)}
           <Card style={[styles.card,{marginTop:10}]}>
             <Image source={{uri: "https://www.t-nation.com/system/publishing/articles/10003259/original/The-Single-Best-Muscle-Building-Method.jpg?1451932310"}} style={{ width: "100%", height: 200 }}  />
             <CardItem>
@@ -314,7 +298,7 @@ class OnlineStore extends Component {
                   <View style={styles.spinnerView}>
                     <Spinner color={"black"} style={styles.spinnerPosition} />
                   </View>
-                ) : this.state.allProducts === [] || this.state.allProducts.length === 0 ? (<View style={{justifyContent:"center",alignItems:"center"}}><Text>No Products</Text></View>):
+                ) : this.state.allProducts === [] || this.state.allProducts.length === 0 ? (<View style={{justifyContent:"center",alignItems:"center"}}><Text>No Products</Text></View>) :
                 <FlatList
                   data={this.state.allProducts}
                   keyExtractor={(x, i) => x.id}

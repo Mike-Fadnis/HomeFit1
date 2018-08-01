@@ -1,18 +1,6 @@
 import React, { Component } from "react";
 import { View, Image ,Modal, TouchableOpacity,AsyncStorage, Alert} from "react-native";
-import {
-  Container,
-  Header,
-  Title,
-  Content,
-  Text,
-  Button,
-  Spinner,
-  Icon,
-  Left,
-  Right,
-  Body
-} from "native-base";
+import {Container,Header,Title,Content,Text,Button,Spinner,Icon,Left,Right,Body} from "native-base";
 import { Calendar } from "react-native-calendars";
 import { Card, CardSection } from "../common";
 import styles from "./styles";
@@ -44,7 +32,9 @@ class ViewTrainer extends Component {
       trainersList: this.props.navigation.getParam("trainersList"),
       trainerData:{},
       noslots:false,
-      keyValue: this.props.navigation.getParam("keyValue")
+      keyValue: this.props.navigation.getParam("keyValue"),
+      keyViewTrainer:this.props.navigation.getParam("keyViewTrainer"),
+      getSelectedData:this.props.navigation.getParam("getSelectedData")
     };
     this.onModalOpen = this.onModalOpen.bind(this);
     this.onModalClose = this.onModalClose.bind(this);
@@ -53,8 +43,45 @@ class ViewTrainer extends Component {
     this.onBookSessionPressed = this.onBookSessionPressed.bind(this);
   }
   componentWillMount(){
+    //alert("check: "+ JSON.stringify(this.state.trainersList.item.id))
+    //alert("check: "+ JSON.stringify(this.props.navigation.state.params.keyViewTrainer))
     this.getAvailableSlots();
     this.getTrainersData();
+    AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
+      var get_user = JSON.parse(getUserData);
+      if (this.props.navigation.state.params.keyViewTrainer === "keyViewTrainer"){
+      console.log("userData",get_user);
+        if (get_user){
+          this.addingSlotsForUser(get_user);
+        } else {
+
+        }
+      } else {
+        }
+        //this.getParticularAppointments(get_user.id);
+      }).done();
+  }
+  addingSlotsForUser(userData){
+    var timing = this.state.getSelectedData[0].time;
+    var getTime = timing.replace(/\s/g, "");
+    var record = {
+      user_id:userData.id,
+      trainer_id:this.state.trainersList.item.id,
+      date:this.state.getSelectedData[0].date,
+      time:getTime,
+    };
+    API.addingSlotsForUser(record).then(async (response) => {
+      //alert("RES: " + JSON.stringify(response));
+      if (response){
+        if (response.status == true){
+          Alert.alert(response.message,"");
+        } else {
+          alert("error");
+        }
+      } else {
+        alert("error");
+      }
+     });
   }
   onDaySelect = day => {
     this.setState({spinner: true});
@@ -98,13 +125,12 @@ class ViewTrainer extends Component {
           this.setState({spinner: false});
           this.onModalOpen(true);
         }
-
       }
     });
   }
   onShow(res){
     var self = this;
-      Object.keys(self.state.subdata).forEach(function (key) {
+    Object.keys(self.state.subdata).forEach(function (key) {
         if (res.date === key) {
             self.state.subdata[key] = {selected:true};
         }
@@ -113,9 +139,7 @@ class ViewTrainer extends Component {
     Object.keys(self.state.subdata).forEach(function (key) {
       obj[key] = {selected:self.state.subdata[key].selected ,selectedColor:self.state.subdata[key].selectedColor};
     });
-    self.setState({
-      subdata:obj
-    });
+    self.setState({subdata:obj});
   }
   onModalOpen(visible) {
     this.setState({ modalVisible: visible });
@@ -134,157 +158,199 @@ class ViewTrainer extends Component {
      });
   }
  onShowModalContinue(){
-   this.setState({
-     showModal: false
-   },()=>{
-     this.state.getSelectedTimedata.map((res,i)=>{
-       this.state.getSelectedTime.push(res);
-     });
-     this.setState({ finalSelectedDates: this.state.getSelectedTime  }, () => {
-       this.props.navigation.navigate("Payment");
-       //   let count = 0;
-       //   var self = this;
-       //   Object.keys(self.state.subdata).forEach(function (key) {
-       //     self.state.finalSelectedDates.map((res,i)=>{
-       //       if (res.date === key) {
-       //         count++;
-       //       } else {
-       //         count = 0;
-       //       }
-       //     });
-       //     if (count !== 0) {
-       //         self.state.subdata[key] = {selected:true,selectedColor:"green"};
+   this.setState({showModal: false},()=>{
+     // this.state.getSelectedTimedata.map((res,i)=>{
+     //   this.state.getSelectedTime.push(res);
+     // });
+
+     // this.setState({ finalSelectedDates: this.state.getSelectedTime  }, () => {
+        // this.testAfterPaymentConfirm();
+        this.props.navigation.navigate("Payment",{keyVTrainer:"keyVTrainer",getSelectedData:this.state.getSelectedTimedata});
+
+       // let count = 0;
+       // var self = this;
+       // Object.keys(self.state.subdata).forEach(function (key) {
+       //    self.state.finalSelectedDates.map((res,i)=>{
+       //    if (res.date === key) {
+       //       count++;
+       //     } else {
+       //       count = 0;
        //     }
        //   });
-       //   var obj = {}
-       //   Object.keys(self.state.subdata).forEach(function (key) {
-       //     obj[key] = {selected:self.state.subdata[key].selected ,selectedColor:self.state.subdata[key].selectedColor};
-       //   });
-       //   self.setState({
-       //     subdata:obj
-       //   });
-     });
+       //   if (count !== 0) {
+       //    self.state.subdata[key] = {selected:true,selectedColor:"green"};
+       //   }
+       // });
+       // var obj = {}
+       // Object.keys(self.state.subdata).forEach(function (key) {
+       //   obj[key] = {selected:self.state.subdata[key].selected ,selectedColor:self.state.subdata[key].selectedColor};
+       // });
+       // self.setState({subdata:obj});
+     // });
    });
  }
-  getTrainersData(){
-    var Id = this.state.trainersList.item.id;
-    API.getTrainersData(Id).then(async (response) => {
-        this.setState({
-          isLoading:false,
-          trainerData:response.data
-        });
-     }).catch((error)=>{
-     this.setState({isLoading:false});
-     });
-  }
-  getAvailableSlots(){
-    var Id = this.state.trainersList.item.id;
-      this.setState({
-      availableslotsspinner: true
+
+testAfterPaymentConfirm(){
+  //console.log("hhhhhh:  ", this.state.finalSelectedDates)
+  let count = 0;
+  var self = this;
+  console.log("123654789: ", JSON.stringify(self.state.subdata))
+  Object.keys(self.state.subdata).forEach(function (key) {
+     self.state.finalSelectedDates.map((res,i)=>{
+     if (res.date === key) {
+        count++;
+      } else {
+        count = 0;
+      }
     });
-     API.getAvailableSlots(Id).then(async (response) => {
-        if (response.status) {
-          this.setState({
-            slotsAlloted:response.data,
-          },()=>{
-            this.getNewResponse();
-          });
-          var subdata = {};
-          response.data.map((res,i)=>{
-            var date = moment(res.date).format(_format);
-            subdata[date] = {selected: true};
-          });
-          this.setState({subdata:subdata,availableslotsspinner:false});
-        } else {
-            this.setState({noslots:true,availableslotsspinner:false,noslotsText:response.message});
-        }
-        }).catch((error)=>{
-        Alert.alert("Error",error);
-        });
-  }
-  getNewResponse(){
-    let count = 0;
-		let responseArray = this.state.slotsAlloted;
-		let finalResponseArray = [];
-		responseArray.map((res, key) => {
-			let date = res.date;
-			if (finalResponseArray.length === 0) {
+    if (count !== 0) {
+     self.state.subdata[key] = {selected:true,selectedColor:"green"};
+    }
+  });
+  var obj = {};
+  Object.keys(self.state.subdata).forEach(function (key) {
+    obj[key] = {selected:self.state.subdata[key].selected ,selectedColor:self.state.subdata[key].selectedColor};
+  });
+  self.setState({subdata:obj});
+}
+
+getTrainersData(){
+  var Id = this.state.trainersList.item.id;
+  API.getTrainersData(Id).then(async (response) => {
+      this.setState({
+        isLoading:false,
+        trainerData:response.data
+      });
+   }).catch((error)=>{
+   this.setState({isLoading:false});
+   });
+}
+getAvailableSlots(){
+  var Id = this.state.trainersList.item.id;
+    this.setState({
+    availableslotsspinner: true
+  });
+   API.getAvailableSlots(Id).then(async (response) => {
+    if (response.status) {
+      this.setState({
+        slotsAlloted:response.data,
+      },()=>{
+        this.getNewResponse();
+      });
+      var subdata = {};
+      response.data.map((res,i)=>{
+        var date = moment(res.date).format(_format);
+        subdata[date] = {selected: true};
+      });
+      this.setState({subdata:subdata,availableslotsspinner:false});
+    } else {
+        this.setState({noslots:true,availableslotsspinner:false,noslotsText:response.message});
+    }
+    }).catch((error)=>{
+      Alert.alert("Error",error);
+    });
+}
+getNewResponse(){
+  let count = 0;
+	let responseArray = this.state.slotsAlloted;
+	let finalResponseArray = [];
+	responseArray.map((res, key) => {
+		let date = res.date;
+		if (finalResponseArray.length === 0) {
+			let listArray = [];
+			listArray.push({time_slot:res.time_slot});
+			var record = { id: res.id,date: date, time_slot: listArray };
+			finalResponseArray.push(record);
+		} else {
+			finalResponseArray.map((finalres, index) => {
+				if (finalres.date === date) {
+					finalres.time_slot.push({time_slot:res.time_slot});
+					count++;
+				} else {
+					count = 0;
+				}
+			});
+			if (count === 0) {
 				let listArray = [];
 				listArray.push({time_slot:res.time_slot});
-				var record = { id: res.id,date: date, time_slot: listArray };
-				finalResponseArray.push(record);
-			} else {
-				finalResponseArray.map((finalres, index) => {
-					if (finalres.date === date) {
-						finalres.time_slot.push({time_slot:res.time_slot});
-						count++;
-					} else {
-						count = 0;
-					}
-				});
-				if (count === 0) {
-					let listArray = [];
-					listArray.push({time_slot:res.time_slot});
-					let rec = { id: res.id,date: date, time_slot: listArray  };
-					finalResponseArray.push(rec);
-				}
+				let rec = { id: res.id,date: date, time_slot: listArray };
+				finalResponseArray.push(rec);
 			}
-		});
-    this.setState({
-        finalResponseArray: finalResponseArray
-    });
+		}
+	});
+  this.setState({
+      finalResponseArray: finalResponseArray
+  });
+}
+onBookSessionPressed(){
+  this.setState({spinner: true});
+  AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
+    var showUserData = JSON.parse(getUserData);
+    if (err){
+      Alert.alert("","Can't get data");
+    }
+    if (showUserData === null){
+      this.setState({spinner: false});
+      this.props.navigation.navigate("ClientLogin",{afterBookSession : this.state.afterBookSession });
+    } else {
+      this.setState({spinner: false});
+      this.props.navigation.navigate("Payment");
+    }
+  });
+}
+onBack(){
+  if (this.state.keyValue === true){
+    this.props.navigation.navigate("FeaturedTrainers");
+  } else if (this.state.keyValue === false){
+    this.props.navigation.navigate("BrowseTrainers");
   }
-  onBookSessionPressed(){
-    this.setState({spinner: true});
-    AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
-      var showUserData = JSON.parse(getUserData);
-      if (err){
-        Alert.alert("","Can't get data");
-      }
-      if (showUserData === null){
-        this.setState({spinner: false});
-        this.props.navigation.navigate("ClientLogin",{afterBookSession : this.state.afterBookSession });
-      } else {
-        this.setState({spinner: false});
-        this.props.navigation.navigate("Payment");
-      }
-    });
+}
+getParticularAppointments(userId){
+  var primaryId = {
+    userId: userId,
+    trainerId: this.state.trainersList.item.id
   }
-   onBack(){
-    if (this.state.keyValue === true){
-      this.props.navigation.navigate("FeaturedTrainers");
-    } else if (this.state.keyValue === false){
-      this.props.navigation.navigate("BrowseTrainers");
+ API.getParticularAppointments(primaryId).then(async (response) => {
+  //alert("particularAppount Response:  "+JSON.stringify(response))
+  if (response.status) {
+    this.setState({finalSelectedDates: response.data},()=>{
+      this.testAfterPaymentConfirm();
+    })
+  } else {
+    Alert.alert("Error no response");
+  }
+  }).catch((error)=>{
+    Alert.alert("Error",error);
+  });
+}
+render() {
+  if (this.state.trainerData.name !== undefined){
+    var res =  this.state.trainerData.name.split(" ");
+    var firstname = "";
+    var lastname = "";
+    if (res[1] === undefined) {
+      firstname = res[0].charAt(0);
+      lastname = "";
+    } else {
+      firstname = res[0].charAt(0);
+      lastname = res[1].charAt(0);
     }
   }
-  render() {
-    if (this.state.trainerData.name !== undefined){
-      var res =  this.state.trainerData.name.split(" ");
-      var firstname = "";
-      var lastname = "";
-      if (res[1] === undefined) {
-        firstname = res[0].charAt(0);
-        lastname = "";
-      } else {
-        firstname = res[0].charAt(0);
-        lastname = res[1].charAt(0);
-      }
-    }
-    return (
-        <Container style={styles.container}>
-          <Header style={styles.headerStyle}>
-          <Left style={styles.ham}>
-            <Button style={styles.ham}
-              transparent
-              onPress={this.onBack.bind(this)}>
-              <Icon name="ios-arrow-back" style={{color: "white"}}/>
-            </Button>
-          </Left>
-            <Body>
-              <Title style={styles.title}>Trainer</Title>
-            </Body>
-            <Right />
-          </Header>
+  return (
+      <Container style={styles.container}>
+        <Header style={styles.headerStyle}>
+        <Left style={styles.ham}>
+          <Button style={styles.ham}
+            transparent
+            onPress={this.onBack.bind(this)}>
+            <Icon name="ios-arrow-back" style={{color: "white"}}/>
+          </Button>
+        </Left>
+          <Body>
+            <Title style={styles.title}>Trainer</Title>
+          </Body>
+          <Right />
+        </Header>
           {this.state.isLoading === true ? (
             <View style={styles.container_spinner}>
               <View style={styles.spinnerView}>
@@ -313,34 +379,34 @@ class ViewTrainer extends Component {
                       source={{uri : "https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg"}} />
                   </View>
                 </CardSection>
-
                 <Card>
                   <Text style={styles.specialityTitle}>Specialities :</Text>
-                  <CardSection>
-                  <Text>Speciality 1</Text>
-                  </CardSection>
-                  <CardSection>
-                  <Text>Speciality 2</Text>
-                  </CardSection>
-                  <CardSection>
-                  <Text>Speciality 3</Text>
-                  </CardSection>
+                    <CardSection>
+                      <Text>Speciality 1</Text>
+                    </CardSection>
+                    <CardSection>
+                      <Text>Speciality 2</Text>
+                    </CardSection>
+                    <CardSection>
+                      <Text>Speciality 3</Text>
+                    </CardSection>
                 </Card>
                 <View style={styles.bioContainer}>
                   <Text style={styles.bio}>{this.state.trainerData.review}</Text>
                 </View>
                 <View style={styles.calendarContainer}>
-                <Text style={styles.specialityTitle}>Available Slots :</Text>
-                {this.state.availableslotsspinner ? (
-                  <Spinner color="black" />
-                ) :
-                 this.state.noslots ? (
-                    <Text style={{textAlign:"center",padding:10}}>{this.state.noslotsText}</Text>
-                 ) :
-                  <Calendar
-                    onDayPress={this.onDaySelect}
-                    markedDates={this.state.subdata}/>
-                }
+                  <Text style={styles.specialityTitle}>Available Slots :</Text>
+                  {this.state.availableslotsspinner ? (
+                    <Spinner color="black" />
+                  ) :
+                   this.state.noslots ? (
+                      <Text style={{textAlign:"center",padding:10}}>{this.state.noslotsText}</Text>
+                   ) :
+                    <Calendar
+                      onDayPress={this.onDaySelect}
+                      minDate={new Date()}
+                      markedDates={this.state.subdata}/>
+                  }
                 </View>
                 <View style={{marginTop:10,alignSelf:"center"}}>
                   <Button full style={styles.bookSessionView} onPress={this.onBookSessionPressed}>
@@ -365,30 +431,28 @@ class ViewTrainer extends Component {
                   selectedTime={this.state.finalResponseArray}/>
               </Modal>
               <Modal
-                 animationType="slide"
+                 animationType="fade"
                  transparent={true}
                  visible={this.state.showModal}>
-                 <View style={styles.modalView}>
-                   <View style={{width: 300, alignSelf:"center", marginTop:window.height / 3,height: 120,backgroundColor:"white",borderWidth:1,borderColor:"white",borderRadius:10}}>
-
-                     <View style={{flex:0.5,justifyContent:"center",alignItems:"center",margin:10}}>
-                       <Text style={{textAlign:"center",fontSize:16,fontWeight:"700"}}>{"Do you want to book this Date and time ? It costs $1.00"}</Text>
+                   <View style={styles.modalView}>
+                     <View style={{width: 300, alignSelf:"center", marginTop:window.height / 3,height: 120,backgroundColor:"white",borderWidth:1,borderColor:"white",borderRadius:10}}>
+                       <View style={{flex:0.5,justifyContent:"center",alignItems:"center",margin:10}}>
+                         <Text style={{textAlign:"center",fontSize:16,fontWeight:"700"}}>{"Do you want to book this Date and time ? It costs $1.00"}</Text>
+                       </View>
+                       <View style={{flex:0.5,marginBottom:10,flexDirection:"row"}}>
+                        <View style={{flex:0.5,justifyContent:"center",alignItems:"center"}}>
+                          <TouchableOpacity onPress={this.onShowModalContinue}>
+                            <Text style={{textAlign:"center",fontSize:18,fontWeight:"800", color:"#009FDB"}}>Continue</Text>
+                          </TouchableOpacity>
+                        </View>
+                        <View style={{flex:0.5,justifyContent:"center",alignItems:"center"}}>
+                          <TouchableOpacity onPress={this.onShowModalClose}>
+                            <Text style={{textAlign:"center",fontSize:18,fontWeight:"800", color:"#009FDB"}}>Cancel</Text>
+                          </TouchableOpacity>
+                        </View>
+                       </View>
                      </View>
-
-                     <View style={{flex:0.5,marginBottom:10,flexDirection:"row"}}>
-                      <View style={{flex:0.5,justifyContent:"center",alignItems:"center"}}>
-                        <TouchableOpacity onPress={this.onShowModalContinue}>
-                           <Text style={{textAlign:"center",fontSize:18,fontWeight:"800", color:"#009FDB"}}>Continue</Text>
-                        </TouchableOpacity>
-                      </View>
-                      <View style={{flex:0.5,justifyContent:"center",alignItems:"center"}}>
-                        <TouchableOpacity onPress={this.onShowModalClose}>
-                           <Text style={{textAlign:"center",fontSize:18,fontWeight:"800", color:"#009FDB"}}>Cancel</Text>
-                        </TouchableOpacity>
-                      </View>
-                     </View>
-                   </View>
-                </View>
+                  </View>
                </Modal>
               </Content>
           )}
@@ -399,8 +463,8 @@ class ViewTrainer extends Component {
              </View>
            </View>
          ) : null}
-      </Container>
-    );
+    </Container>
+  );
   }
 }
 

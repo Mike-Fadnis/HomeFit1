@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity, FlatList,Text,Image, Modal,AsyncStorage,Alert } from 'react-native';
-import {Container,Header,Title,Content,Button,Icon,Left,Right,Body} from "native-base";
+import { View, TouchableOpacity, FlatList,Text,Image, Modal,AsyncStorage,Alert } from "react-native";
+import {Container,Header,Title,Content,Button,Icon,Left,Right,Body,Spinner} from "native-base";
 
-// import { Card, CardSection, ButtonTwo } from '../common';
 import styles from "./styles";
 import Images from "@theme/images/images";
 import ModalAddCard from "./ModalAddCard";
@@ -19,25 +18,25 @@ class TrainerFinancialDetails extends Component {
       cardDetails:null,
       cardDetailsModal:false,
       noCards: false
-    }
+    };
   }
   componentWillMount(){
     this.fetchData();
   }
   fetchData(){
-    AsyncStorage.getItem('@getUserData:key', (err, getUserData) => {
-        var get_user = JSON.parse(getUserData)
+    AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
+        var get_user = JSON.parse(getUserData);
         this.setState({
           userData:get_user
         },()=>{
           this.getCardsList(this.state.userData.id);
-        })
-     }).done()
+        });
+     }).done();
   }
   getCardsList(Id){
     API.getCards(Id).then(async (response) => {
       if (response) {
-        if(response.status){
+        if (response.status){
           this.setState({cardsList: response.data,spinner:false});
         } else {
             this.setState({noCards: true,spinner:false});
@@ -49,39 +48,36 @@ class TrainerFinancialDetails extends Component {
     });
   }
   onButtonAddCard(){
-    this.setState({modalAddCard: true})
+    this.setState({modalAddCard: true});
   }
   onButtonCloseAddcard(){
     this.setState({modalAddCard: false},()=>{
       this.getCardsList(this.state.userData.id);
-    })
+    });
 
   }
   onRadioButtonPressed(item,index){
     this.setState({itemId: index},()=>{
-        this.onCardDetails(item)
+        this.onCardDetails(item);
     });
   }
-
-  //EditButtonModal Functions
-
   onCardDetails(item){
     this.setState({cardDetails : item},()=>{
-      this.setState({cardDetailsModal:true})
-    })
+      this.setState({cardDetailsModal:true});
+    });
   }
   onClose(){
-    this.setState({ cardDetailsModal:false})
+    this.setState({ cardDetailsModal:false});
   }
   renderData = ({item, index}) => {
       var cardno = item.card_number.substr(item.card_number.length - 4);
       return (
         <TouchableOpacity onPress={this.onRadioButtonPressed.bind(this,item,index)}>
-          <View style={[styles.rowView,{borderColor:this.state.itemId === index ? ("#34ace0"):("#f9f9f9")}]}>
+          <View style={[styles.rowView,{borderColor:this.state.itemId === index ? ("#34ace0") : ("#f9f9f9")}]}>
             <View style={styles.mainRowView}>
               {this.state.itemId === index ? (
                 <Image source={Images.success} style={styles.rowImageStyle} />
-              ): (
+              ) : (
                 <Image source={Images.emptyCircle} style={styles.rowImageStyle} />
               )}
             </View>
@@ -101,7 +97,7 @@ class TrainerFinancialDetails extends Component {
             </View>
           </View>
         </TouchableOpacity>
-    )
+    );
   }
   render() {
     return (
@@ -130,100 +126,33 @@ class TrainerFinancialDetails extends Component {
                <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
                    <Text style={{textAlign:"center"}}>{"No card information found for this user."}</Text>
                </View>
-             ):
+             ) :
             <FlatList
               data={this.state.cardsList}
               keyExtractor={(x, i) => x.id}
               extraData={this.state}
               renderItem={this.renderData.bind(this)}
-              style={{backgroundColor:'#FFFFFF'}}
+              style={{backgroundColor:"#FFFFFF"}}
             />
             }
           </View>
-
-
-
-
-
-
-      {/*<TouchableOpacity>
-          <Text style={styles.titleText}>Please provide billing info : </Text>
-          <Text style={styles.subTitleText}>
-            ( Please provide your debit card/billing information where the
-            payments can be sent to. )
-          </Text>
-          <View style={styles.imputBoxContainer}>
-            <Form>
-              <Text style={styles.billingAddressTitle}>
-                Billing address :
-              </Text>
-              <Item fixedLabel>
-                <Label>Address</Label>
-                <Input />
-              </Item>
-              <Item fixedLabel>
-                <Label>City</Label>
-                <Input />
-              </Item>
-              <Item fixedLabel>
-                <Label>State</Label>
-                <Input />
-              </Item>
-              <Item fixedLabel last>
-                <Label>Zip</Label>
-                <Input />
-              </Item>
-              <Text style={styles.billingAddressTitle}>Card Info : </Text>
-              <Item fixedLabel>
-                <Label>Card Number</Label>
-                <Input />
-              </Item>
-              <Item fixedLabel>
-                <Label>Expiration Date</Label>
-                <Input />
-              </Item>
-              <Item fixedLabel last>
-                <Label>CV Number</Label>
-                <Input />
-              </Item>
-              <Text style={styles.billingAddressTitle}>Bank Info : </Text>
-              <Item fixedLabel>
-                <Label>Account Number</Label>
-                <Input />
-              </Item>
-              <Item fixedLabel>
-                <Label>Routing Number</Label>
-                <Input />
-              </Item>
-              <Button block
-                style={{ marginBottom : 20, backgroundColor :  "#009FDB" }}>
-                <Text>Done</Text>
-              </Button>
-            </Form>
-          </View>
-        </TouchableOpacity>*/}
-
-
-
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={this.state.modalAddCard}>
-            <ModalAddCard
-              onClose={this.onButtonCloseAddcard.bind(this)}
-            />
-        </Modal>
-
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={this.state.cardDetailsModal}>
-            <CardDetailsModal
-              onClose={this.onClose.bind(this)}
-              cardDetails={this.state.cardDetails}
-            />
-        </Modal>
-
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={this.state.modalAddCard}>
+              <ModalAddCard
+                onClose={this.onButtonCloseAddcard.bind(this)}
+              />
+          </Modal>
+          <Modal
+            animationType="slide"
+            transparent={false}
+            visible={this.state.cardDetailsModal}>
+              <CardDetailsModal
+                onClose={this.onClose.bind(this)}
+                cardDetails={this.state.cardDetails}
+              />
+          </Modal>
         </Content>
       </Container>
     );
@@ -234,33 +163,33 @@ export default TrainerFinancialDetails;
 
 var creditCardArray = [
   {
-    id:'1',
-    name:'ABCDABCD ABCD JOHN',
-    last:'4242',
+    id:"1",
+    name:"ABCDABCD ABCD JOHN",
+    last:"4242",
     cardType: "visa"
   },
   {
-    id:'2',
-    name:'EFGHEFGH EFGH JOHN',
-    last:'3222',
+    id:"2",
+    name:"EFGHEFGH EFGH JOHN",
+    last:"3222",
     cardType: "master"
   },
   {
-    id:'3',
-    name:'IJKLIJKL IJKL JOHN',
-    last:'0005',
+    id:"3",
+    name:"IJKLIJKL IJKL JOHN",
+    last:"0005",
     cardType: "american-express"
   },
   {
-    id:'4',
-    name:'MNOPMNOP MNOP JOHN',
-    last:'5554',
+    id:"4",
+    name:"MNOPMNOP MNOP JOHN",
+    last:"5554",
     cardType: "visa"
   },
   {
-    id:'5',
-    name:'QRSTQRST QRST JOHN',
-    last:'4444',
+    id:"5",
+    name:"QRSTQRST QRST JOHN",
+    last:"4444",
     cardType: "master"
   }
-]
+];

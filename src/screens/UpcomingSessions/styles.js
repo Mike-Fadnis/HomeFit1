@@ -1,8 +1,7 @@
 import {
-  Dimensions,
-  Platform
+  Dimensions
 } from "react-native";
-const window = Dimensions.get('window');
+const window = Dimensions.get("window");
 
 export default {
   container: {
@@ -13,15 +12,13 @@ export default {
     backgroundColor: "#009FDB"
   },
   title: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold'
+    fontWeight: "bold"
   },
   contentStyle: {
     flex: 1,
-    // backgroundColor:'lightgreen'
   },
-
   timeView: {
     marginTop: 10,
     marginLeft: 15,
@@ -29,17 +26,17 @@ export default {
 
     height: window.width / 10,
     width: window.width / 1.1,
-    borderColor: 'lightgrey',
+    borderColor: "lightgrey",
     borderWidth: 1,
     borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center'
+    alignItems: "center",
+    justifyContent: "center"
   },
   modalView: {
     flex: 1,
-    backgroundColor: '#000000c4',
-    justifyContent: 'center',
-    alignItems: 'center'
+    backgroundColor: "#000000c4",
+    justifyContent: "center",
+    alignItems: "center"
   },
   subModalContainerView: {
     width: 300,
@@ -66,6 +63,24 @@ export default {
     textAlign: "center",
     fontSize: 18,
     fontWeight: "500",
-    color: '#009FDB'
+    color: "#009FDB"
+  },
+  container_spinner: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor:"rgba(0,0,0,0.72)"
+  },
+  spinnerView:{
+    height:window.width / 3,
+    width:window.width / 3,
+    backgroundColor:"white",
+    borderRadius:20,
+    alignItems:"center",
+    justifyContent:"center"
   }
 };
