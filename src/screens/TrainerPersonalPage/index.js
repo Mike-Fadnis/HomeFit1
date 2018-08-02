@@ -145,25 +145,41 @@ selectPhotoTapped() {
       this.setState({spinner:false});
       console.log("User tapped custom button: ", response.customButton);
     }
-    else {
-      let source = { uri: response.uri };
-      this.setState({avatarSource: source,spinner:false},()=>{
-        var key = moment().format("DDMMYYYYhhmmss");
-        RNFetchBlob.fetch("POST", "http://ajaypalsidhu.com/demo/HomeFit/Admin/base64.php", {
-        Authorization : "Bearer access-token",
-        otherHeader : "foo",
-        "Content-Type" : "multipart/form-data",
-        }, [
-        // custom content type
-        { name : "images-png", filename : key + ".png", type:"image/png", data: response.data},
-        ]).then((resp) => {
-         console.log("response",resp.json());
-          alert("response" + resp.json());
-        }).catch((err) => {
-        console.log("err",err);
+  else {
+        let source = { uri: response.uri };
+        this.setState({avatarSource: source,spinner:false},()=>{
+          var base64 = "data:image/png;base64," + response.data;
+          var string = {"data":base64};
+          API.uploadImage(string).then(async (response) => {
+            if (response) {
+              Alert.alert("Home Fit",response.data)
+            } else{
+              Alert.alert("Error","Error uploading image")
+            }
+          })
+          // fetch("http://ajaypalsidhu.com/demo/HomeFit/Admin/base64.php",{
+          //     method:"POST",
+          //     body: this.convertFormData(string)
+          // }).then((response)=>{
+          // 	//alert("responseData:"+JSON.stringify(responseData));
+          // 	    console.log("responseData",response)
+          //   }).catch((err)=>{
+          //   	console.log("error",err)
+          //   })
+          // RNFetchBlob.fetch("POST", "http://ajaypalsidhu.com/demo/HomeFit/Admin/base64.php", {
+          //   Authorization : "Bearer access-token",
+          //    otherHeader : "foo"
+          //    }, [
+          //     // custom content type
+          //     {"data":base64},
+          // ]).then((resp) => {
+          //       console.log("response",resp.json());
+          //       alert("response" + resp.json());
+          // }).catch((err) => {
+          //     console.log("errorr.....",err);
+          // });
         });
-      });
-    }
+      }
   });
 }
 // onAvailableDates(){

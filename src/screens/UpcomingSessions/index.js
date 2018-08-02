@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Modal, AsyncStorage,FlatList} from "react-native";
+import { View,Text, Modal, AsyncStorage,FlatList} from "react-native";
 import {Container,Header,Title,Content,Icon,Button,Left,Right,Body,Spinner} from "native-base";
 import styles from "./styles";
 import ModalDesign from "./ModalDesign";
@@ -13,54 +13,109 @@ class UpcomingSessions extends Component {
       modalVisible:false,
       dataItem:{},
       sessions:[],
-      spinner: true
+      spinner: true,
+      emptyData:false,
+      userData:{},
+      userType:""
     };
   }
   componentWillMount(){
     AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
+      if  (err){
+        Alert.alert("ERROR","Error Fetching data")
+      }
       var get_user = JSON.parse(getUserData);
       console.log("userData",get_user);
-        if(get_user){
-          this.getUpcomingSessionsList(get_user.id)
-        }else{
+        if (get_user){
+          this.setState({
+            userData:get_user
+          })
+          AsyncStorage.getItem("@getUserType:key", (error, getUserType) => {
+            if (error){
+              Alert.alert("ERROR","Error Fetching data")
+            }
+            if(getUserType){
+              if (getUserType === "Trainer"){
+                this.setState({
+                  userType: "Trainer"
+                },()=>{
+                  this.getUpcomingSessionsListTrainer(get_user.id);
+                })
+              } else {
+                this.setState({
+                  userType: "User"
+                },()=>{
+                  this.getUpcomingSessionsListUsers(get_user.id);
+                })
+              }
+            }
+          })
+        } else {
         }
       }).done();
   }
-  getUpcomingSessionsList(user_id){
-    API.getUpcomingSessions(user_id).then(async (response) => {
-      if(response){
-        if(response.status === true){
+  getUpcomingSessionsListTrainer(trainer_id){
+    API.getUpcomingSessionsByTrainerId(trainer_id).then(async (response) => {
+      console.log("respomse",response)
+      if (response){
+        if (response.status === true){
           this.setState({
             sessions:response.data,
+            emptyData:false,
             spinner:false
-          })
-        }else{
+          });
+        } else {
           this.setState({
-            spinner:false
-          })
-          alert("error")
+            spinner:false,emptyData:true
+          });
+          // alert("error")
         }
-      }else{
+      } else {
         this.setState({
-          spinner:false
-        })
-        alert("error")
+          spinner:false,emptyData:true
+        });
+        // alert("error")
       }
-    }).done()
+    }).done();
+  }
+
+  getUpcomingSessionsListUsers(user_id){
+    API.getUpcomingSessions(user_id).then(async (response) => {
+      if (response){
+        if (response.status === true){
+          this.setState({sessions:response.data,emptyData:false,spinner:false});
+        } else {
+          this.setState({spinner:false,emptyData:true});
+        }
+      } else {
+          this.setState({spinner:false,emptyData:true});
+      }
+    }).done();
   }
   onClicked(item){
-    this.setState({
-      dataItem:item
-    },()=>{
-      this.setState({
-        modalVisible:true
-      });
+    this.setState({dataItem:item},() => {
+      this.setState({modalVisible:true})
     });
   }
   onModalClose(){
-    this.setState({
-      modalVisible:false
-    });
+      this.setState({
+        modalVisible:false
+      },()=>{
+        this.setState({
+          spinner:true
+        },()=>{
+          if(this.state.userType === "Trainer" ){
+            this.getUpcomingSessionsListTrainer(this.state.userData.id);
+          }else if(this.state.userType === "User" ){
+            this.getUpcomingSessionsListUsers(this.state.userData.id);
+          }
+        })
+      });
+    }
+  modalCloseafterJoinedSession(){
+    this.setState({modalVisible:false},()=>{
+      this.props.navigation.navigate("JoinedSession")
+    })
   }
   renderData(item){
     return (
@@ -96,19 +151,22 @@ class UpcomingSessions extends Component {
             ) : (
               <Content>
                 <View style={styles.contentStyle}>
-                   <FlatList
-                      data={this.state.sessions}
-                      keyExtractor={(x, i) => x.id}
-                      extraData={this.state}
-                      renderItem={this.renderData.bind(this)}
-                      style={{backgroundColor:'#FFFFFF'}}/>
+                 {this.state.emptyData === true ? (
+                  <Text style={{textAlign:"center", fontSize:16,fontWeight:"700"}}>No Upcoming Sessions</Text>)
+                  : ( <FlatList
+                    data={this.state.sessions}
+                    keyExtractor={(x, i) => x.id}
+                    extraData={this.state}
+                    renderItem={this.renderData.bind(this)}
+                    style={{backgroundColor:"#FFFFFF"}}/>)
+                  }
                 </View>
                 <Modal
                   animationType="slide"
                   transparent={true}
                   visible={this.state.modalVisible}>
                   <View style={styles.modalView}>
-                <ModalDesign onClose={this.onModalClose.bind(this)} dataItem={this.state.dataItem}/>
+                <ModalDesign onClose={this.onModalClose.bind(this)} dataItem={this.state.dataItem} afterJoinSessionClose={this.modalCloseafterJoinedSession.bind(this)}/>
                 </View>
                 </Modal>
               </Content>

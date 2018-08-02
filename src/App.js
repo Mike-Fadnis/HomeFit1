@@ -145,6 +145,8 @@ import NotificationMessages from "./screens/Notifications/NotificationMessages";
 import OrderHistory from "./screens/OrderHistory";
 import UpcomingSessions from "./screens/UpcomingSessions";
 import TrackFriends from "./screens/TrackFriends";
+import JoinedSession from "./screens/JoinedSession";
+
 
 //client
 import ClientHome from "./screens/ClientHome";
@@ -175,6 +177,7 @@ const Drawer = DrawerNavigator(
     NotificationMessages: { screen: NotificationMessages},
     UpcomingSessions: { screen: UpcomingSessions},
     OrderHistory: { screen: OrderHistory},
+    JoinedSession: { screen: JoinedSession},
     TrackFriends: { screen: TrackFriends},
     ClientHome: { screen: ClientHome },
     ClientLogin : { screen : ClientLogin },

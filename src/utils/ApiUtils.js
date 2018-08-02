@@ -1,4 +1,4 @@
-import {API_BASE_URL} from "@common/global";
+import {API_BASE_URL,convertFormData} from "@common/global";
 
 const AppUtils = {
   getProducts: async function(data) {
@@ -234,7 +234,7 @@ const AppUtils = {
         });
     },
     getProductsByCategory: async function(id){
-      return fetch(API_BASE_URL + "action=search_product_by_category&category="+id , {
+      return fetch(API_BASE_URL + "action=search_product_by_category&category=" + id , {
         method: "GET"
       }).then((response) => {
         return response.json();
@@ -245,7 +245,7 @@ const AppUtils = {
       });
     },
   getCards: async function(id){
-    return fetch(API_BASE_URL + "action=fetch_card_info&user_id="+id , {
+    return fetch(API_BASE_URL + "action=fetch_card_info&user_id=" + id , {
       method: "GET"
     }).then((response) => {
       return response.json();
@@ -256,7 +256,7 @@ const AppUtils = {
     });
   },
   addCardDetails: async function(cardDetailsObject) {
-    return fetch(API_BASE_URL + "action=save_card_info&cardDetailsObject=["+cardDetailsObject+"]", {
+    return fetch(API_BASE_URL + "action=save_card_info&cardDetailsObject=[" + cardDetailsObject + "]", {
       method: "POST"
     }).then((response) => {
       return response.json();
@@ -278,7 +278,7 @@ const AppUtils = {
     });
   },
   addingSlotsForUser:async function(data) {
-    return fetch(API_BASE_URL + "action=save_user_appt&user_id="+data.user_id+"&trainer_id="+data.trainer_id+"&date="+data.date+"&time="+data.time, {
+    return fetch(API_BASE_URL + "action=save_user_appt&user_id=" + data.user_id + "&trainer_id=" + data.trainer_id + "&date=" + data.date + "&time=" + data.time, {
       method: "POST"
     }).then((response) => {
       return response.json();
@@ -289,7 +289,7 @@ const AppUtils = {
     });
   },
   getUpcomingSessions:async function(id) {
-    return fetch(API_BASE_URL + "action=fetch_upcoming_appointments&user_id="+id, {
+    return fetch(API_BASE_URL + "action=fetch_upcoming_appointments&user_id=" + id, {
       method: "GET"
     }).then((response) => {
       return response.json();
@@ -300,7 +300,7 @@ const AppUtils = {
     });
   },
   getParticularAppointments: async function(primaryId){
-    return fetch(API_BASE_URL + "action=fetch_particular_upcoming_appointments&user_id="+ primaryId.userId +"&trainer_id="+ primaryId.trainerId , {
+    return fetch(API_BASE_URL + "action=fetch_particular_upcoming_appointments&user_id=" + primaryId.userId + "&trainer_id=" + primaryId.trainerId , {
       method: "GET"
     }).then((response) => {
       return response.json();
@@ -312,7 +312,7 @@ const AppUtils = {
   },
    startSession:async function(id) {
   // action=start_free_session&trainer_id=16
-    return fetch(API_BASE_URL + "action=start_free_session&trainer_id="+id, {
+    return fetch(API_BASE_URL + "action=start_free_session&trainer_id=" + id, {
       method: "POST"
     }).then((response) => {
       return response.json();
@@ -324,8 +324,66 @@ const AppUtils = {
   },
   stopSession:async function(id) {
   // action=stop_free_session&session_id=115
-    return fetch(API_BASE_URL + "action=stop_free_session&session_id="+id, {
+    return fetch(API_BASE_URL + "action=stop_free_session&session_id=" + id, {
       method: "POST"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  joinUpcomingHourlyAppt:async function(id) {
+    return fetch(API_BASE_URL + "action=join_upcoming_hourly_appointments&appt_id=" + id, {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  uploadImage: async function(data) {
+    return fetch("http://ajaypalsidhu.com/demo/HomeFit/Admin/base64.php", {
+      method: "POST",
+      body: await convertFormData(data)
+    }).then((response) => {
+      console.log("response at utils",JSON.stringify(response))
+      return response.json();
+    }, function(error) {
+        console.log("error", error);
+    }).catch((error) => {
+        console.log("error", error);
+    });
+  },
+   appointmentCancelledByUser:async function(id) {
+    return fetch(API_BASE_URL + "action=user_appoitment_cancellation&appt_id="+id, {
+      method: "POST"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  appointmentCancelledByTrainer:async function(id) {
+    // action=trainer_appoitment_cancellation&appt_id=48
+    return fetch(API_BASE_URL + "action=trainer_appoitment_cancellation&appt_id="+id, {
+      method: "POST"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  getUpcomingSessionsByTrainerId:async function(id) {
+    return fetch(API_BASE_URL + "action=fetch_upcoming_appointments_for_trainers&trainer_id=" + id, {
+      method: "GET"
     }).then((response) => {
       return response.json();
     }, function(error) {

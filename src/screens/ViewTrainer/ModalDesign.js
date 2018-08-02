@@ -61,21 +61,21 @@ export default class ModalDesign extends Component {
   }
   onPropsModalDone() {
       if (this.state.duplicateArray.length > 0) {
-        var finalArray = []
-        var rec = {date:this.props.selectedTime[0].date, time:this.state.duplicateArray[0].time_slot}
-        finalArray.push(rec)
+        var finalArray = [];
+        var rec = {date:this.props.selectedDate, time:this.state.duplicateArray[0].time_slot};
+        finalArray.push(rec);
         // console.log("this.state.selectedTime@@@@@: ",finalArray)
-        this.props.getDataObj(finalArray)
+        this.props.getDataObj(finalArray);
       } else {
-        alert('please select atleast one time slot')
+        alert("please select atleast one time slot");
       }
   }
   onSingleSelection(item, index){
     this.setState({
       indexValue:index
     },()=>{
-      this.state.duplicateArray.push(item)
-    })
+      this.state.duplicateArray.push(item);
+    });
   }
   renderData = ({item, index}) =>  {
     // let data1;
@@ -108,7 +108,7 @@ export default class ModalDesign extends Component {
           </TouchableOpacity>
         </View>
         <View style={{flex: 0.2,justifyContent: "center",alignItems: "flex-end",paddingRight: 20}}>
-          {this.state.indexValue === index ?(<Image source={Images.checked} style={{height:20,width:20}} />):(null)}
+          {this.state.indexValue === index ? (<Image source={Images.checked} style={{height:20,width:20}} />) : (null)}
         </View>
       </View>
     );
@@ -137,8 +137,8 @@ export default class ModalDesign extends Component {
 
 
       {this.state.forEmptyTimeSlot === true ? (
-        <View>
-          <Text> Nothing to display</Text>
+        <View style={{marginTop:10,alignItems:"center"}}>
+          <Text > No Time Slots Available For The Selected Date</Text>
         </View>
       ) : (
         <View style={{ flex: 1 }}>

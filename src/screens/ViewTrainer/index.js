@@ -43,22 +43,21 @@ class ViewTrainer extends Component {
     this.onBookSessionPressed = this.onBookSessionPressed.bind(this);
   }
   componentWillMount(){
-    //alert("check: "+ JSON.stringify(this.state.trainersList.item.id))
-    //alert("check: "+ JSON.stringify(this.props.navigation.state.params.keyViewTrainer))
     this.getAvailableSlots();
     this.getTrainersData();
     AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
       var get_user = JSON.parse(getUserData);
       if (this.props.navigation.state.params.keyViewTrainer === "keyViewTrainer"){
-      console.log("userData",get_user);
+        console.log("userData",get_user);
         if (get_user){
           this.addingSlotsForUser(get_user);
         } else {
 
         }
       } else {
+
         }
-        //this.getParticularAppointments(get_user.id);
+        this.getParticularAppointments(get_user.id);
       }).done();
   }
   addingSlotsForUser(userData){
@@ -71,15 +70,16 @@ class ViewTrainer extends Component {
       time:getTime,
     };
     API.addingSlotsForUser(record).then(async (response) => {
-      //alert("RES: " + JSON.stringify(response));
       if (response){
-        if (response.status == true){
+        //alert("API response:  "+JSON.stringify(response))
+        if (response.status === true){
           Alert.alert(response.message,"");
+          this.getParticularAppointments(userData.id);
         } else {
-          alert("error");
+          Alert.alert(response.message,"");
         }
       } else {
-        alert("error");
+        alert("Error");
       }
      });
   }
@@ -162,58 +162,36 @@ class ViewTrainer extends Component {
      // this.state.getSelectedTimedata.map((res,i)=>{
      //   this.state.getSelectedTime.push(res);
      // });
+    //  this.setState({ finalSelectedDates: this.state.getSelectedTime  }, () => {
 
-     // this.setState({ finalSelectedDates: this.state.getSelectedTime  }, () => {
-        // this.testAfterPaymentConfirm();
-        this.props.navigation.navigate("Payment",{keyVTrainer:"keyVTrainer",getSelectedData:this.state.getSelectedTimedata});
+      // let count = 0;
+      // var self = this;
+      // Object.keys(self.state.subdata).forEach(function (key) {
+      //   self.state.finalSelectedDates.map((res,i)=>{
+      //   if (res.date === key) {
+      //      count++;
+      //    } else {
+      //      count = 0;
+      //    }
+      //  });
+      //  if (count !== 0) {
+      //   self.state.subdata[key] = {selected:true,selectedColor:"green"};
+      //  }
+      // });
+      // var obj = {}
+      // Object.keys(self.state.subdata).forEach(function (key) {
+      //  obj[key] = {selected:self.state.subdata[key].selected ,selectedColor:self.state.subdata[key].selectedColor};
+      // });
+      // self.setState({subdata:obj});
 
-       // let count = 0;
-       // var self = this;
-       // Object.keys(self.state.subdata).forEach(function (key) {
-       //    self.state.finalSelectedDates.map((res,i)=>{
-       //    if (res.date === key) {
-       //       count++;
-       //     } else {
-       //       count = 0;
-       //     }
-       //   });
-       //   if (count !== 0) {
-       //    self.state.subdata[key] = {selected:true,selectedColor:"green"};
-       //   }
-       // });
-       // var obj = {}
-       // Object.keys(self.state.subdata).forEach(function (key) {
-       //   obj[key] = {selected:self.state.subdata[key].selected ,selectedColor:self.state.subdata[key].selectedColor};
-       // });
-       // self.setState({subdata:obj});
-     // });
+
+    this.props.navigation.navigate("Payment",{keyVTrainer:"keyVTrainer",getSelectedData:this.state.getSelectedTimedata});
+
+    // });
+
+
    });
  }
-
-testAfterPaymentConfirm(){
-  //console.log("hhhhhh:  ", this.state.finalSelectedDates)
-  let count = 0;
-  var self = this;
-  console.log("123654789: ", JSON.stringify(self.state.subdata))
-  Object.keys(self.state.subdata).forEach(function (key) {
-     self.state.finalSelectedDates.map((res,i)=>{
-     if (res.date === key) {
-        count++;
-      } else {
-        count = 0;
-      }
-    });
-    if (count !== 0) {
-     self.state.subdata[key] = {selected:true,selectedColor:"green"};
-    }
-  });
-  var obj = {};
-  Object.keys(self.state.subdata).forEach(function (key) {
-    obj[key] = {selected:self.state.subdata[key].selected ,selectedColor:self.state.subdata[key].selectedColor};
-  });
-  self.setState({subdata:obj});
-}
-
 getTrainersData(){
   var Id = this.state.trainersList.item.id;
   API.getTrainersData(Id).then(async (response) => {
@@ -311,18 +289,38 @@ getParticularAppointments(userId){
     trainerId: this.state.trainersList.item.id
   }
  API.getParticularAppointments(primaryId).then(async (response) => {
-  //alert("particularAppount Response:  "+JSON.stringify(response))
+  console.log("particularAppount Response:  ", JSON.stringify(response))
   if (response.status) {
-    this.setState({finalSelectedDates: response.data},()=>{
-      this.testAfterPaymentConfirm();
-    })
+      this.forSelectedGreenArray(response.data);
   } else {
-    Alert.alert("Error no response");
+    Alert.alert("Error");
   }
   }).catch((error)=>{
     Alert.alert("Error",error);
   });
 }
+forSelectedGreenArray(resData){
+  let count = 0;
+  var self = this;
+  Object.keys(self.state.subdata).forEach(function (key) {
+    resData.map((res,i)=>{
+      if (res.appt_date === key) {
+        self.state.subdata[key] = {selected:true,selectedColor:"green",disabled: true, disableTouchEvent: true};
+       } else {
+         count = 0;
+      }
+   });
+   if (count !== 0) {
+    self.state.subdata[key] = {selected:true,selectedColor:"green",disabled: true, disableTouchEvent: true};
+   }
+  });
+  var obj = {}
+  Object.keys(self.state.subdata).forEach(function (key) {
+   obj[key] = {selected:self.state.subdata[key].selected ,selectedColor:self.state.subdata[key].selectedColor,disabled:self.state.subdata[key].disabled, disableTouchEvent:self.state.subdata[key].disableTouchEvent};
+  });
+  self.setState({subdata:obj,isLoading: false});
+}
+
 render() {
   if (this.state.trainerData.name !== undefined){
     var res =  this.state.trainerData.name.split(" ");

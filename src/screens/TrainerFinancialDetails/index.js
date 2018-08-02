@@ -69,6 +69,11 @@ class TrainerFinancialDetails extends Component {
   onClose(){
     this.setState({ cardDetailsModal:false});
   }
+  getDataObj(){
+    this.setState({modalAddCard: false},()=>{
+      this.fetchData();
+    })
+  }
   renderData = ({item, index}) => {
       var cardno = item.card_number.substr(item.card_number.length - 4);
       return (
@@ -141,6 +146,7 @@ class TrainerFinancialDetails extends Component {
             transparent={true}
             visible={this.state.modalAddCard}>
               <ModalAddCard
+                getDataObj={this.getDataObj.bind(this)}
                 onClose={this.onButtonCloseAddcard.bind(this)}
               />
           </Modal>

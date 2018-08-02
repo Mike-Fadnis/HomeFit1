@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import { Image,View, AsyncStorage, ListView, Alert,Modal} from "react-native";
 import {Content,Text,List,ListItem,Icon,Container,Left,Right,Button,Badge} from "native-base";
 import styles from "./style";
-import RadioForm from 'react-native-simple-radio-button';
+import RadioForm from "react-native-simple-radio-button";
 
 var radio_props = [
- {label: 'User', value: 0 },
- {label: 'Trainer', value: 1 }
+ {label: "User", value: 0 },
+ {label: "Trainer", value: 1 }
 ];
 
 const dataUser = [
@@ -127,7 +127,7 @@ const dataTrainer = [
     bg: "#BE6F50"
   },
 ];
-const emptyData =[
+const emptyData = [
   {
     name: "Landing",
     route: "Landing",
@@ -152,7 +152,7 @@ const emptyData =[
     icon: "navigate",
     bg: "#BE6F50"
   },
-]
+];
 
 class SideBar extends Component {
   constructor(props) {
@@ -162,40 +162,40 @@ class SideBar extends Component {
       shadowOffsetWidth: 1,
       shadowRadius: 4,
       userData:null,
-      userType:'',
+      userType:"",
       modalVisible:false,
       radioButton:0
     };
     this.onLogin = this.onLogin.bind(this);
   }
   fetchData(){
-    AsyncStorage.getItem('@getUserType:key', (err, type) => {
-      if(type){
+    AsyncStorage.getItem("@getUserType:key", (err, type) => {
+      if (type){
         this.setState({
           userType:type
         },()=>{
-          if(this.state.userType === 'Trainer'){
+          if (this.state.userType === "Trainer"){
             this.setState({
               dataSource:new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows(dataTrainer)
-            })
-          }else{
+            });
+          } else {
             this.setState({
               dataSource:new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows(dataUser)
-            })
+            });
           }
-        })
-      }else{
+        });
+      } else {
         this.setState({
           dataSource:new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows(emptyData)
-        })
+        });
       }
-    })
-    AsyncStorage.getItem('@getUserData:key', (err, getUserData) => {
-        var get_user = JSON.parse(getUserData)
+    });
+    AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
+        var get_user = JSON.parse(getUserData);
         this.setState({
           userData:get_user
-        })
-     }).done()
+        });
+     }).done();
   }
   componentWillMount(){
     this.fetchData();
@@ -204,12 +204,12 @@ class SideBar extends Component {
     this.fetchData();
   }
   onLogoutOk(){
-    AsyncStorage.removeItem('@getUserData:key')
-    AsyncStorage.removeItem('@getUserType:key')
-    this.props.navigation.navigate("Landing")
+    AsyncStorage.removeItem("@getUserData:key");
+    AsyncStorage.removeItem("@getUserType:key");
+    this.props.navigation.navigate("Landing");
   }
   onClicking(data){
-    if(data.name === "Logout"){
+    if (data.name === "Logout"){
       Alert.alert(
         "Log-Out",
         "Are you sure you want to Log-out ?", [
@@ -225,16 +225,16 @@ class SideBar extends Component {
           cancelable: false
         }
       );
-    }else{
-      if(data.route){
-        this.props.navigation.navigate(data.route)
-      }else{
-        alert("No Routing Given")
+    } else {
+      if (data.route){
+        this.props.navigation.navigate(data.route);
+      } else {
+        alert("No Routing Given");
       }
     }
   }
 renderData(data){
-  return(
+  return (
     <ListItem
       button
       noBorder
@@ -263,61 +263,61 @@ renderData(data){
           </Badge>
         </Right>}
     </ListItem>
-  )
+  );
 }
 onLogin(){
-  this.setState({modalVisible:true})
+  this.setState({modalVisible:true});
 }
 onModalClose(){
-  this.setState({modalVisible:false})
+  this.setState({modalVisible:false});
 }
 onDone(){
-  console.log("44556699:   ",JSON.stringify(this.state.radioButton))
-  if(this.state.radioButton === 0){
+  console.log("44556699:   ",JSON.stringify(this.state.radioButton));
+  if (this.state.radioButton === 0){
     this.onModalClose();
-    this.props.navigation.navigate("ClientLogin")
-  }else{
+    this.props.navigation.navigate("ClientLogin");
+  } else {
     this.onModalClose();
-    this.props.navigation.navigate("TrainerLogin")
+    this.props.navigation.navigate("TrainerLogin");
   }
+  this.setState({radioButton: 0})
 }
 onCancel(){
   this.onModalClose();
 }
 onRadioFormPressed(value){
-  console.log("radio value:  ", JSON.stringify(value))
   this.setState({
     radioButton: value
-  })
+  });
 }
 render() {
- console.log("USERDATA@@@@@:"+JSON.stringify(this.state.userData))
+ console.log("USERDATA@@@@@:" + JSON.stringify(this.state.userData));
     return (
       <Container style={{backgroundColor: "#009FDB",}}>
         <Content
           bounces={false}
           style={{ flex: 1, backgroundColor: "#009FDB",
-            marginTop : 30,  borderColor : '#fff',
+            marginTop : 30,  borderColor : "#fff",
             borderBottomWidth : 1 }}>
-            <View style={{ alignItems:'center', justifyContent:'center'}}>
+            <View style={{ alignItems:"center", justifyContent:"center"}}>
             <Icon name="ios-contact" style={{color: "white"}} />
             {this.state.userData === null ? (
             <Button onPress={this.onLogin} style={{alignSelf:"center"}} transparent>
               <Text style={{color: "white"}}>Sign Up/Log In</Text>
             </Button>
-            ):
-             this.state.userData.user_name? (
-               <Text style={{color: "white",fontSize:20}}>{this.state.userData.user_name}</Text>):(<Text style={{color: "white",fontSize:20}}>{this.state.userData.name}</Text>)}
+            ) :
+             this.state.userData.user_name ? (
+               <Text style={{color: "white",fontSize:20}}>{this.state.userData.user_name}</Text>) : (<Text style={{color: "white",fontSize:20}}>{this.state.userData.name}</Text>)}
             </View>
           <ListView
             dataSource={this.state.dataSource}
             renderRow={data =>
-              data.name === "Logout"? (
-                this.state.userData === null ?(null):(
+              data.name === "Logout" ? (
+                this.state.userData === null ? (null) : (
                   this.renderData(data)
                 )
               )
-              :(<ListItem
+              : (<ListItem
                 button
                 noBorder
                 onPress={this.onClicking.bind(this, data)}>

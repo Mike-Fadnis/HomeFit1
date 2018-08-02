@@ -77,7 +77,19 @@ class Payment extends Component {
     });
   }
   onRadioButtonPressed(item, index){
-    this.setState({itemId: index});
+    this.setState({itemId: index},()=>{
+      if (this.state.keyVTrainer){
+        //console.log("adadadad: ", JSON.stringify(this.state.keyVTrainer))
+        Alert.alert("Are you sure ?"," Your Payment will be Done after ok pressed ",
+          [
+            {text: "OK", onPress: () => this.props.navigation.navigate("ViewTrainer",{keyViewTrainer:"keyViewTrainer", getSelectedData:this.state.getSelectedData})},
+          ],
+          { cancelable: false }
+        );
+      } else {
+        console.log("skjgfjkhf");
+        }
+    });
   }
 
   addingCreditCard() {
@@ -130,16 +142,16 @@ class Payment extends Component {
             if (response.status === true){
               this.setState({spinner: false,user_cardDetails:{}},()=>{
                 this.getCardsList(this.state.userData.id);
-                if(this.state.keyVTrainer){
+                if (this.state.keyVTrainer){
                   //console.log("adadadad: ", JSON.stringify(this.state.keyVTrainer))
-                  Alert.alert(response.message,"first",
+                  Alert.alert(response.message,"",
                     [
-                      {text: 'OK', onPress: () => this.props.navigation.navigate("ViewTrainer",{keyViewTrainer:"keyViewTrainer", getSelectedData:this.state.getSelectedData})},
+                      {text: "OK", onPress: () => this.props.navigation.navigate("ViewTrainer",{keyViewTrainer:"keyViewTrainer", getSelectedData:this.state.getSelectedData})},
                     ],
                     { cancelable: false }
                   );
                 } else {
-                    Alert.alert(response.message,"secondd");
+                    Alert.alert(response.message,"");
                   }
               });
             } else {

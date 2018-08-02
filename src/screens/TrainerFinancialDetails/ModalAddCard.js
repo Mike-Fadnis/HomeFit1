@@ -16,20 +16,21 @@ export default class ModalAddCard extends Component {
       stateValue:"",
       userData:{},
       spinner: false
-    }
+    };
+    this.onConformalertOk = this.onConformalertOk.bind(this);
   }
   componentWillMount(){
     this.fetchData();
   }
   fetchData(){
-    AsyncStorage.getItem('@getUserData:key', (err, getUserData) => {
-        var get_user = JSON.parse(getUserData)
+    AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
+        var get_user = JSON.parse(getUserData);
         this.setState({
           userData:get_user
         },()=>{
         //  this.getCardsList(this.state.userData.id);
-        })
-     }).done()
+        });
+     }).done();
   }
   _onChange(values) {
     this.setState({
@@ -52,6 +53,9 @@ export default class ModalAddCard extends Component {
     this.setState({
       stateValue:text
     });
+  }
+  onConformalertOk(){
+    this.props.getDataObj();
   }
   addingCreditCard() {
     if (this.state.user_cardDetails.values === undefined) {
@@ -99,25 +103,22 @@ export default class ModalAddCard extends Component {
         };
         var cardDetailsObject = JSON.stringify(cardDetails);
         API.addCardDetails(cardDetailsObject).then(async (response) => {
-          if(response){
+          if (response){
             if (response.status === true){
               this.setState({spinner: false,user_cardDetails:{}},()=>{
-                Alert.alert(response.message,'',[{
-                  "text": "ok", onPress:() => this.props.onClose()
-                }])
-              })
-            }else{
-              this.setState({spinner: false})
-                Alert.alert('Error','')
+                Alert.alert(response.message,"",[{
+                  "text": "ok", onPress: this.onConformalertOk                  
+                }]);
+              });
+            } else {
+              this.setState({spinner: false});
+                Alert.alert("Error","");
             }
-          }else{
-            this.setState({
-                spinner: false
-              })
-            Alert.alert('Error','')
+          } else {
+            this.setState({spinner: false});
+            Alert.alert("Error","");
           }
-
-        })
+        });
       }
     }
   }
@@ -158,9 +159,9 @@ export default class ModalAddCard extends Component {
                    <Input placeholder="AP" value={this.state.stateValue} onChangeText={this.onChangeState.bind(this)}/>
                 </Item>
               </View>
-              <Button block style={styles.confirmButtonView}
+              <Button full style={styles.confirmButtonView}
                 onPress={this.addingCreditCard.bind(this)}>
-                <Text style={styles.confirmButtonText}>CONFIRM PAYMENT</Text>
+                  <Text style={styles.confirmButtonText}>CONFIRM PAYMENT</Text>
               </Button>
           </View>
         </View>
@@ -175,11 +176,11 @@ export default class ModalAddCard extends Component {
     );
   }
 }
-const window = Dimensions.get('window');
+const window = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:'white',
+    backgroundColor:"white",
     justifyContent:"center",
   },
   mainView:{
@@ -193,22 +194,24 @@ const styles = StyleSheet.create({
   },
   inputView:{marginLeft:20, marginRight:20},
   container_spinner: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.72)'
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.72)"
   },
   spinnerView: {
     height: window.width / 3,
     width: window.width / 3,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  confirmButtonView:{backgroundColor:"#009FDB", margin:20},
+  confirmButtonText:{fontSize:18,fontWeight:"700",color:"white"},
 
 });
