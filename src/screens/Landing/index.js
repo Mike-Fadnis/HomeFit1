@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { View, AsyncStorage, StyleSheet,Alert } from "react-native";
-import { Container, Text, Footer } from "native-base";
+import { View, AsyncStorage, StyleSheet,Alert,Dimensions } from "react-native";
+import { Container,Content, Text, Footer,FooterTab } from "native-base";
 import ImageSlider from "react-native-image-slider";
 import { Button, Header } from "../common";
 import API from "@utils/ApiUtils";
@@ -99,56 +99,45 @@ class Landing extends Component {
     return (
       <Container style={styles.container}>
         <Header headerText="HomeFit" />
-        <View>
-          <View style={styles.sliderStyle}>
+        <Content>
+          <View>
+            <View style={styles.sliderStyle}>
               <ImageSlider autoPlayWithInterval={3000}
-                  images={this.state.libraries.map((album) => IMAGE_PATH + album.image) }/>
-          </View>
-          <View style={styles.lowerContainer}>
+              images={this.state.libraries.map((album) => IMAGE_PATH + album.image) }/>
+            </View>
+            <View style={styles.lowerContainer}>
               <View style={styles.cardStyle}>
-                  <Text style={styles.subTitle}>
-                      One Stop Shop For All Your Gym Needs!
-                  </Text>
+                <Text style={styles.subTitle}>One Stop Shop For All Your Gym Needs!</Text>
               </View>
-              <View style={styles.lowerTextContainer}>
-                  <Text style={styles.lowerText}>
-                      Browse our professaional trainers!
-                  </Text>
-              </View>
-              <View style={styles.lowerTextContainer}>
-                  <Text style={styles.lowerText}>
-                      Have video consultations with them!
-                  </Text>
-              </View>
-              <View style={styles.lowerTextContainer}>
-                  <Text style={styles.lowerText}>Pay by the hour!</Text>
-              </View>
-              <View style={styles.lowerTextContainer}>
-                  <Text style={styles.lowerText}>Buy the best products!</Text>
-              </View>
+            </View>
+            <View style={styles.lowerTextContainer}>
+              <Text style={styles.lowerText}>Browse our professaional trainers! {"\n"} Have video consultations with them! {"\n"} Pay by the hour! {"\n"} Buy the best products!</Text>
+            </View>
           </View>
-        </View>
-        <Footer style={{marginTop:25}}>
-          <Button full onPress={this.onEnter.bind(this)}>
-            Enter
-          </Button>
+        </Content>
+        <Footer>
+          <FooterTab style={{marginBottom:10}}>
+              <Button full transparent onPress={this.onEnter.bind(this)} style={{alignItems:"center",justifyContent:"center"}}>
+                <Text style={{color : "#009FDB",fontSize:18}}>Enter</Text>
+              </Button>
+            </FooterTab>
         </Footer>
       </Container>
     );
   }
 }
+export default Landing;
 
-
-
-
+const window = Dimensions.get("window");
 const styles = StyleSheet.create({
   container : {
     backgroundColor : "#fff"
   },
   sliderStyle : {
       width: "100%",
-      height: 315 ,
-      marginTop: 10
+      height: window.height * 0.5 ,
+      marginTop: 10,
+      margin:10
   },
   subTitle : {
       color : "#fff",
@@ -163,35 +152,33 @@ const styles = StyleSheet.create({
       position : "relative"
   },
   lowerContainer : {
-    //height : '100%'
+    //height : '100%',
+    flex:1,
+    marginTop:5
   },
   cardStyle : {
-      marginTop : 10,
-      height : 60,
       borderRadius : 5,
       justifyContent : "center",
-      marginLeft : 5,
-      marginRight : 5,
+      marginHorizontal:10,
+      margin:2,
       alignItems : "center",
       backgroundColor  : "#009FDB",
       shadowColor : "#000",
       shadowOffset : { width : 0, height : 2 },
       shadowOpacity : 0.8,
-      elevation : 2,
-      position : "relative"
+      // elevation : 2,
+      // position : "relative"
   },
   lowerTextContainer : {
-      paddingTop : 10,
       alignItems : "center",
       justifyContent : "center",
-      backgroundColor : "#fff"
+      backgroundColor : "#FFF",
+      padding:15
   },
   lowerText : {
-      fontSize : 17,
+      fontSize : window.width / 20,
       color : "#009FDB",
       fontWeight : "600",
-
+      textAlign:"center"
   }
 });
-
-export default Landing;

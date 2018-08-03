@@ -1,7 +1,7 @@
 import {
   Dimensions
 } from "react-native";
-const window = Dimensions.get('window');
+const window = Dimensions.get("window");
 export default {
   container: {
     backgroundColor: "#fff",
@@ -11,40 +11,40 @@ export default {
     backgroundColor: "#009FDB",
   },
   title: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   ham: {
     backgroundColor: "#009FDB",
   },
   buttonContainerStyle: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   buttonStyle: {
-    backgroundColor: '#009FDB',
-    color: '#fff',
-    alignSelf: 'center',
-    color: '#fff',
-    textAlign: 'center',
+    backgroundColor: "#009FDB",
+    color: "#fff",
+    alignSelf: "center",
+    color: "#fff",
+    textAlign: "center",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     paddingTop: 10,
     paddingBottom: 10
   },
   SpecialityButton: {
-    backgroundColor: '#009FDB',
-    color: '#fff',
-    alignSelf: 'flex-start',
-    color: '#fff',
+    backgroundColor: "#009FDB",
+    color: "#fff",
+    alignSelf: "flex-start",
+    color: "#fff",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     paddingTop: 10,
     paddingBottom: 10
   },
   onlineStore: {
     marginTop: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     borderBottomColor: "#009FDB",
     shadowOffset: {
       width: 0,
@@ -54,7 +54,7 @@ export default {
   },
   hostLiveGrpSession: {
     marginTop: 30,
-    shadowColor: '#000',
+    shadowColor: "#000",
     borderBottomColor: "#009FDB",
     shadowOffset: {
       width: 0,
@@ -63,27 +63,27 @@ export default {
     shadowOpacity: 0.8,
   },
   sessionSliderStyle: {
-    width: '100%',
+    width: "100%",
     height: 130,
     marginTop: 20
   },
   hostLiveGrpSessionTextContainer: {
     marginTop: 10,
     //textAlign : 'center',
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: "center",
+    alignItems: "center"
   },
   hostLiveGrpSessionText: {
 
   },
   totalClientsTextBox: {
-    flexDirection: 'row'
+    flexDirection: "row"
   },
   totalClientsText: {
     paddingTop: 10,
     paddingBottom: 10,
     paddingLeft: 10,
-    fontWeight: 'bold'
+    fontWeight: "bold"
   },
   totalClientsTextTwo: {
     paddingTop: 10,
@@ -92,7 +92,7 @@ export default {
   },
   calendarContainer: {
     marginTop: 30,
-    shadowColor: '#009FDB',
+    shadowColor: "#009FDB",
     borderColor: "#009FDB",
     shadowOffset: {
       width: 0,
@@ -102,26 +102,20 @@ export default {
 
   },
   book: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 10,
-    width: '100%',
+    width: "100%",
   },
   bookText: {
     fontSize: 20,
-    width: '100%',
-    color: '#fff',
-    backgroundColor: '#009FDB',
-    textAlign: 'center',
-    textAlign: 'center',
-    justifyContent: 'center',
-    paddingBottom: 10,
-    paddingTop: 10
+    color: "#fff",    
+    textAlign: "center",
   },
   avatarContainer: {
-    borderColor: '#9B9B9B',
+    borderColor: "#9B9B9B",
     borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: "center",
+    alignItems: "center"
   },
   avatar: {
     borderRadius: window.width / 7.4, //50
@@ -129,34 +123,34 @@ export default {
     height: window.width / 3.7
   },
   backgroundVideo: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     left: 0,
     bottom: 10,
     right: 0,
   },
   container_spinner: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.72)'
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.72)"
   },
   spinnerView: {
     height: window.width / 3,
     width: window.width / 3,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center'
+    alignItems: "center",
+    justifyContent: "center"
   },
   modalView: {
     flex: 1,
-    backgroundColor: '#000000c4',
-    justifyContent: 'center',
-    alignItems: 'center'
+    backgroundColor: "#000000c4",
+    justifyContent: "center",
+    alignItems: "center"
   }
 };

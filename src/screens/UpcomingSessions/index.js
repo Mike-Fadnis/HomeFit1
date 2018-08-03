@@ -112,9 +112,9 @@ class UpcomingSessions extends Component {
         })
       });
     }
-  modalCloseafterJoinedSession(){
+  modalCloseafterJoinedSession(item){    
     this.setState({modalVisible:false},()=>{
-      this.props.navigation.navigate("JoinedSession")
+      this.props.navigation.navigate("JoinedSession",{dataItem:item})
     })
   }
   renderData(item){

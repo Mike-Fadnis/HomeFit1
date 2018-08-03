@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Image ,Modal, TouchableOpacity,AsyncStorage, Alert} from "react-native";
+import { View, Image ,Modal, TouchableOpacity,AsyncStorage, Alert,Dimensions} from "react-native";
 import {Container,Header,Title,Content,Text,Button,Spinner,Icon,Left,Right,Body} from "native-base";
 import { Calendar } from "react-native-calendars";
 import { Card, CardSection } from "../common";
@@ -9,6 +9,7 @@ import API from "@utils/ApiUtils";
 const _format = "YYYY-MM-DD";
 import ModalDesign from "./ModalDesign";
 
+const window = Dimensions.get('window');
 class ViewTrainer extends Component {
   initialState = {}
   constructor(props) {
@@ -45,20 +46,25 @@ class ViewTrainer extends Component {
   componentWillMount(){
     this.getAvailableSlots();
     this.getTrainersData();
+    console.log("4455454885656:* ",this.state.keyViewTrainer)
     AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
       var get_user = JSON.parse(getUserData);
-      if (this.props.navigation.state.params.keyViewTrainer === "keyViewTrainer"){
-        console.log("userData",get_user);
-        if (get_user){
-          this.addingSlotsForUser(get_user);
+      if(get_user != null) {
+        if (this.state.keyViewTrainer === "keyViewTrainer"){
+          console.log("userData",get_user);
+          if (get_user){
+
+            this.addingSlotsForUser(get_user);
+          } else {
+
+          }
         } else {
-
-        }
+          }
+          this.getParticularAppointments(get_user.id)
       } else {
-
-        }
-        this.getParticularAppointments(get_user.id);
-      }).done();
+        this.props.navigation.navigate("ClientLogin")
+      }
+    }).done();
   }
   addingSlotsForUser(userData){
     var timing = this.state.getSelectedData[0].time;
@@ -79,7 +85,7 @@ class ViewTrainer extends Component {
           Alert.alert(response.message,"");
         }
       } else {
-        alert("Error");
+        alert("Error || Please check network");
       }
      });
   }
@@ -158,38 +164,8 @@ class ViewTrainer extends Component {
      });
   }
  onShowModalContinue(){
-   this.setState({showModal: false},()=>{
-     // this.state.getSelectedTimedata.map((res,i)=>{
-     //   this.state.getSelectedTime.push(res);
-     // });
-    //  this.setState({ finalSelectedDates: this.state.getSelectedTime  }, () => {
-
-      // let count = 0;
-      // var self = this;
-      // Object.keys(self.state.subdata).forEach(function (key) {
-      //   self.state.finalSelectedDates.map((res,i)=>{
-      //   if (res.date === key) {
-      //      count++;
-      //    } else {
-      //      count = 0;
-      //    }
-      //  });
-      //  if (count !== 0) {
-      //   self.state.subdata[key] = {selected:true,selectedColor:"green"};
-      //  }
-      // });
-      // var obj = {}
-      // Object.keys(self.state.subdata).forEach(function (key) {
-      //  obj[key] = {selected:self.state.subdata[key].selected ,selectedColor:self.state.subdata[key].selectedColor};
-      // });
-      // self.setState({subdata:obj});
-
-
+  this.setState({showModal: false},()=>{
     this.props.navigation.navigate("Payment",{keyVTrainer:"keyVTrainer",getSelectedData:this.state.getSelectedTimedata});
-
-    // });
-
-
    });
  }
 getTrainersData(){
@@ -337,11 +313,11 @@ render() {
   return (
       <Container style={styles.container}>
         <Header style={styles.headerStyle}>
-        <Left style={styles.ham}>
-          <Button style={styles.ham}
+        <Left>
+          <Button style={{width:window.width * 0.15}}
             transparent
             onPress={this.onBack.bind(this)}>
-            <Icon name="ios-arrow-back" style={{color: "white"}}/>
+            <Icon name="ios-arrow-back" style={{marginLeft:5,color: "white"}}/>
           </Button>
         </Left>
           <Body>
@@ -433,7 +409,7 @@ render() {
                  transparent={true}
                  visible={this.state.showModal}>
                    <View style={styles.modalView}>
-                     <View style={{width: 300, alignSelf:"center", marginTop:window.height / 3,height: 120,backgroundColor:"white",borderWidth:1,borderColor:"white",borderRadius:10}}>
+                     <View style={{width: 300, alignSelf:"center",height: 120,backgroundColor:"white",borderWidth:1,borderColor:"white",borderRadius:10}}>
                        <View style={{flex:0.5,justifyContent:"center",alignItems:"center",margin:10}}>
                          <Text style={{textAlign:"center",fontSize:16,fontWeight:"700"}}>{"Do you want to book this Date and time ? It costs $1.00"}</Text>
                        </View>

@@ -64,7 +64,6 @@ export default class ModalDesign extends Component {
         var finalArray = [];
         var rec = {date:this.props.selectedDate, time:this.state.duplicateArray[0].time_slot};
         finalArray.push(rec);
-        // console.log("this.state.selectedTime@@@@@: ",finalArray)
         this.props.getDataObj(finalArray);
       } else {
         alert("please select atleast one time slot");
@@ -78,26 +77,6 @@ export default class ModalDesign extends Component {
     });
   }
   renderData = ({item, index}) =>  {
-    // let data1;
-    // let images = [];
-    // let count = 0;
-    // this.state.selectedTime.map((res1, j) => {
-    //   if (res1.time === item.item.time_slot) {
-    //     data1 = "true";
-    //     count = count + 1;
-    //   }
-    //   if (count === 0) {
-    //     data1 = "";
-    //   }
-    // });
-    // if (data1 === "true") {
-    //   console.log("112211:  ");
-    //   images.push(
-    //       <Image source={Images.checked} style={{height:20,width:20}} />
-    //   );
-    // } else {
-    //   images.push(<View />);
-    // }
     return (
       <View style={{flexGrow: 1, flexDirection: "row", marginTop: 5, height: 55}}>
         <View style={{flex: 0.8,justifyContent: "center",paddingLeft: 15}}>
@@ -117,7 +96,6 @@ export default class ModalDesign extends Component {
     return (
       <View style={{ flex: 1 }}>
         <View style={{ height: 20 }}/>
-
           {this.state.forEmptyTimeSlot === true ? (
             <View style={{height: 44,backgroundColor: "white",justifyContent: "space-between", alignItems: "center", paddingLeft: 10, paddingRight: 10, borderBottomWidth: 1, borderBottomColor: "grey", flexDirection: "row"}}>
               <TouchableOpacity onPress={this.props.onClose}>

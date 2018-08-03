@@ -346,16 +346,22 @@ const AppUtils = {
     });
   },
   uploadImage: async function(data) {
-    return fetch("http://ajaypalsidhu.com/demo/HomeFit/Admin/base64.php", {
+    let formdata = new FormData();
+    formdata.append("action", "trainers_upload_image");
+    formdata.append("trainer_id", data.trainer_id)
+    formdata.append("data",data.data)
+    console.log("formdata",formdata)
+    return fetch("http://ajaypalsidhu.com/demo/HomeFit/api/api.php", {
       method: "POST",
-      body: await convertFormData(data)
-    }).then((response) => {
-      console.log("response at utils",JSON.stringify(response))
-      return response.json();
-    }, function(error) {
-        console.log("error", error);
-    }).catch((error) => {
-        console.log("error", error);
+      body: formdata
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      console.log("responseJson",responseJson);
+      return responseJson;
+    })
+    .catch((error) => {
+        console.log("errorgfgfgsdfgs",error)
     });
   },
    appointmentCancelledByUser:async function(id) {
@@ -391,6 +397,28 @@ const AppUtils = {
     }).catch((error) => {
       console.log("error", error);
     });
-  }
+  },
+  getTrainersWithMostSessions:async function(id) {
+    return fetch(API_BASE_URL + "action=search_for_trainers_with_the_most_sessions", {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  cancelledUpcomingHourlyAppt:async function(id) {
+    return fetch(API_BASE_URL + "action=stop_ongoing_hourly_appointments&appt_id=" + id, {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
 };
 export default AppUtils;

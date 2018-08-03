@@ -23,7 +23,6 @@ export default {
     marginTop: 10,
     marginLeft: 15,
     marginRight: 15,
-
     height: window.width / 10,
     width: window.width / 1.1,
     borderColor: "lightgrey",
@@ -39,9 +38,9 @@ export default {
     alignItems: "center"
   },
   subModalContainerView: {
-    width: 300,
+    height: window.width * 1.25,
+    width: window.width / 1.1,
     alignSelf: "center",
-    height: 400,
     backgroundColor: "white",
     borderWidth: 1,
     borderColor: "white",

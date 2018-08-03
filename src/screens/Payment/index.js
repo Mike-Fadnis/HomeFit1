@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity,Alert,AsyncStorage,ActivityIndicator,FlatList,Image } from "react-native";
+import { View, TouchableOpacity,Alert,AsyncStorage,ActivityIndicator,Dimensions,FlatList,Image } from "react-native";
 import { Container,Header,Title,Content,Text,Button,Icon,Left,Right,Body,Spinner,Item,Label,Input} from "native-base";
 import { CreditCardInput } from "react-native-credit-card-input";
 import styles from "./styles";
 import Images from "@theme/images/images";
 import API from "@utils/ApiUtils";
 // var CryptoJS = require("crypto-js");
+const window = Dimensions.get("window");
 
 class Payment extends Component {
   constructor(props){
@@ -28,7 +29,9 @@ class Payment extends Component {
       cardArray:[],
       keyVTrainer:this.props.navigation.getParam("keyVTrainer"),
       //afterConfirmSucces:this.props.navigation.getParam("afterSucces"),
-      getSelectedData:this.props.navigation.getParam("getSelectedData")
+      getSelectedData:this.props.navigation.getParam("getSelectedData"),
+      radioButton: false,
+      useNewCard: false
 
     };
   }
@@ -77,29 +80,50 @@ class Payment extends Component {
     });
   }
   onRadioButtonPressed(item, index){
-    this.setState({itemId: index},()=>{
-      if (this.state.keyVTrainer){
-        //console.log("adadadad: ", JSON.stringify(this.state.keyVTrainer))
-        Alert.alert("Are you sure ?"," Your Payment will be Done after ok pressed ",
-          [
-            {text: "OK", onPress: () => this.props.navigation.navigate("ViewTrainer",{keyViewTrainer:"keyViewTrainer", getSelectedData:this.state.getSelectedData})},
-          ],
-          { cancelable: false }
-        );
-      } else {
-        console.log("skjgfjkhf");
-        }
+    this.setState({itemId: index,useNewCard:false},()=>{
+      this.setState({radioButton: true});
+      // if (this.state.keyVTrainer){
+      //   Alert.alert("Are you sure ?"," Your Payment will be Done after ok pressed ",
+      //     [
+      //       {text: "OK", onPress: () => this.props.navigation.navigate("ViewTrainer",{keyViewTrainer:"keyViewTrainer", getSelectedData:this.state.getSelectedData})},
+      //     ],
+      //     { cancelable: false }
+      //   );
+      // } else {
+      //   console.log("skjgfjkhf");
+      // }
     });
   }
+  onConfirmPayment() {
+    if (this.state.useNewCard === false && this.state.radioButton === false){
+      alert("You should Choose either existed card or Enter new card");
+    } else {
+        if (this.state.useNewCard === true){
+          this.forAddNewcard();
+        } else {
+          if (this.state.keyVTrainer){
+            Alert.alert("Are you sure ?","you will continue with Payment",
+              [
+                 {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                {text: "OK", onPress: () => this.props.navigation.navigate("ViewTrainer",{keyViewTrainer:"keyViewTrainer", getSelectedData:this.state.getSelectedData})},
+              ],
+              { cancelable: false }
+            );
+          } else{
+            Alert.alert("HomeFit")
+          }
+        }
+    }
+  }
 
-  addingCreditCard() {
+  forAddNewcard() {
     if (this.state.user_cardDetails.values === undefined) {
       Alert.alert("Please enter card details","");
     } else {
       var cardNumber = this.state.user_cardDetails.values.number;
       var cardNumberDetails = cardNumber.replace(/\s/g, "");
       // var expiry = this.state.user_cardDetails.values.expiry
-        if (cardNumber == "" || cardNumber == null) {
+        if (cardNumber === "" || cardNumber === null) {
           Alert.alert("Card Number","Please enter card number");
         } else if (cardNumber.length < 16) {
           Alert.alert("Card Number","Please enter 16 digits");
@@ -143,7 +167,6 @@ class Payment extends Component {
               this.setState({spinner: false,user_cardDetails:{}},()=>{
                 this.getCardsList(this.state.userData.id);
                 if (this.state.keyVTrainer){
-                  //console.log("adadadad: ", JSON.stringify(this.state.keyVTrainer))
                   Alert.alert(response.message,"",
                     [
                       {text: "OK", onPress: () => this.props.navigation.navigate("ViewTrainer",{keyViewTrainer:"keyViewTrainer", getSelectedData:this.state.getSelectedData})},
@@ -152,7 +175,7 @@ class Payment extends Component {
                   );
                 } else {
                     Alert.alert(response.message,"");
-                  }
+                }
               });
             } else {
               this.setState({spinner: false});
@@ -165,36 +188,6 @@ class Payment extends Component {
         });
       }
     }
-  }
-  renderData = ({item,index}) => {
-      var cardno = item.card_number.substr(item.card_number.length - 4);
-      return (
-          <TouchableOpacity onPress={this.onRadioButtonPressed.bind(this,item, index)}>
-            <View style={[styles.rowView,{borderColor:this.state.itemId === index ? ("#34ace0") : ("#f9f9f9")}]}>
-                <View style={styles.mainRowView}>
-                  {this.state.itemId === index ? (
-                    <Image source={Images.success} style={styles.rowImageStyle} />
-                  ) : (
-                    <Image source={Images.emptyCircle} style={styles.rowImageStyle} />
-                  )}
-                </View>
-                <View style={styles.cardView}>
-                  {item.card_type === "master-card" ? (<Image source={Images.masterCard} style={styles.cardImgStyle} />) : item.card_type === "visa" ? (<Image source={Images.visaCard} style={styles.cardImgStyle} />) : (<Image source={Images.amexpCard} style={styles.cardImgStyle} />)}
-                </View>
-                <View style={styles.rowDataView}>
-                  <Text numberOfLines={1} style={styles.cardHolderNameStyle}>{item.card_holder_name}</Text>
-                  <View style={{flexDirection:"row"}}>
-                    <Text> ....  ....  ....  </Text>
-                    <Text>{cardno}</Text>
-                  </View>
-                </View>
-                <View style={styles.rowTextView}>
-                  <Text style={styles.rowTextStyle}>EXP. </Text>
-                  <Text style={styles.rowTextStyle}>{item.expiry_date} </Text>
-                </View>
-            </View>
-          </TouchableOpacity>
-          );
   }
   onChangeAddress(text){
     this.setState({
@@ -217,7 +210,6 @@ class Payment extends Component {
     });
   }
   onCheckedSame(){
-    // alert(this.state.checked)
     this.setState({
       checkedSame:!this.state.checkedSame
     });
@@ -231,17 +223,55 @@ class Payment extends Component {
     if (this.state.backFromPayment){
       this.props.navigation.navigate("TrainerPersonalPage");
     } else {
-       this.props.navigation.navigate("ViewTrainer");
+       this.props.navigation.navigate("ViewTrainer",{keyViewTrainer:"ourundefined"});
     }
   }
-
+  useNewCard(){
+    this.setState({useNewCard: true,radioButton: false,itemId:"1"});
+  }
+  pointEvent(){
+    if (this.state.useNewCard === false || this.state.radioButton === true){
+      "none";
+    } else {
+      "auto";
+    }
+  }
+  renderData = ({item,index}) => {
+    var cardno = item.card_number.substr(item.card_number.length - 4);
+    return (
+      <TouchableOpacity onPress={this.onRadioButtonPressed.bind(this,item, index)}>
+        <View style={[styles.rowView,{borderColor:this.state.itemId === index ? ("#34ace0") : ("#f9f9f9")}]}>
+          <View style={styles.mainRowView}>
+            {this.state.itemId === index ? (
+              <Image source={Images.success} style={styles.rowImageStyle} />
+            ) : (
+              <Image source={Images.emptyCircle} style={styles.rowImageStyle} />
+            )}
+          </View>
+          <View style={styles.cardView}>
+            {item.card_type === "master-card" ? (<Image source={Images.masterCard} style={styles.cardImgStyle} />) : item.card_type === "visa" ? (<Image source={Images.visaCard} style={styles.cardImgStyle} />) : (<Image source={Images.amexpCard} style={styles.cardImgStyle} />)}
+          </View>
+          <View style={styles.rowDataView}>
+            <Text numberOfLines={1} style={styles.cardHolderNameStyle}>{item.card_holder_name}</Text>
+            <View style={{flexDirection:"row"}}>
+              <Text> ....  ....  ....  </Text>
+              <Text>{cardno}</Text>
+            </View>
+          </View>
+          <View style={styles.rowTextView}>
+            <Text style={styles.rowTextStyle}>EXP. </Text>
+            <Text style={styles.rowTextStyle}>{item.expiry_date} </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  }
   render() {
-
     return (
         <Container style={styles.container}>
             <Header style={styles.headerStyle}>
             <Left style={styles.ham}>
-              <Button style={styles.ham} transparent onPress={this.onBack.bind(this)}>
+              <Button style={{width:window.width * 0.15}} transparent onPress={this.onBack.bind(this)}>
                 <Icon name="ios-arrow-back" style={{color: "white"}}/>
               </Button>
             </Left>
@@ -252,88 +282,110 @@ class Payment extends Component {
             </Header>
             <Content style={styles.content}>
               <View style={styles.contentView}>
-              {this.state.isLoading === true ? (
-                <Spinner size="large" color="black"/>
-              )
-              : (<FlatList
-                    data={this.state.cardArray}
-                    keyExtractor={(x, i) => x.id}
-                    extraData={this.state}
-                    renderItem={this.renderData.bind(this)}
-                    style={{backgroundColor:"#FFFFFF"}}
-                />)}
-              </View>
-              <View style={styles.cardView}>
-                <CreditCardInput
-                  requiresName
-                  requiresPostalCode
-                  autoFocus={true}
-                  inputStyle={styles.cardInputStyle}
-                  validColor={"green"}
-                  invalidColor={"red"}
-                  placeholderColor={"darkgray"}
-                  cardImageFront={Images.cardFront}
-                  cardImageBack={Images.cardBack}
-                  onFocus={this._onFocus}
-                  onChange={this._onChange.bind(this)}/>
-              </View>
-              <View style={styles.inputView}>
-                <Item stackedLabel>
-                   <Label>Billing Address</Label>
-                   <Input placeholder="321/A" value={this.state.address} onChangeText={this.onChangeAddress.bind(this)}/>
-                </Item>
-                <Item stackedLabel>
-                   <Label>City</Label>
-                   <Input placeholder="VSP" value={this.state.city} onChangeText={this.onChangeCity.bind(this)}/>
-                </Item>
-                <Item stackedLabel>
-                   <Label>State</Label>
-                   <Input placeholder="AP" value={this.state.stateValue} onChangeText={this.onChangeState.bind(this)}/>
-                </Item>
-               </View>
-               <View style={styles.buttonView}>
-                 <View style={styles.checkBoxView}>
-                   <TouchableOpacity onPress={this.onCheckedSame.bind(this)}>
-                   {this.state.checkedSame === true ?
-                     (<Image source={Images.checkedIcon} style={styles.iconStyle} />) :
-                     (<Image source={Images.unChecked} style={styles.iconStyle} />
-                   )}
-                   </TouchableOpacity>
-                 </View>
-                 <View style={styles.textView}>
-                    <Text style={styles.textStyle}>
-                    SHIPPING ADDRESS SAME AS BILLING ADDRESS. In admin panel we need to be able to see that they clicked on this.
-                    </Text>
+                {this.state.isLoading === true ? (
+                  <Spinner size="large" color="black"/>
+                )
+                : (<View style={{flex:1}}>
+                    <FlatList
+                      data={this.state.cardArray}
+                      keyExtractor={(x, i) => x.id}
+                      extraData={this.state}
+                      renderItem={this.renderData.bind(this)}
+                      style={{backgroundColor:"#FFFFFF"}}
+                    />
+                    <TouchableOpacity onPress={this.useNewCard.bind(this)}>
+                      <View style={[styles.rowView,{borderColor:this.state.useNewCard === true ? ("#34ace0") : ("#f9f9f9")}]}>
+                        <View style={styles.mainRowView}>
+                        {this.state.useNewCard === true ? (
+                        <Image source={Images.success} style={styles.rowImageStyle} />
+                        ) : (
+                        <Image source={Images.emptyCircle} style={styles.rowImageStyle} />
+                        )}
+                        </View>
+                        <View style={styles.rowDataView}>
+                          <Text> use new card</Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
                 </View>
-                <View style={styles.emptyView}/>
+                )}
               </View>
-              <View style={styles.buttonView}>
-                <View style={styles.checkBoxView}>
-                  <TouchableOpacity onPress={this.onCheckedDiff.bind(this)}>
-                  {this.state.checkedDiff === true ?
-                    (<Image source={Images.checkedIcon} style={styles.iconStyle} />) :
-                    (<Image source={Images.unChecked} style={styles.iconStyle} />
-                  )}
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.textView}>
-                   <Text style={styles.textStyle}>
-                   ADD A DIFFERENT ADDRESS FOR SHIPPING (if they click this then open up 2 more fields one asking for address the other asking for city, state, zipcode).
-                   </Text>
-               </View>
-               <View style={styles.emptyView}/>
-             </View>
+              <View style={{flex: 1,width: null,height: null,paddingVertical:25}} pointerEvents={this.pointEvent.bind(this)}>
+                  <View style={styles.cardView}>
+                    <CreditCardInput
+                      requiresName
+                      requiresPostalCode
+                      autoFocus={false}
+                      inputStyle={styles.cardInputStyle}
+                      validColor={"green"}
+                      invalidColor={"red"}
+                      placeholderColor={"darkgray"}
+                      cardImageFront={Images.cardFront}
+                      cardImageBack={Images.cardBack}
+                      onFocus={this._onFocus}
+                      onChange={this._onChange.bind(this)}/>
+                  </View>
+                  <View style={styles.inputView}>
+                    <Item stackedLabel>
+                       <Label>Billing Address</Label>
+                       <Input placeholder="321/A" value={this.state.address} onChangeText={this.onChangeAddress.bind(this)}/>
+                    </Item>
+                    <Item stackedLabel>
+                       <Label>City</Label>
+                       <Input placeholder="VSP" value={this.state.city} onChangeText={this.onChangeCity.bind(this)}/>
+                    </Item>
+                    <Item stackedLabel>
+                       <Label>State</Label>
+                       <Input placeholder="AP" value={this.state.stateValue} onChangeText={this.onChangeState.bind(this)}/>
+                    </Item>
+                  </View>
+                   <View style={styles.buttonView}>
+                     <View style={styles.checkBoxView}>
+                       <TouchableOpacity onPress={this.onCheckedSame.bind(this)}>
+                       {this.state.checkedSame === true ?
+                         (<Image source={Images.checkedIcon} style={styles.iconStyle} />) :
+                         (<Image source={Images.unChecked} style={styles.iconStyle} />
+                       )}
+                       </TouchableOpacity>
+                     </View>
+                     <View style={styles.textView}>
+                        <Text style={styles.textStyle}>
+                        SHIPPING ADDRESS SAME AS BILLING ADDRESS. In admin panel we need to be able to see that they clicked on this.
+                        </Text>
+                    </View>
+                    <View style={styles.emptyView}/>
+                  </View>
+                  <View style={styles.buttonView}>
+                    <View style={styles.checkBoxView}>
+                      <TouchableOpacity onPress={this.onCheckedDiff.bind(this)}>
+                      {this.state.checkedDiff === true ?
+                        (<Image source={Images.checkedIcon} style={styles.iconStyle} />) :
+                        (<Image source={Images.unChecked} style={styles.iconStyle} />
+                      )}
+                      </TouchableOpacity>
+                    </View>
+                    <View style={styles.textView}>
+                       <Text style={styles.textStyle}>
+                       ADD A DIFFERENT ADDRESS FOR SHIPPING (if they click this then open up 2 more fields one asking for address the other asking for city, state, zipcode).
+                       </Text>
+                   </View>
+                   <View style={styles.emptyView}/>
+                  </View>
+                {this.state.radioButton === true || this.state.useNewCard === false ? (
+                  <View style= {styles.overlay}/>
+                ) : (<View/>)}
+              </View>
               <Button block style={styles.confirmButtonView}
-                onPress={this.addingCreditCard.bind(this)}>
+                onPress={this.onConfirmPayment.bind(this)}>
                 <Text style={styles.confirmButtonText}>CONFIRM PAYMENT</Text>
               </Button>
           </Content>
           {this.state.spinner === true ? (
-          <View style={styles.container_spinner}>
-            <View style={styles.spinnerView}>
-              <ActivityIndicator size="large" color="black"/>
+            <View style={styles.container_spinner}>
+              <View style={styles.spinnerView}>
+                <ActivityIndicator size="large" color="black"/>
+              </View>
             </View>
-          </View>
           ) : null}
         </Container>
       );

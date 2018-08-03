@@ -5,7 +5,6 @@ import { Dropdown } from "react-native-material-dropdown";
 import { Card, CardSection } from "../common";
 import styles from "./styles";
 import API from "@utils/ApiUtils";
-
 class BrowseTrainers extends Component {
   constructor(props){
     super(props);
@@ -23,7 +22,12 @@ class BrowseTrainers extends Component {
   fetchTrainerList(){
     API.getTrainerList().then(async (response) => {
       if (response) {
-        this.setState({trainersList: response.data,spinner:false});
+        if (response.status){
+           var newarray = this.checkDuplicates(response.data);
+           this.setState({trainersList: newarray,spinner:false});
+        } else {
+          Alert.alert("HomeFit",response.message);
+        }
       } else {
         this.setState({spinner:false});
         Alert.alert("Error");
@@ -72,6 +76,23 @@ class BrowseTrainers extends Component {
        this.getTrainersList();
     });
   }
+  checkDuplicates(a) {
+     var r = [];
+     var count = 0;
+     for (var i = 0, n = a.length; i < n; i++){
+        for (var x = 0, y = r.length; x < y; x++){
+           if (r[x].id === a[i].id){
+             count = count + 1;
+           }
+        }
+        if (count === 0){
+          r.push(a[i]);
+        }
+     }
+     //Return the reconstructed array of unique values
+     return r;
+  }
+
   getTrainersList(){
     let filterdkey = this.state.searchedvalue;
     if (filterdkey === "Highest rated") {
@@ -79,8 +100,10 @@ class BrowseTrainers extends Component {
         spinner : true
       });
       API.getHighestRatedTrainerList().then(async (response) => {
+
         if (response) {
-          var sortedArray = response.data.sort(function(a, b){
+         var newarray = this.checkDuplicates(response.data);
+          var sortedArray = newarray.sort(function(a, b){
              return parseFloat(b.avg_rating) - parseFloat(a.avg_rating);
           });
           this.setState({trainersList: sortedArray,spinner:false});
@@ -89,8 +112,25 @@ class BrowseTrainers extends Component {
           Alert.alert("Error");
         }
       });
+    } else if (filterdkey === "Most no. of sessions"){
+        this.setState({
+          spinner : true
+        });
+        API.getTrainersWithMostSessions().then(async (response) => {
+          if (response) {
+           var newarray = this.checkDuplicates(response.data);
+            var sortedArray = newarray.sort(function(a, b){
+               return b.num_of_sessions - a.num_of_sessions;
+            });
+            this.setState({trainersList: sortedArray,spinner:false});
+          } else {
+            this.setState({spinner:false});
+            Alert.alert("Error");
+          }
+        });
     }
   }
+  _keyExtractor = (item, index) => item.id;
   render() {
     let data = [{
          value: "Highest rated",
@@ -110,7 +150,7 @@ class BrowseTrainers extends Component {
         <Header style={styles.headerStyle}>
           <Left style={styles.ham}>
             <Button style={styles.ham} transparent onPress={() => this.props.navigation.navigate("ClientHome")}>
-              <Icon name="ios-arrow-back" style={{color: "white"}}/>
+              <Icon name="ios-arrow-back" style={{color: "white",width:30,height:30}}/>
             </Button>
           </Left>
           <Body>
@@ -133,8 +173,9 @@ class BrowseTrainers extends Component {
                 ) : (
                   <FlatList
                     data={this.state.trainersList}
-                    keyExtractor={(x, i) => x.id}
-                     removeClippedSubviews={false}
+                    extraData={this.state}
+                    keyExtractor={this._keyExtractor}
+                    removeClippedSubviews={false}
                     renderItem={this.renderData.bind(this)}
                     />
                 )}

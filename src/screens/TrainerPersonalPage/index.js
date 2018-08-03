@@ -5,7 +5,6 @@ import { Calendar,CalendarList } from "react-native-calendars";
 import moment from "moment";
 import {Container,Header,Title,Content,Text,Icon,Footer,Button,FooterTab,Left,Right,Body,Spinner} from "native-base";
 var ImagePicker = require("react-native-image-picker");
-import RNFetchBlob from "rn-fetch-blob";
 
 import { ButtonTwo, Card, CardSection } from "../common";
 import ButtonOne from "./ButtonOne";
@@ -16,7 +15,6 @@ import API from "@utils/ApiUtils";
 import TrainersMedia from "./TrainersMedia";
 import SpecialtyModalDesign from "./specialtyModalDesign";
 
-var finalRecordData = [];
 const _format = "YYYY-MM-DD";
 var options = {
   title: "Select Avatar",
@@ -144,76 +142,29 @@ selectPhotoTapped() {
     else if (response.customButton) {
       this.setState({spinner:false});
       console.log("User tapped custom button: ", response.customButton);
-    }
-  else {
-        let source = { uri: response.uri };
-        this.setState({avatarSource: source,spinner:false},()=>{
-          var base64 = "data:image/png;base64," + response.data;
-          var string = {"data":base64};
-          API.uploadImage(string).then(async (response) => {
-            if (response) {
-              Alert.alert("Home Fit",response.data)
-            } else{
-              Alert.alert("Error","Error uploading image")
-            }
-          })
-          // fetch("http://ajaypalsidhu.com/demo/HomeFit/Admin/base64.php",{
-          //     method:"POST",
-          //     body: this.convertFormData(string)
-          // }).then((response)=>{
-          // 	//alert("responseData:"+JSON.stringify(responseData));
-          // 	    console.log("responseData",response)
-          //   }).catch((err)=>{
-          //   	console.log("error",err)
-          //   })
-          // RNFetchBlob.fetch("POST", "http://ajaypalsidhu.com/demo/HomeFit/Admin/base64.php", {
-          //   Authorization : "Bearer access-token",
-          //    otherHeader : "foo"
-          //    }, [
-          //     // custom content type
-          //     {"data":base64},
-          // ]).then((resp) => {
-          //       console.log("response",resp.json());
-          //       alert("response" + resp.json());
-          // }).catch((err) => {
-          //     console.log("errorr.....",err);
-          // });
-        });
+    }else {
+      let source = { uri: response.uri };
+      var base64 = "data:image/png;base64," + response.data;
+      var string = {"action":"trainers_upload_image","trainer_id":this.state.userData.id,"data":base64};
+      API.uploadImage(string).then(async (responseData) => {
+        if (responseData) {
+          if (responseData.status){
+            Alert.alert("Home Fit",responseData.message);
+            this.setState({
+              avatarSource: { uri: responseData.imaage },
+              spinner:false,
+            })
+          }
+          else {
+            Alert.alert("HomeFit",responseData.message);
+          }
+        } else {
+          Alert.alert("Error","Error uploading image");
+        }
+      });
       }
   });
 }
-// onAvailableDates(){
-//   this.setState({loading : true});
-//   if (this.state.finalSelectedDates === [] || this.state.finalSelectedDates.length === 0){
-//     alert("Please select atleast one day");
-//     this.setState({loading : false});
-//   } else {
-//     var finararray = [];
-//     this.state.finalSelectedDates.map((res,i)=>{
-//       res.time.map((res1,k)=>{
-//         var record = {"date":res.date,"time":res1.time};
-//         finararray.push(record);
-//       });
-//     });
-//     console.log("hfklfkfjl;djflad",finararray);
-//     console.log("id",this.state.userData.id,);
-//     var availableDates = {
-//       id:this.state.userData.id,
-//       availableSlot:JSON.stringify(finararray)
-//     };
-//     API.availableDates(availableDates).then(async (response) => {
-//       this.setState({loading : false});
-//       if (response.status === "true") {
-//         Alert.alert("HomeFit",response.message);
-//       } else {
-//         Alert.alert("HomeFit",response.message);
-//       }
-//     }).catch((error)=>{
-//       this.setState({spinner:false});
-//       console.log("Console Error",error);
-//     });
-//   }
-// }
 onSpecialtyPressed(){
   this.setState({userData:this.state.userData},()=>{
     this.setState({specialtyModal: true});
@@ -330,11 +281,7 @@ onStartSession(){
   })
 }
 onStopSession(){
-  // alert("kjahfjdfh"+this.state.sessionId)
-  this.setState({
-    sessionValue:true,
-    loading:true
-  },()=>{
+  this.setState({sessionValue:true,loading:true},()=>{
     API.stopSession(this.state.sessionId).then(async (response) => {
       if(response){
         if(response.status=== true){
@@ -395,13 +342,12 @@ render() {
       ) : (
       <Content padder>
         <View style={styles.onlineStore}>
-           <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)} style={{alignItems:"center", justifyContent:"center"}}>
-            <View style={[styles.avatar, styles.avatarContainer, {marginBottom: 20}]}>
-            { this.state.spinner ? (<Spinner color="black"/>) : this.state.avatarSource === null ? <Image style={styles.avatar} source={Images.user} /> :
-              <Image style={styles.avatar} source={this.state.avatarSource} />
-            }
-            </View>
-          </TouchableOpacity>
+           <View style={ {marginBottom: 20, alignItems:'center'}}>
+            <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)} style={[styles.avatar, styles.avatarContainer]}>
+              { this.state.spinner ? (<Spinner color="black"/>) : this.state.avatarSource === null ? <Image style={styles.avatar} source={Images.user} /> :
+                <Image style={styles.avatar} source={this.state.avatarSource} /> }
+            </TouchableOpacity>
+          </View>
           <View>
             <TrainersMedia onPayment={this.onPayment.bind(this)}/>
           </View>
@@ -490,24 +436,24 @@ render() {
                   UPDATE AVAILABLE DATES
               </ButtonTwo>
             </View>*/}
-          </View>
-          <Modal
-            animationType="slide"
-            transparent={false}
-            visible={this.state.modalVisible}>
-          <CalendarModalOpenDesign
-            onClose={this.onModalClose}
-            getDataObj={this.getDataObj.bind(this)}
-            userData={this.state.userData}
-            selectedTimes={this.state.selectedTimes}
-            onRemoveTimeSlots={this.onRemoveTimeSlots.bind(this)}
-            selectedDate={this.state._selectedDay}/>
-        </Modal>
-        <View style={styles.book}>
-          <Text style={styles.bookText}>
-            JOIN NEXT UPCOMING TRAINING SESSION
-          </Text>
+          <Button full transparent style={{backgroundColor: "#009FDB",}}>
+            <Text style={styles.bookText}>
+              JOIN NEXT UPCOMING TRAINING SESSION
+            </Text>
+          </Button>
         </View>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.modalVisible}>
+        <CalendarModalOpenDesign
+          onClose={this.onModalClose}
+          getDataObj={this.getDataObj.bind(this)}
+          userData={this.state.userData}
+          selectedTimes={this.state.selectedTimes}
+          onRemoveTimeSlots={this.onRemoveTimeSlots.bind(this)}
+          selectedDate={this.state._selectedDay}/>
+      </Modal>
       </Content>
       )}
      {this.state.loading === true ? (
@@ -517,6 +463,7 @@ render() {
         </View>
       </View>
     ) : null}
+
     </Container>
   );
 }
