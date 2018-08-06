@@ -171,35 +171,28 @@ class ViewTrainer extends Component {
 getTrainersData(){
   var Id = this.state.trainersList.item.id;
   API.getTrainersData(Id).then(async (response) => {
-      this.setState({
-        isLoading:false,
-        trainerData:response.data
-      });
+    this.setState({isLoading:false,trainerData:response.data});
    }).catch((error)=>{
-   this.setState({isLoading:false});
+    this.setState({isLoading:false});
    });
 }
 getAvailableSlots(){
   var Id = this.state.trainersList.item.id;
-    this.setState({
-    availableslotsspinner: true
-  });
+  this.setState({availableslotsspinner: true});
    API.getAvailableSlots(Id).then(async (response) => {
-    if (response.status) {
-      this.setState({
-        slotsAlloted:response.data,
-      },()=>{
-        this.getNewResponse();
-      });
-      var subdata = {};
-      response.data.map((res,i)=>{
-        var date = moment(res.date).format(_format);
-        subdata[date] = {selected: true};
-      });
-      this.setState({subdata:subdata,availableslotsspinner:false});
-    } else {
-        this.setState({noslots:true,availableslotsspinner:false,noslotsText:response.message});
-    }
+      if (response.status) {
+        this.setState({slotsAlloted:response.data,},()=>{
+          this.getNewResponse();
+        });
+        var subdata = {};
+        response.data.map((res,i)=>{
+          var date = moment(res.date).format(_format);
+          subdata[date] = {selected: true};
+        });
+        this.setState({subdata:subdata,availableslotsspinner:false});
+      } else {
+          this.setState({noslots:true,availableslotsspinner:false,noslotsText:response.message});
+      }
     }).catch((error)=>{
       Alert.alert("Error",error);
     });
@@ -265,12 +258,12 @@ getParticularAppointments(userId){
     trainerId: this.state.trainersList.item.id
   }
  API.getParticularAppointments(primaryId).then(async (response) => {
-  console.log("particularAppount Response:  ", JSON.stringify(response))
-  if (response.status) {
-      this.forSelectedGreenArray(response.data);
-  } else {
-    Alert.alert("Error");
-  }
+    console.log("particularAppount Response:  ", JSON.stringify(response))
+    if (response.status === true) {
+        this.forSelectedGreenArray(response.data);
+    } else {
+      this.setState({noslots: true,noslotsText: response.message})
+    }
   }).catch((error)=>{
     Alert.alert("Error",error);
   });

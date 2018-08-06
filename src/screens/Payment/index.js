@@ -231,9 +231,9 @@ class Payment extends Component {
   }
   pointEvent(){
     if (this.state.useNewCard === false || this.state.radioButton === true){
-      "none";
+      {"none"}
     } else {
-      "auto";
+      {"auto"}
     }
   }
   renderData = ({item,index}) => {
@@ -310,7 +310,7 @@ class Payment extends Component {
                 </View>
                 )}
               </View>
-              <View style={{flex: 1,width: null,height: null,paddingVertical:25}} pointerEvents={this.pointEvent.bind(this)}>
+              <View style={{flex: 1,width: null,height: null,paddingVertical:25}} pointerEvents={'auto'}>
                   <View style={styles.cardView}>
                     <CreditCardInput
                       requiresName

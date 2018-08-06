@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Image, View ,Dimensions, TouchableOpacity, Modal,FlatList} from "react-native";
+import { Image, View ,Dimensions, TouchableOpacity, Alert,Modal,FlatList} from "react-native";
 import {Container,Header,Title,Content,Button,Icon,Left,Body,Badge,Right,Text,List,ListItem,Thumbnail,Spinner} from "native-base";
 import { Col, Grid } from "react-native-easy-grid";
 import Picker from "react-native-picker";
@@ -66,25 +66,36 @@ class ProductDetails extends React.Component {
   componentWillReceiveProps(nextProps){
     this.setState({badgeTotal: nextProps.cartTotal.addToCartItem.total});
   }
-  async getSizesFlavours(){
+ async getSizesFlavours(){
     var getProductId = this.state.productId;
     API.getSizesFlavours(getProductId).then(async (response) => {
       if (response){
-        this.setState({productDetails: response.data},()=>{
-          this.setState({
-            name: this.state.productDetails.name,
-            description: this.state.productDetails.description,
-            price: response.data[0].price,
-            category: this.state.productDetails.category,
-            quantity: this.state.productDetails.quantity,
-            sub_heading: this.state.productDetails.sub_heading,
-            image:IMAGE_PATH + this.state.productDetails.image,
-            status: this.state.productDetails.status
-          },()=>{
+        if(response.status){
+          if(response.data){
+            this.setState({productDetails: response.data},()=>{
+              console.log("product details",response.data)
+              this.setState({
+                name: this.state.productDetails.name,
+                description: this.state.productDetails.description,
+                price: this.state.productDetails.price,
+                category: this.state.productDetails.category,
+                quantity: this.state.productDetails.quantity,
+                sub_heading: this.state.productDetails.sub_heading,
+                image:IMAGE_PATH + this.state.productDetails.image,
+                status: this.state.productDetails.status
+              },()=>{
+                this.setState({isLoading:false})
+                this.getNewResponse();
+              });
+            });
+          }else{
             this.setState({isLoading:false})
-            this.getNewResponse();
-          });
-        });
+            Alert.alert("HomeFit","Can't get the product Details.")
+          }
+        }else{
+          this.setState({isLoading:false})
+          Alert.alert("HomeFit",response.message)
+        }
       } else {
         this.setState({isLoading:false})
         alert("error getting product details || Check Network");

@@ -56,10 +56,7 @@ class OnlineStore extends Component {
     API.getCategories().then(async (response) => {
       if (response){
         if (response.status) {
-          this.setState({
-            allCategories: response.data,
-            spinner:false
-          },()=>{
+          this.setState({allCategories: response.data,spinner:false},()=>{
             var categoryarray = [];
              this.state.allCategories.map((res,i)=>{
                var rec = {
@@ -69,9 +66,7 @@ class OnlineStore extends Component {
                };
                categoryarray.push(rec);
              });
-             this.setState({
-               newCategoryarry : categoryarray
-             });
+             this.setState({newCategoryarry : categoryarray});
           });
         }
         else {
@@ -102,9 +97,7 @@ class OnlineStore extends Component {
     this.setState({onChangeColumn: !this.state.onChangeColumn});
   }
   onChangeDropdown(item,index){
-    this.setState({
-      searchedvalue : item
-    },()=>{
+    this.setState({searchedvalue : item},()=>{
       if (this.state.searchedvalue === "Search by None" || this.state.searchedvalue === "Search by Name"){
         this.getProducts();
       }

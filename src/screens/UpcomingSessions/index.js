@@ -112,7 +112,7 @@ class UpcomingSessions extends Component {
         })
       });
     }
-  modalCloseafterJoinedSession(item){    
+  modalCloseafterJoinedSession(item){
     this.setState({modalVisible:false},()=>{
       this.props.navigation.navigate("JoinedSession",{dataItem:item})
     })
@@ -132,15 +132,15 @@ class UpcomingSessions extends Component {
       return (
         <Container style={styles.container}>
           <Header style={styles.headerStyle}>
-            <Left style={styles.ham}>
+            <Left style={{flex:0.1}}>
               <Button transparent onPress={() => this.props.navigation.navigate("DrawerOpen")}>
                 <Icon name = "ios-menu" style={{color: "white"}} />
               </Button>
             </Left>
-            <Body>
-              <Title style={styles.title}>UPCOMINGSESSIONS</Title>
+            <Body style={{flex:0.8,flexWrap: "wrap"}}>
+              <Title style={styles.title}>UPCOMING SESSIONS</Title>
             </Body>
-            <Right/>
+            <Right style={{flex:0.1}} />
           </Header>
           {this.state.spinner === true ? (
               <View style={styles.container_spinner}>

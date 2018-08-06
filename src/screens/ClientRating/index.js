@@ -1,44 +1,21 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, ScrollView, Modal, TouchableOpacity, AsyncStorage, Image, Platform,FlatList} from 'react-native';
-import {Container,Header,Title,Content,Icon,Button,Footer,FooterTab,Left,Right,Body,Card, CardItem,Thumbnail,Input, Item} from "native-base";
+import { Text, View, StyleSheet, ScrollView, Modal, TouchableOpacity, AsyncStorage, Image, Platform,FlatList,Alert} from 'react-native';
+import {Container,Header,Title,Content,Icon,Button,Footer,FooterTab,Left,Right,Body,Card, CardItem,Thumbnail,Input, Item,Spinner} from "native-base";
 import StarRating from 'react-native-star-rating';
 
-
+import API from "@utils/ApiUtils";
 import styles from "./styles";
 import Images from "@theme/images/images";
 import MyColors from "@colors/myColor";
 
-var data =[
-  {
-    "id": "1",
-    "trainersName": "John A",
-    "trainersImage": "sampleImage",
-    "rating": 0
-  },
-  {
-    "id": "2",
-    "trainersName": "John B",
-    "trainersImage": "sampleImage",
-    "rating": 0
-  },
-  {
-    "id": "3",
-    "trainersName": "John C",
-    "trainersImage": "sampleImage",
-    "rating": 0
-  },
-  {
-    "id": "4",
-    "trainersName": "John D",
-    "trainersImage": "sampleImage",
-    "rating": 0
-  }
-]
+
 class ClientRating extends Component {
   constructor(props){
     super(props);
     this.state ={
-      data: data
+      data: [],
+      spinner:true,
+      emptyText:true
     }
   }
   onStarRatingPress(item,rating) {
@@ -50,6 +27,38 @@ class ClientRating extends Component {
     })
     this.setState({data: data})
   }
+  componentWillMount(){
+    AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
+      var get_user = JSON.parse(getUserData);
+    if(get_user != null) {
+        console.log("userData",get_user);
+        if (get_user){
+          this.getClientRating(get_user);
+        }
+        else {
+
+        }
+    } else {
+
+    }
+    }).done();
+  }
+  getClientRating(userData){
+    console.log("userDDATTTAAA!!!! ",userData)
+    API.getClientRating(userData.id).then(async (response) => {
+      if (response){
+        if(response.status === true){
+          this.setState({data: response.data,spinner:false, emptyText:false});
+        }else{
+          this.setState({spinner:false,emptyText:true});
+          // alert("error");
+        }
+      } else {
+        this.setState({spinner:false,emptyText:true});
+        // alert("error");
+      }
+    });
+  }
   renderData(item){
     return(
       <View style={{flex:1}}>
@@ -58,7 +67,7 @@ class ClientRating extends Component {
             <Left>
               <Thumbnail source={Images.user} />
               <Body>
-                <Text>{item.item.trainersName}</Text>
+                <Text>{item.item.name}</Text>
               </Body>
             </Left>
             <Right>
@@ -105,6 +114,11 @@ class ClientRating extends Component {
           </Header>
           <Content>
             <View style={styles.contentStyle}>
+            {this.state.spinner === true ? (
+                 <Spinner size="large" color="black"/>
+             ) : this.state.emptyText === true ? ( <Text style={{textAlign:'center', marginTop:10,fontWeight:'700', fontSize:16}}> No Trainers Found. </Text>)
+             :(
+              <View style={styles.contentStyle}>
               <View style={styles.rateYourTrainerTextStyle}>
                 <Text style={{color:MyColors.blue,fontSize:16}}> {"Rate Your Past Trainer's"} </Text>
               </View>
@@ -114,6 +128,7 @@ class ClientRating extends Component {
                 renderItem={this.renderData.bind(this)}
                 extraData={this.state}
                 />
+              </View>)}
             </View>
           </Content>
         </Container>

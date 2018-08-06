@@ -114,7 +114,7 @@ class TrainerFinancialDetails extends Component {
             </Button>
           </Left>
           <Body>
-            <Title style={styles.title}>Details</Title>
+            <Title style={styles.title}>Billing Info</Title>
           </Body>
           <Right>
             <Button transparent onPress={this.onButtonAddCard.bind(this)}>

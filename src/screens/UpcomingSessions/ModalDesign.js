@@ -27,21 +27,20 @@ class ModalDesign extends Component {
       this.setState({userType:getUserType});
     });
 
-    var date = this.state.data.item.appt_date;
-    var newdate = moment(date).format("MM-DD-YYYY");
-    console.log("newdate",newdate);
-    var time =  this.state.data.item.appt_time;
+    var date = this.state.data.item.appt_date
+    var newdate = moment(date).format("YYYY-MM-DD");
+    var time =  this.state.data.item.appt_time
     var data = time.split("-");
-    console.log("newdate@@@@@@@ ",data);
-    var x = moment(data[0], "h:mm A");
-    var newTime = x.format("HH:mm:ss");
-    var date = new Date(newdate + " " + newTime);
-    var appointmnet_date = new Date(date);
+     var x = moment(data[0], 'h:mm A');
+    var newTime = x.format('HH:mm:ss')
+    var date = newdate + ' ' + newTime;
+    let dateParam = date.split(/[\s-:]/)
+    dateParam[1] = (parseInt(dateParam[1], 10) - 1).toString()
+    var appointmnet_date =  new Date(...dateParam)
     var todaysDate = new Date();
-    console.log("appointmnet_date",appointmnet_date);
-    console.log("todaysDate",todaysDate);
     var difference = appointmnet_date.getTime() - todaysDate.getTime(); // This will give difference in milliseconds
     var resultInMinutes = Math.round(difference / 60000);
+    console.log("sdjlsklskdl",resultInMinutes)
     this.setState({newResultInMinutes:resultInMinutes});
     console.log("resultInMinutes:-  ",resultInMinutes);
     this.timeConvert(resultInMinutes);

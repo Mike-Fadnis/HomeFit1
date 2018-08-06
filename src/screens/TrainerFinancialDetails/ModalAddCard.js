@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { View,Text,StyleSheet,Alert,AsyncStorage,ActivityIndicator,Dimensions,TouchableOpacity } from "react-native";
-import { Item,Label,Input,Button} from "native-base";
+import { View,Text,StyleSheet,Alert,ScrollView,TouchableWithoutFeedback,AsyncStorage,ActivityIndicator,Dimensions,TouchableOpacity } from "react-native";
+import { Container,Content,Item,Label,Input,Button} from "native-base";
 import { CreditCardInput } from "react-native-credit-card-input";
+var dismissKeyboard = require("dismissKeyboard");
 
 import Images from "@theme/images/images";
 import API from "@utils/ApiUtils";
@@ -68,23 +69,23 @@ export default class ModalAddCard extends Component {
           Alert.alert("Card Number","Please enter card number");
         } else if (cardNumber.length < 16) {
           Alert.alert("Card Number","Please enter 16 digits");
-        } else if (this.state.user_cardDetails.values.expiry == "" || this.state.user_cardDetails.values.expiry == null) {
+        } else if (this.state.user_cardDetails.values.expiry === "" || this.state.user_cardDetails.values.expiry === null) {
           Alert.alert("Exipry Date","Please enter expiry date");
         } else if (this.state.user_cardDetails.values.expiry.length < 5) {
           Alert.alert("Exipry Date","Please enter correct expiry date");
-        } else if (this.state.user_cardDetails.values.cvc == "" || this.state.user_cardDetails.values.cvc == null) {
+        } else if (this.state.user_cardDetails.values.cvc === "" || this.state.user_cardDetails.values.cvc === null) {
           Alert.alert("CVC","Please enter cvc");
         } else if (this.state.user_cardDetails.values.cvc.length < 3) {
           Alert.alert("CVC","Please enter 3 digits");
-        } else if (this.state.user_cardDetails.values.name == "" || this.state.user_cardDetails.values.name == null) {
+        } else if (this.state.user_cardDetails.values.name === "" || this.state.user_cardDetails.values.name === null) {
           Alert.alert("Name","Please enter Name");
-        } else if (this.state.user_cardDetails.values.postalCode == "" || this.state.user_cardDetails.values.postalCode == null) {
+        } else if (this.state.user_cardDetails.values.postalCode === "" || this.state.user_cardDetails.values.postalCode === null) {
           Alert.alert("Postal-Code","Please enter Postal-Code");
-        }  else if (this.state.address == "" || this.state.address == null) {
+        }  else if (this.state.address === "" || this.state.address === null) {
           Alert.alert("Address","Please enter Address");
-        } else if (this.state.city == "" || this.state.city == null) {
+        } else if (this.state.city === "" || this.state.city === null) {
           Alert.alert("City","Please enter City");
-        } else if (this.state.stateValue == "" || this.state.stateValue == null) {
+        } else if (this.state.stateValue === "" || this.state.stateValue === null) {
           Alert.alert("State","Please enter State");
         } else {
         this.setState({spinner: true});
@@ -107,7 +108,7 @@ export default class ModalAddCard extends Component {
             if (response.status === true){
               this.setState({spinner: false,user_cardDetails:{}},()=>{
                 Alert.alert(response.message,"",[{
-                  "text": "ok", onPress: this.onConformalertOk                  
+                  "text": "ok", onPress: this.onConformalertOk
                 }]);
               });
             } else {
@@ -124,6 +125,7 @@ export default class ModalAddCard extends Component {
   }
   render() {
     return (
+    <Container>
       <View style={styles.container}>
         <View style={{ height: 20 }}/>
         <View style={{height: 44,backgroundColor: "white",justifyContent:"center",alignItems:"flex-end", paddingRight: 10, borderBottomWidth: 1, borderBottomColor: "grey"}}>
@@ -131,40 +133,45 @@ export default class ModalAddCard extends Component {
             <Text style={{fontSize:16, fontWeight:"800", color:"#009FDB"}}>Close</Text>
           </TouchableOpacity>
         </View>
+
         <View style={styles.mainView}>
-          <View style={styles.cardView}>
-            <CreditCardInput
-              requiresName
-              requiresPostalCode
-              // autoFocus={this.state.focusing}
-              inputStyle={styles.cardInputStyle}
-              validColor={"green"}
-              invalidColor={"red"}
-              placeholderColor={"darkgray"}
-              cardImageFront={Images.cardFront}
-              cardImageBack={Images.cardBack}
-              onFocus={this._onFocus}
-              onChange={this._onChange.bind(this)}/>
-              <View style={styles.inputView}>
-                <Item stackedLabel>
-                   <Label>Billing Address</Label>
-                   <Input placeholder="321/A" value={this.state.address} onChangeText={this.onChangeAddress.bind(this)}/>
-                </Item>
-                <Item stackedLabel>
-                   <Label>City</Label>
-                   <Input placeholder="VSP" value={this.state.city} onChangeText={this.onChangeCity.bind(this)}/>
-                </Item>
-                <Item stackedLabel>
-                   <Label>State</Label>
-                   <Input placeholder="AP" value={this.state.stateValue} onChangeText={this.onChangeState.bind(this)}/>
-                </Item>
-              </View>
-              <Button full style={styles.confirmButtonView}
-                onPress={this.addingCreditCard.bind(this)}>
-                  <Text style={styles.confirmButtonText}>CONFIRM PAYMENT</Text>
-              </Button>
-          </View>
+          <Content>
+            <View style={styles.cardView}>
+              <CreditCardInput
+                requiresName
+                requiresPostalCode
+                // autoFocus={this.state.focusing}
+                inputStyle={styles.cardInputStyle}
+                validColor={"green"}
+                invalidColor={"red"}
+                placeholderColor={"darkgray"}
+                cardImageFront={Images.cardFront}
+                cardImageBack={Images.cardBack}
+                onFocus={this._onFocus}
+                onChange={this._onChange.bind(this)}/>
+
+                <View style={styles.inputView}>
+                  <Item stackedLabel>
+                    <Label>Billing Address</Label>
+                    <Input placeholder="321/A" value={this.state.address} onChangeText={this.onChangeAddress.bind(this)}/>
+                  </Item>
+                  <Item stackedLabel>
+                    <Label>City</Label>
+                    <Input placeholder="VSP" value={this.state.city} onChangeText={this.onChangeCity.bind(this)}/>
+                  </Item>
+                  <Item stackedLabel>
+                    <Label>State</Label>
+                    <Input placeholder="AP" value={this.state.stateValue} onChangeText={this.onChangeState.bind(this)}/>
+                  </Item>
+                </View>
+                <Button full style={styles.confirmButtonView}
+                  onPress={this.addingCreditCard.bind(this)}>
+                    <Text style={styles.confirmButtonText}>CONFIRM PAYMENT</Text>
+                </Button>
+            </View>
+          </Content>
         </View>
+
         {this.state.spinner === true ? (
         <View style={styles.container_spinner}>
           <View style={styles.spinnerView}>
@@ -173,6 +180,7 @@ export default class ModalAddCard extends Component {
         </View>
         ) : null}
       </View>
+</Container>
     );
   }
 }

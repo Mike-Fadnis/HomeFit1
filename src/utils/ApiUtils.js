@@ -420,5 +420,38 @@ const AppUtils = {
       console.log("error", error);
     });
   },
+  getTrainersBySpecialityId:async function(id) {
+    return fetch(API_BASE_URL + "action=search_for_trainers_by_speciality&speciality_id=" + id, {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  getTrainersByGender: async function(id){
+    return fetch(API_BASE_URL + "action=search_for_trainers_by_gender&gender=" + id, {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  getClientRating:async function(id){
+    return fetch(API_BASE_URL + "action=fetch_past_trainers&user_id=" + id, {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  }
 };
 export default AppUtils;
