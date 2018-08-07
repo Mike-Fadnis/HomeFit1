@@ -1,6 +1,5 @@
 import {
-  Dimensions,
-  Platform
+  Dimensions
 } from "react-native";
 const window = Dimensions.get('window');
 
@@ -34,6 +33,10 @@ export default {
     flex: 1,
     flexDirection: "row"
   },
+  billingInfoViewStyle: {
+    flex: 1,
+    flexDirection: "row"
+  },
   avatar: {
     borderRadius: window.width / 7.4, //50
     width: window.width / 3.7, //100
@@ -57,7 +60,7 @@ export default {
     flex:0.1,
     flexDirection:"row",
     justifyContent:"center",
-    alignItems:"center"    
+    alignItems:"center"
   },
   cardDetails: {
     flex: 0.8
@@ -83,5 +86,33 @@ export default {
     alignItems: "center",
     borderLeftWidth:0.8,
     borderLeftColor:"lightgrey"
-  }
+  },
+  editButton:{
+    flexDirection:"row",
+    alignItems:"center",
+    justifyContent:"center",
+    width: window.width / 4,
+    height: "auto"
+  },
+  inputTextStyle:{
+    fontSize:18
+  },
+    container_spinner: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "rgba(0,0,0,0.72)"
+    },
+    spinnerView: {
+      height: window.width / 3,
+      width: window.width / 3,
+      backgroundColor: "white",
+      borderRadius: 20,
+      alignItems: "center",
+      justifyContent: "center"
+    },
 };

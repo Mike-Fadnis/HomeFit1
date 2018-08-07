@@ -452,6 +452,48 @@ const AppUtils = {
     }).catch((error) => {
       console.log("error", error);
     });
+  },
+  postClientProfileDetails:async function(ProfileDetails){
+    return fetch(API_BASE_URL + "action=save_additional_user_profile_info&user_id=" + ProfileDetails.userId + "&userName="+ ProfileDetails.userName + "&profilePicture=" + ProfileDetails.profilePicture + "&phoneNumber=" + ProfileDetails.phoneNumber , {
+      method: "POST"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  uploadImage_clientPRofilepic: async function(data) {
+    let formdata = new FormData();
+    formdata.append("action", "user_upload_image");
+    formdata.append("trainer_id", data.user_id);
+    formdata.append("data",data.data);
+    console.log("formdata",formdata);
+    return fetch("http://ajaypalsidhu.com/demo/HomeFit/api/api.php", {
+      method: "POST",
+      body: formdata
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      console.log("responseJson",responseJson);
+      return responseJson;
+    })
+    .catch((error) => {
+        console.log("errorgfgfgsdfgs",error)
+    });
+  },
+  postClientRatings:async function(data){
+    return fetch(API_BASE_URL + "action=rate_your_trainer&user_id="+data.user_id+"&trainer_id="+data.trainer_id+"&rating="+data.rating+"&review=" + data.review, {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
   }
+
 };
 export default AppUtils;

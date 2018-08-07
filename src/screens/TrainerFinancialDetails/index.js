@@ -167,35 +167,35 @@ class TrainerFinancialDetails extends Component {
 
 export default TrainerFinancialDetails;
 
-var creditCardArray = [
-  {
-    id:"1",
-    name:"ABCDABCD ABCD JOHN",
-    last:"4242",
-    cardType: "visa"
-  },
-  {
-    id:"2",
-    name:"EFGHEFGH EFGH JOHN",
-    last:"3222",
-    cardType: "master"
-  },
-  {
-    id:"3",
-    name:"IJKLIJKL IJKL JOHN",
-    last:"0005",
-    cardType: "american-express"
-  },
-  {
-    id:"4",
-    name:"MNOPMNOP MNOP JOHN",
-    last:"5554",
-    cardType: "visa"
-  },
-  {
-    id:"5",
-    name:"QRSTQRST QRST JOHN",
-    last:"4444",
-    cardType: "master"
-  }
-];
+// var creditCardArray = [
+//   {
+//     id:"1",
+//     name:"ABCDABCD ABCD JOHN",
+//     last:"4242",
+//     cardType: "visa"
+//   },
+//   {
+//     id:"2",
+//     name:"EFGHEFGH EFGH JOHN",
+//     last:"3222",
+//     cardType: "master"
+//   },
+//   {
+//     id:"3",
+//     name:"IJKLIJKL IJKL JOHN",
+//     last:"0005",
+//     cardType: "american-express"
+//   },
+//   {
+//     id:"4",
+//     name:"MNOPMNOP MNOP JOHN",
+//     last:"5554",
+//     cardType: "visa"
+//   },
+//   {
+//     id:"5",
+//     name:"QRSTQRST QRST JOHN",
+//     last:"4444",
+//     cardType: "master"
+//   }
+// ];

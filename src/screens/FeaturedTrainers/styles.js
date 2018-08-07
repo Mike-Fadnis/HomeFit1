@@ -80,5 +80,11 @@ export default {
     color:"white",
     fontSize:18,
     fontWeight:"900"
+  },
+  pickerStyle:{
+    height:window.width / 1.5
+  },
+  pickerStyleContainer:{
+    height:window.width / 1.7
   }
 };

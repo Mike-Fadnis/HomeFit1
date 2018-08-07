@@ -18,6 +18,7 @@ const images = {
     noimage:require('@images/noimage.png'),
     productsinGrid:require('@images/grid.png'),
     productsinList:require('@images/list-with-dots.png'),
-    addFriend:require('@images/addFriend.png')
+    addFriend:require('@images/addFriend.png'),
+    cameraIcon:require('@images/camera.png'),
 }
 export default images

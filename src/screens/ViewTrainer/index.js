@@ -327,7 +327,7 @@ render() {
             ) : (
               <Content style={styles.content}>
                 <View style={styles.nameContainer}>
-                  <Text style={styles.name}>{this.state.trainerData.name}</Text>
+                  <Text style={styles.name}>{this.state.trainerData.name.toUpperCase()}</Text>
                 </View>
                 <View style={styles.imageView}>
                 {this.state.trainerData.image === "" ? (<View style={styles.imageContainer}><Text style={styles.imageEmptyText}>{firstname.toUpperCase()}{lastname.toUpperCase()}</Text></View>) : (<Image style={styles.trainerImage} source={{uri : "https://ajaypalsidhu.com/demo/HomeFit/Admin/uploads/gym-trainer1.jpg"}} />)}
@@ -367,7 +367,7 @@ render() {
                     <Spinner color="black" />
                   ) :
                    this.state.noslots ? (
-                      <Text style={{textAlign:"center",padding:10}}>{this.state.noslotsText}</Text>
+                      <Text style={{textAlign:"center",padding:10}}>This trainer has not listed any available time slots.</Text>
                    ) :
                     <Calendar
                       onDayPress={this.onDaySelect}
@@ -376,11 +376,19 @@ render() {
                   }
                 </View>
                 <View style={{marginTop:10,alignSelf:"center"}}>
+                {this.state.noslots ? (
+                  <Button disabled full style={[styles.bookSessionView,{backgroundColor: "grey"}]}>
+                    <View style={styles.bookSessionButton}>
+                      <Text style={{color:"white"}}> Book a one hour session </Text>
+                    </View>
+                  </Button>
+                ):(
                   <Button full style={styles.bookSessionView} onPress={this.onBookSessionPressed}>
                     <View style={styles.bookSessionButton}>
                       <Text style={{color:"white"}}> Book a one hour session </Text>
                     </View>
                   </Button>
+                )}
                   <Button full style={styles.quickAdviceView} onPress={this.onBookSessionPressed}>
                     <View style={styles.quickAdviceButton}>
                       <Text style={{color:"white"}}> Have a quick 5 minute advice </Text>

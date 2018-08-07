@@ -228,14 +228,7 @@ class Payment extends Component {
   }
   useNewCard(){
     this.setState({useNewCard: true,radioButton: false,itemId:"1"});
-  }
-  pointEvent(){
-    if (this.state.useNewCard === false || this.state.radioButton === true){
-      {"none"}
-    } else {
-      {"auto"}
-    }
-  }
+  }  
   renderData = ({item,index}) => {
     var cardno = item.card_number.substr(item.card_number.length - 4);
     return (
@@ -310,7 +303,7 @@ class Payment extends Component {
                 </View>
                 )}
               </View>
-              <View style={{flex: 1,width: null,height: null,paddingVertical:25}} pointerEvents={'auto'}>
+              <View style={{flex: 1,width: null,height: null,paddingVertical:25,pointerEvents:this.state.useNewCard ? 'none':'auto'}}>
                   <View style={styles.cardView}>
                     <CreditCardInput
                       requiresName

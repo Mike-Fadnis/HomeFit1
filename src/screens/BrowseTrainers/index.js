@@ -266,6 +266,7 @@ class BrowseTrainers extends Component {
                value={this.state.searchedvalue}
                dropdownPosition={0}
                onChangeText={this.onChangeDropdown}
+               pickerStyle={styles.pickerStyle}
                inputContainerStyle={{borderBottomColor:"transparent"}}
                containerStyle={{borderWidth:1,borderColor:"#009FDB",height:50,justifyContent:"center",paddingBottom:10,paddingLeft:10,marginLeft:5,marginRight:5}}
              />
@@ -276,6 +277,7 @@ class BrowseTrainers extends Component {
                value={this.state.specialitySearchedValue}
                dropdownPosition={0}
                onChangeText={this.onSpecialityChangeDropdown}
+               pickerStyle={styles.pickerStyleContainer}
                ref={"specialityref"}
                inputContainerStyle={{borderBottomColor:"transparent"}}
                containerStyle={{borderWidth:1,borderColor:"#009FDB",height:50,justifyContent:"center",paddingBottom:10,paddingLeft:10,marginLeft:5,marginRight:5,marginTop:5}}

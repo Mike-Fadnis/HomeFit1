@@ -142,7 +142,7 @@ selectPhotoTapped() {
     else if (response.customButton) {
       this.setState({spinner:false});
       console.log("User tapped custom button: ", response.customButton);
-    }else {
+    } else {
       let source = { uri: response.uri };
       var base64 = "data:image/png;base64," + response.data;
       var string = {"action":"trainers_upload_image","trainer_id":this.state.userData.id,"data":base64};
@@ -150,10 +150,7 @@ selectPhotoTapped() {
         if (responseData) {
           if (responseData.status){
             Alert.alert("Home Fit",responseData.message);
-            this.setState({
-              avatarSource: { uri: responseData.imaage },
-              spinner:false,
-            })
+            this.setState({avatarSource: { uri: responseData.imaage },spinner:false,})
           }
           else {
             Alert.alert("HomeFit",responseData.message);
@@ -162,7 +159,7 @@ selectPhotoTapped() {
           Alert.alert("Error","Error uploading image");
         }
       });
-      }
+    }
   });
 }
 onSpecialtyPressed(){
