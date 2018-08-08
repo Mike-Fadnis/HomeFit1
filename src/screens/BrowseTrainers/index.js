@@ -4,6 +4,7 @@ import { Text, View, Image, FlatList, Alert } from "react-native";
 import { Dropdown } from "react-native-material-dropdown";
 import { Card, CardSection } from "../common";
 import styles from "./styles";
+import moment from "moment";
 import API from "@utils/ApiUtils";
 class BrowseTrainers extends Component {
   constructor(props){
@@ -197,6 +198,25 @@ class BrowseTrainers extends Component {
     } else {
       rating = item.item.avg_rating.substring(0, item.item.avg_rating.length - 3);
     }
+    var date = ''
+    var time = ''
+    if(item.item.next_available_date && item.item.next_available_time_slot){
+      date = moment(item.item.next_available_date).format('MM/DD/YYYY');
+      time = item.item.next_available_time_slot.replace(/ /g,'')
+    }else{
+      date = ''
+      time = ''
+    }
+    console.log("item.item.speciality", item.item.speciality)
+    var specialities = []
+    if(item.item.speciality){
+      specialities=item.item.speciality
+    }else{
+      specialities=[]
+    }
+    // var specialities=item.item.speciality
+
+
     return (
     <Card onPress={() => this.props.navigation.navigate("ViewTrainer",{trainersList: item,keyValue:false,keyViewTrainer:"undefined"})}>
       <CardSection>
@@ -209,13 +229,38 @@ class BrowseTrainers extends Component {
             }
           </View>
           <View style={styles.trainerDescription}>
-              <Text style={styles.descriptionLine}> Name : {item.item.name} </Text>
-              <Text style={styles.descriptionLine}> Rating : {rating}/10 </Text>
-              <View style={{flex: 1}}>
-                <Text numberOfLines={2} style={styles.descriptionLine3}>
-                    {item.item.review}
+              <Text style={styles.descriptionLine}> Name: {item.item.name} </Text>
+              <Text style={styles.descriptionLine}> Rating: {rating}/10 Experience: {item.item.experience} years</Text>
+              <View style={{flex: 1, flexDirection:'row'}}>
+                <Text style={styles.descriptionLine3}>
+                    Specialities:
                 </Text>
-              </View>
+                {specialities === [] || specialities.length === 0 ?(
+                  <Text style={[styles.descriptionLine3,{paddingLeft: 0}]}>No specialities available</Text>
+                ):(
+                  <FlatList
+                    data={specialities}
+                    extraData={this.state}
+                    keyExtractor={this._keyExtractor}
+                    removeClippedSubviews={false}
+                    renderItem={({item}) => <Text style={[styles.descriptionLine3,{paddingLeft: 0}]}>{item.speciality}</Text>}
+                    />)}
+                </View>
+                <View style={{flex: 1, flexDirection:'row'}}>
+                <Text style={styles.descriptionLine3}>
+                    Available date:
+                </Text>
+                {date === '' && time === ''?(
+                  <Text style={[styles.descriptionLine3,{paddingLeft: 0}]}>
+                      No dates available
+                  </Text>
+                ):(
+                  <Text style={[styles.descriptionLine3,{paddingLeft: 0}]}>
+                      {date},{time}
+                  </Text>
+                )}
+
+                </View>
           </View>
       </CardSection>
     </Card>

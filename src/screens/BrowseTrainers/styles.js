@@ -1,7 +1,7 @@
 import {
   Dimensions
 } from "react-native";
-const window = Dimensions.get('window');
+const window = Dimensions.get("window");
 import myColors from "@colors/myColor";
 
 export default {
@@ -13,15 +13,15 @@ export default {
     backgroundColor: "#009FDB",
   },
   title: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   ham: {
     backgroundColor: "#009FDB",
   },
   trainerItemList: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 10,
     paddingLeft: 5,
     paddingRight: 5,
@@ -40,40 +40,40 @@ export default {
     paddingLeft: 5,
     paddingRight: 5,
     paddingBottom: 5,
-    fontSize: 15
+    fontSize: 12
   },
   descriptionLine3: {
     paddingLeft: 10,
     paddingRight: 5,
     paddingBottom: 5,
-    fontSize: 15
+    fontSize: 12
     //height:20
   },
   container_spinner: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor:'rgba(0,0,0,0.72)'
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor:"rgba(0,0,0,0.72)"
   },
   spinnerView: {
     height: window.width / 3,
     width: window.width / 3,
-    backgroundColor: 'rgba(255, 255, 255, 255)',
+    backgroundColor: "rgba(255, 255, 255, 255)",
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center'
+    alignItems: "center",
+    justifyContent: "center"
   },
   emptyImageStyle: {
     height: window.width / 5,
     width: window.width / 5,
     backgroundColor: myColors.blue,
     marginLeft: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: window.width / 2.5
   },
   emptyImageTextStyle: {

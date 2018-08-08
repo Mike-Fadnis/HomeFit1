@@ -3,7 +3,7 @@ import { View ,Modal,TouchableOpacity,Image, FlatList,AsyncStorage,Alert} from "
 import ImageSlider from "react-native-image-slider";
 import { Calendar,CalendarList } from "react-native-calendars";
 import moment from "moment";
-import {Container,Header,Title,Content,Text,Icon,Footer,Button,FooterTab,Left,Right,Body,Spinner} from "native-base";
+import {Container,Header,Title,Content,Text,Icon,Footer,Button,FooterTab,Left,Right,Body,Spinner,Input} from "native-base";
 var ImagePicker = require("react-native-image-picker");
 
 import { ButtonTwo, Card, CardSection } from "../common";
@@ -46,9 +46,14 @@ class TrainerPersonalPage extends Component {
   specialtiesDataById:[],
   duplicateSpecialities:[],
   availableDatesss:[],
+  media:[0,1,2,3],
   isLoading:true,
   sessionValue:true,
-  sessionId:null
+  sessionId:null,
+  videopaymentConfirm:false,
+  imageId:null,
+  addCustomeSpec: false,
+  speciality:""
   };
   this.onModalOpen = this.onModalOpen.bind(this);
   this.onModalClose = this.onModalClose.bind(this);
@@ -57,8 +62,10 @@ class TrainerPersonalPage extends Component {
   }
 async componentWillMount(){
   AsyncStorage.getItem("@getUserType:key", (err, type) => {
+    if (err){
+    }
     if (type === "Trainer"){
-      AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
+      AsyncStorage.getItem("@getUserData:key", (error, getUserData) => {
         var get_user = JSON.parse(getUserData);
         console.log("userData",get_user);
         this.setState({userData:get_user},()=>{
@@ -68,7 +75,7 @@ async componentWillMount(){
       }).done();
     }
   });
-  this.getPushedSpecialityData();
+ // this.getPushedSpecialityData();
 }
 getAvailableSlots(){
   var Id = this.state.userData.id;
@@ -172,9 +179,9 @@ onSpecialtyModalClose(){
 }
 getPushedSpecialityData(getSpecialtyData){
   var finalSelectedSpecialties = [];
-  this.setState({specialtyModal: false,selectedSpecialties:getSpecialtyData},()=>{
+  this.setState({specialtyModal: false},()=>{
     if (this.state.selectedSpecialties != undefined){
-      this.state.selectedSpecialties.map((res,i)=>{
+      getSpecialtyData.map((res,i)=>{
         var rec = {id: res.id,trainerId:this.state.userData.id, speciality: res.speciality};
         finalSelectedSpecialties.push(rec);
       });
@@ -186,19 +193,6 @@ getPushedSpecialityData(getSpecialtyData){
   });
 }
 addingSpecialities(data){
-  var dupArray = [];
-  this.state.duplicateSpecialities.map((result, key)=>{
-    var rec = {id: result.speciality,trainerId:this.state.userData.id, speciality: result.speciality_name};
-    dupArray.push(rec);
-  });
-  for (var i = 0, len = dupArray.length; i < len; i++) {
-    for (var j = 0, len2 = data.length; j < len2; j++) {
-      if (dupArray[i].id === data[j].id) {
-        data.splice(j, 1);
-        len2 = data.length;
-      }
-    }
-  }
   var array = JSON.stringify(data);
   var specialitiesData = {
     id:this.state.userData.id,
@@ -236,22 +230,29 @@ getSpecialitiesById(id) {
   API.getSpecialitiesById(id).then(async (response) => {
     this.setState({selectedSpecialties:[],specialtiesDataById:[]});
     if (response.status === true) {
+      var arry = [];
       response.data.map((res, key)=>{
         var record = {id: res.speciality, trainerId: res.trainer_id, speciality: res.speciality_name};
-        this.state.specialtiesDataById.push(record);
+        arry.push(record);
       });
-      this.setState({selectedSpecialties:this.state.specialtiesDataById,duplicateSpecialities:response.data,isLoading:false});
+      this.setState({selectedSpecialties:arry,duplicateSpecialities:response.data,isLoading:false});
+      if (this.props.navigation.getParam("backFromPayment")){
+        this.setState({media: this.props.navigation.getParam("media")},()=>{
+           Alert.alert("HomeFit","your payment was successfull you can continue uplaod video",
+          [
+            {text: "OK", onPress: ()=> this.setState({videopaymentConfirm:true,imageId:this.props.navigation.getParam("imageId")})
+            },
+          ],
+          { cancelable: false }
+          );
+
+        })
+      }
     } else {
       this.setState({isLoading: false});
-      // Alert.alert(response.message,'',[{
-      //   text: 'OK',
-      //   }],
-      //   {cancelable: false}
-      // )
     }
   });
 }
-
 onStartSession(){
   this.setState({
     sessionValue:false,
@@ -260,13 +261,13 @@ onStartSession(){
     API.startSession(this.state.userData.id).then(async (response) => {
       if(response){
         if(response.status=== true){
-            this.setState({loading : false, sessionId:data},()=>{
+            this.setState({loading : false, sessionId:response.data},()=>{
               Alert.alert(response.message,'');
             });
 
         }else{
           this.setState({loading : false},()=>{
-            Alert.alert(response.message,'');
+            Alert.alert(response.message,"");
           });
         }
       }else{
@@ -298,6 +299,16 @@ onStopSession(){
     })
   })
 }
+onAddCustomSpeciality(){
+  this.setState({
+    addCustomeSpec:!this.state.addCustomeSpec
+  })
+}
+onChangeText = (text) => {
+  this.setState({
+    speciality:text
+  })
+}
 
 renderData(item){
   return (
@@ -308,11 +319,19 @@ renderData(item){
     </View>
   );
 }
-onPayment(){
-  this.props.navigation.navigate("Payment",{backFromPayment: "true"});
+onPayment(imageId){
+  this.props.navigation.navigate("Payment",{backFromPayment: "uploadVideoTrainer",media:this.state.media,imageId:imageId});
 }
 onViewourOnlineStore(){
   this.props.navigation.navigate("OnlineStore",{toOnlineStore: true});
+}
+onImageUpload(record,imageId){
+  this.state.media[imageId] = record;
+  this.setState({media :  this.state.media});
+}
+onVideoUploding(record,imageId){
+  this.state.media[imageId] = record;
+  this.setState({videopaymentConfirm:false,media :  this.state.media});
 }
 render() {
   return (
@@ -339,14 +358,22 @@ render() {
       ) : (
       <Content padder>
         <View style={styles.onlineStore}>
-           <View style={ {marginBottom: 20, alignItems:'center'}}>
+           <View style={ {marginBottom: 20, alignItems:"center"}}>
             <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)} style={[styles.avatar, styles.avatarContainer]}>
               { this.state.spinner ? (<Spinner color="black"/>) : this.state.avatarSource === null ? <Image style={styles.avatar} source={Images.user} /> :
                 <Image style={styles.avatar} source={this.state.avatarSource} /> }
             </TouchableOpacity>
           </View>
           <View>
-            <TrainersMedia onPayment={this.onPayment.bind(this)}/>
+            <TrainersMedia
+              onPayment={this.onPayment.bind(this)}
+              Media={this.state.media}
+              imageId={this.state.imageId}
+              userData={this.state.userData}
+              videopaymentConfirm={this.state.videopaymentConfirm}
+              onVideoUploding={this.onVideoUploding.bind(this)}
+              onImageUploding={this.onImageUpload.bind(this)}
+            />
           </View>
           <View style={styles.buttonContainerStyle1}>
             <ButtonTwo style={styles.buttonStyle}
@@ -354,9 +381,25 @@ render() {
                 VIEW OUR ONLINE STORE
             </ButtonTwo>
           </View>
+          <View style={{alignItems:'center', marginTop:10}}>
+          <TouchableOpacity onPress={this.onAddCustomSpeciality.bind(this)}>
+            <Text style={{fontSize:15, fontWeight:'500', color:"#009FDB",textDecorationLine:"underline",textDecorationColor:'#009FDB'}}>{"Do you want to add custom speciality"}</Text>
+          </TouchableOpacity>
+          </View>
+          {this.state.addCustomeSpec?(
+            <View style={{flex:1,marginTop:10,flexDirection:'row'}}>
+            <View style={{flex:0.8,alignItems:'center' }}>
+            <Input placeholder="Add Speciality" style={{height:30, width:250,borderWidth:1,borderColor:'grey', fontSize:14, borderRadius:5}} onChangeText={this.onChangeText} value={this.state.speciality}/>
+            </View>
+            <View style={{flex:0.2,alignItems:'flex-start', justifyContent:'center'}}>
+            <Image source={Images.add} style={{tintColor:"#009FDB", height:20, width:20}}/>
+            </View>
+          </View>)
+            :(null)
+          }
 
           <View style={{flex:0.5,marginTop:20}}>
-            <TouchableOpacity style={{flex: 1,flexDirection: "row",margin: 5,backgroundColor: "#EDEEF0",height: 50,borderWidth: 1.2,borderColor: "lightgrey"}} onPress={this.onSpecialtyPressed.bind(this)}>
+            <TouchableOpacity style={styles.specailityView} onPress={this.onSpecialtyPressed.bind(this)}>
               <View style={{flex: 0.7,justifyContent: "center",padding: 10}}>
                   <Text>Specialties</Text>
               </View>

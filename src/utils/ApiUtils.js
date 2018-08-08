@@ -493,7 +493,30 @@ const AppUtils = {
     }).catch((error) => {
       console.log("error", error);
     });
-  }
+  },
+  getClientProdileDetails:async function(id){
+    console.log("lkjhgfdsaqwert:   ",JSON.stringify(id))
+    return fetch(API_BASE_URL + "action=get_additional_user_profile_info&user_id="+ id, {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
+  deleteCard:async function(id){   
+    return fetch(API_BASE_URL + "action=delete_card_info&card_id="+id, {
+      method: "GET"
+    }).then((response) => {
+      return response.json();
+    }, function(error) {
+      console.log("error", error);
+    }).catch((error) => {
+      console.log("error", error);
+    });
+  },
 
 };
 export default AppUtils;

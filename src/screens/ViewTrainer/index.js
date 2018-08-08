@@ -62,7 +62,7 @@ class ViewTrainer extends Component {
           }
           this.getParticularAppointments(get_user.id)
       } else {
-        this.props.navigation.navigate("ClientLogin")
+        //this.props.navigation.navigate("ClientLogin")
       }
     }).done();
   }
@@ -159,9 +159,7 @@ class ViewTrainer extends Component {
      });
   }
   onShowModalClose(){
-     this.setState({
-       showModal: false
-     });
+     this.setState({showModal: false});
   }
  onShowModalContinue(){
   this.setState({showModal: false},()=>{
@@ -262,7 +260,7 @@ getParticularAppointments(userId){
     if (response.status === true) {
         this.forSelectedGreenArray(response.data);
     } else {
-      this.setState({noslots: true,noslotsText: response.message})
+      this.setState({noslotsText: response.message})
     }
   }).catch((error)=>{
     Alert.alert("Error",error);
@@ -376,19 +374,19 @@ render() {
                   }
                 </View>
                 <View style={{marginTop:10,alignSelf:"center"}}>
-                {this.state.noslots ? (
-                  <Button disabled full style={[styles.bookSessionView,{backgroundColor: "grey"}]}>
-                    <View style={styles.bookSessionButton}>
-                      <Text style={{color:"white"}}> Book a one hour session </Text>
-                    </View>
-                  </Button>
-                ):(
-                  <Button full style={styles.bookSessionView} onPress={this.onBookSessionPressed}>
-                    <View style={styles.bookSessionButton}>
-                      <Text style={{color:"white"}}> Book a one hour session </Text>
-                    </View>
-                  </Button>
-                )}
+                  {this.state.noslots ? (
+                    <Button disabled full style={[styles.bookSessionView,{backgroundColor: "grey"}]}>
+                      <View style={styles.bookSessionButton}>
+                        <Text style={{color:"white"}}> Book a one hour session </Text>
+                      </View>
+                    </Button>
+                  ) : (
+                    <Button full style={styles.bookSessionView} onPress={this.onBookSessionPressed}>
+                      <View style={styles.bookSessionButton}>
+                        <Text style={{color:"white"}}> Book a one hour session </Text>
+                      </View>
+                    </Button>
+                  )}
                   <Button full style={styles.quickAdviceView} onPress={this.onBookSessionPressed}>
                     <View style={styles.quickAdviceButton}>
                       <Text style={{color:"white"}}> Have a quick 5 minute advice </Text>

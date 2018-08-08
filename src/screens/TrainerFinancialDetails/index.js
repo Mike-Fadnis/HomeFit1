@@ -17,7 +17,8 @@ class TrainerFinancialDetails extends Component {
       cardsList:[],
       cardDetails:null,
       cardDetailsModal:false,
-      noCards: false
+      noCards: false,
+      spinner: true
     };
   }
   componentWillMount(){
@@ -54,7 +55,6 @@ class TrainerFinancialDetails extends Component {
     this.setState({modalAddCard: false},()=>{
       this.getCardsList(this.state.userData.id);
     });
-
   }
   onRadioButtonPressed(item,index){
     this.setState({itemId: index},()=>{
@@ -67,7 +67,9 @@ class TrainerFinancialDetails extends Component {
     });
   }
   onClose(){
-    this.setState({ cardDetailsModal:false});
+    this.setState({ cardDetailsModal:false,spinner:true },()=>{
+      this.getCardsList(this.state.userData.id)
+    });
   }
   getDataObj(){
     this.setState({modalAddCard: false},()=>{
@@ -117,9 +119,9 @@ class TrainerFinancialDetails extends Component {
             <Title style={styles.title}>Billing Info</Title>
           </Body>
           <Right>
-            <Button transparent onPress={this.onButtonAddCard.bind(this)}>
-              <Icon name="ios-add" style={{color: "white"}}/>
-            </Button>
+            <TouchableOpacity onPress={this.onButtonAddCard.bind(this)}>
+              <Image source={Images.add} style={styles.addIconStyle} />
+            </TouchableOpacity>
           </Right>
         </Header>
         <Content padder>

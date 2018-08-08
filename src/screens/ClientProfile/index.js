@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import { Text, View,Modal, TouchableOpacity, AsyncStorage, Image, Alert,TextInput} from "react-native";
 import {Container,Header,Title,Content,Button,Icon,Left,Right,Body,Spinner} from "native-base";
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome'
-
+import FontAwesomeIcon from "react-native-vector-icons/FontAwesome"
 var ImagePicker = require("react-native-image-picker");
-var dismissKeyboard = require("dismissKeyboard");
+//var dismissKeyboard = require("dismissKeyboard");
 
 //import { Input } from "../common";
 import styles from "./styles";
@@ -36,8 +35,24 @@ class ClientProfile extends Component {
   fetchData(){
     AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
         var get_user = JSON.parse(getUserData);
-        this.setState({userData:get_user, spinner :false});
+        this.setState({userData:get_user},()=>{
+          this.getClientProdileDetails(this.state.userData.id);
+        });
      }).done();
+  }
+  getClientProdileDetails(id){
+    API.getClientProdileDetails(id).then(async (response) => {
+      if (response) {
+        if (response.status){
+          this.setState({userName: response.data.user_name,avatarSource: { uri: response.data.profile_picture },phoneNumber:response.data.phone_number,spinner:false})
+        }
+        else {
+          Alert.alert("HomeFit",response.message);
+        }
+      } else {
+          Alert.alert("Error","");
+      }
+    });
   }
   onImageUpload(){
     const options = {
@@ -140,7 +155,10 @@ class ClientProfile extends Component {
     }
   }
   onUpdateClose(){
-    this.setState({onEditButton: false,userName: "",phoneNumber: "",avatarSource:"" })
+    //this.setState({onEditButton: false,userName: this.state.userName,phoneNumber: this.state.phoneNumber,avatarSource: this.state.avatarSource })
+    this.setState({onEditButton: false,spinner:true},()=>{
+      this.fetchData();
+    })
   }
   render(){
       //console.log("aaaaaa: ", JSON.stringify(this.state.userData));
@@ -199,15 +217,17 @@ class ClientProfile extends Component {
                 ) : (
                   <View>
                     <Image source={this.state.avatarSource} style={styles.avatar}/>
+                    {this.state.onEditButton ? (
                     <View style={{flex:0.1,backgroundColor:"white",borderWidth:1,borderColor:"lightgrey",padding:3,position:"absolute",bottom:2,right:2}}>
                       <TouchableOpacity onPress={this.onImageUpload}>
                         <Image source={Images.cameraIcon} style={{width:20,height:20}}/>
                       </TouchableOpacity>
                     </View>
+                    ) : (<View/>)}
                   </View>)
               }
             </View>
-            <View style={[styles.ProfileDetails,{width: null,height: null,paddingVertical:25}]} pointerEvents={this.state.onEditButton ? 'auto':'none'}>
+            <View style={[styles.ProfileDetails,{width: null,height: null,paddingVertical:25}]} pointerEvents={this.state.onEditButton ? 'auto' : 'none'}>
               <View style={{margin:10,flexDirection:"row",padding:10}}>
                 <Text style={styles.inputTextStyle}>User Name : </Text>
                 <TextInput
@@ -265,7 +285,7 @@ class ClientProfile extends Component {
             <Spinner size="large" color="black"/>
           </View>
         </View>
-        ):(null)}
+        ) : (null)}
         </Container>
       );
   }

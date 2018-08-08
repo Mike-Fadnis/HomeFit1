@@ -44,6 +44,31 @@ export default {
   },
   onlineStore: {
     marginTop: 10,
+    // shadowColor: "#000",
+    // borderBottomColor: "#009FDB",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2
+    // },
+    // shadowOpacity: 0.8,
+  },
+  buttonContainerStyle1:{
+    shadowColor: "#000",
+    borderBottomColor: "#009FDB",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.8,
+  },
+  specailityView:{
+    flex: 1,
+    flexDirection: "row",
+    margin: 5,
+    backgroundColor: "#EDEEF0",
+    height: 50,
+    borderWidth: 1.2,
+    borderColor: "lightgrey",
     shadowColor: "#000",
     borderBottomColor: "#009FDB",
     shadowOffset: {
@@ -108,7 +133,7 @@ export default {
   },
   bookText: {
     fontSize: 20,
-    color: "#fff",    
+    color: "#fff",
     textAlign: "center",
   },
   avatarContainer: {

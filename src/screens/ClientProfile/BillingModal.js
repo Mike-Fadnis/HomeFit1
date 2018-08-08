@@ -1,111 +1,171 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, ScrollView, Modal, TouchableOpacity, AsyncStorage, Image, Platform, FlatList} from 'react-native';
-import {Container,Header,Title,Content,Icon,Button,Footer,FooterTab,Left,Right,Body} from "native-base";
+import { Text, View,  Alert, Modal, TouchableOpacity, AsyncStorage, Image, FlatList} from "react-native";
+import {Spinner,Item,Input,Label,Button} from "native-base";
+// import { CreditCardInput } from "react-native-credit-card-input";
+
+import CardDetailsModal from "./CardDetailsModal";
+import ModalAddCard from "./ModalAddCard";
 import styles from "./styles";
 import Images from "@theme/images/images";
+import API from "@utils/ApiUtils";
 
 class BillingModal extends Component {
   constructor(){
-    super()
-    this.state ={
-      itemId: "1"
-    }
+    super();
+    this.state = {
+      itemId: "1",
+      userType: null,
+      cardsList:[],
+      spinner: true,
+      noCards: false,
+      editCardModal: false,
+      modalAddCard: false,
+      cardDetails: null,
+      user_cardDetails:{},
+      address:"",
+      city:"",
+      stateValue:"",
+      zipcode:"",
+    };
+    this.onClose = this.onClose.bind(this);
+    this.onCloseModalCardDetails = this.onCloseModalCardDetails.bind(this);
+    this.onAddcard = this.onAddcard.bind(this)
   }
-  renderData(item){
-      var item = item.item
-      return(
-          <TouchableOpacity onPress={this.onRadioButtonPressed.bind(this,item)}>
-            <View style={{flexDirection:"row",margin:5,padding:5, height:70,backgroundColor:"#f9f9f9",borderRadius:5,borderColor:this.state.itemId === item.id ? ("#34ace0"):("#f9f9f9"), borderWidth:2, alignItems:'center'}}>
-                <View style={{flex:0.1,alignItems:"center",justifyContent:"center"}}>
-                  {this.state.itemId === item.id ? (
-                    <Image source={Images.success} style={{height:20,width:20}} />
-                  ): (
-                    <Image source={Images.emptyCircle} style={{height:20,width:20}} />
-                  )}
-                </View>
-                <View style={{flex:0.2,backgroundColor:"white",alignItems:"center",justifyContent:"center"}}>
-                  {item.cardType === "master" ? (<Image source={Images.masterCard} style={{height:40,width:50}} />) : item.cardType === "visa" ? (<Image source={Images.visaCard} style={{height:20,width:30}} />) : (<Image source={Images.amexpCard} style={{height:20,width:30}} />)}
-                </View>
-                <View style={{flex:0.7,paddingLeft:20,alignItems:"flex-start",justifyContent:"center"}}>
-                  <Text numberOfLines={1} style={styles.cardHolderNameStyle}>{item.name}</Text>
-                  <View style={{flexDirection:"row"}}>
-                    <Text> ....  ....  ....  </Text>
-                    <Text>{item.last}</Text>
-                  </View>
-                </View>
-            </View>
-          </TouchableOpacity>
-          )
+  componentWillMount(){
+    this.fetchData();
   }
-  onRadioButtonPressed(item){
-    this.setState({itemId: item.id})
+  fetchData(){
+    AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
+      var get_user = JSON.parse(getUserData);
+      this.setState({userData:get_user},()=>{
+        this.getCardsList(this.state.userData.id);
+      });
+     }).done();
   }
-  render(){
-      return(
-        <View style={styles.modalContainer}>
-          <View style={styles.BillingDetails}>
-            <View style={styles.modalHeaderStyle}>
-              <TouchableOpacity style={{flex:0.5,alignItems:"flex-start",padding:10}}><Text style={{color:"#009FDB"}}>Edit</Text></TouchableOpacity>
-              <TouchableOpacity style={{flex:0.5,alignItems:"flex-end",padding:10}}><Text style={{color:"#009FDB"}}>Add</Text></TouchableOpacity>
+  getCardsList(Id){
+    API.getCards(Id).then(async (response) => {
+      if (response) {
+        if (response.status){
+          this.setState({cardsList: response.data,spinner:false});
+        } else {
+            this.setState({noCards: true,spinner:false});
+        }
+      } else {
+        this.setState({spinner:false});
+        Alert.alert("Error");
+      }
+    });
+  }
+  onClose(){
+    this.props.onClose()
+  }
+  onCloseModalCardDetails(){
+    this.setState({editCardModal: false,spinner:true},()=>{
+      this.getCardsList(this.state.userData.id);
+    })
+  }
+  onRadioButtonPressed(item, index){
+    this.setState({itemId: index},()=>{
+        this.onCardDetails(item);
+    });
+  }
+  onCardDetails(item){
+    this.setState({cardDetails : item},()=>{
+      this.setState({editCardModal:true});
+    });
+  }
+  onAddcard(){
+    this.setState({modalAddCard: true})
+  }
+  getDataObj(){
+    this.setState({modalAddCard: false},()=>{
+      this.fetchData();
+    })
+  }
+  onButtonCloseAddcard(){
+    this.setState({modalAddCard: false},()=>{
+      this.getCardsList(this.state.userData.id);
+    });
+  }
+  renderData = ({item, index}) => {
+      var cardno = item.card_number.substr(item.card_number.length - 4);
+      return (
+        <TouchableOpacity style={{flex:1}} onPress={this.onRadioButtonPressed.bind(this,item,index)}>
+          <View style={[styles.rowView,{borderColor:this.state.itemId === index ? ("#34ace0") : ("#f9f9f9")}]}>
+            <View style={styles.radioIconView}>
+              {this.state.itemId === index ? (
+                <Image source={Images.success} style={styles.rowImageStyle} />
+              ) : (
+                <Image source={Images.emptyCircle} style={styles.rowImageStyle} />
+              )}
             </View>
-            <View style={styles.cardDetails}>
-              <FlatList
-                data={creditCardArray}
-                keyExtractor={(x, i) => x.id}
-                extraData={this.state}
-                renderItem={this.renderData.bind(this)}
-                style={{backgroundColor:'#FFFFFF'}}
-              />
+            <View style={styles.cardView}>
+              {item.card_type === "master-card" ? (<Image source={Images.masterCard} style={styles.cardImgStyle} />) : item.card_type === "visa" ? (<Image source={Images.visaCard} style={styles.cardImgStyle} />) : (<Image source={Images.amexpCard} style={styles.cardImgStyle} />)}
             </View>
-            <View style={styles.modalFooterStyle}>
-              <View style={styles.buttons}>
-                <TouchableOpacity style={styles.cancel} onPress={this.props.onClose}>
-                  <View> <Text style={{color:"#009FDB"}}>Cancel </Text></View>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.done} onPress={this.props.onClose}>
-                  <View> <Text style={{color:"#009FDB"}}>Done </Text></View>
-                </TouchableOpacity>
+            <View style={styles.rowDataView}>
+              <Text numberOfLines={1} style={styles.cardHolderNameStyle}>{item.card_holder_name}</Text>
+              <View style={{flexDirection:"row"}}>
+                <Text> ....  ....  ....  </Text>
+                <Text>{cardno}</Text>
               </View>
             </View>
+            <View style={styles.rowTextView}>
+              <Text style={styles.rowTextStyle}>EXP. </Text>
+              <Text style={styles.rowTextStyle}>{item.expiry_date}</Text>
+            </View>
           </View>
+        </TouchableOpacity>
+    );
+  }
+  render(){
+      return (
+        <View style={styles.modalContainer}>
+          <View style={styles.BillingDetails}>
+            <View style={{height:20}}/>
+            <View style={styles.modalHeaderStyle}>
+              <TouchableOpacity onPress={this.onClose}><Text style={{fontSize:16, fontWeight:"800", color:"#009FDB"}}>Close</Text></TouchableOpacity>
+              <TouchableOpacity onPress={this.onAddcard}><Text style={{fontSize:16, fontWeight:"800", color:"#009FDB"}}>Add</Text></TouchableOpacity>
+            </View>
+            <View style={styles.cardDetails}>
+              {this.state.spinner ? (
+                <Spinner color="black" />
+              ) :
+               this.state.noCards ? (
+                 <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+                     <Text style={{textAlign:"center"}}>{"No card information found for this user."}</Text>
+                 </View>
+               ) : (
+                <FlatList
+                  data={this.state.cardsList}
+                  keyExtractor={(x, i) => x.id}
+                  extraData={this.state}
+                  renderItem={this.renderData.bind(this)}
+                  style={{backgroundColor:"#FFFFFF"}}
+                />
+              )}
+            </View>
+          </View>
+          <Modal
+            animationType="fade"
+            transparent={false}
+            visible={this.state.editCardModal}>
+              <CardDetailsModal
+                onClose={this.onCloseModalCardDetails.bind(this)}
+                cardDetails={this.state.cardDetails}
+              />
+          </Modal>
+          <Modal
+            animationType="fade"
+            transparent={false}
+            visible={this.state.modalAddCard}>
+              <ModalAddCard
+                getDataObj={this.getDataObj.bind(this)}
+                onClose={this.onButtonCloseAddcard.bind(this)}
+              />
+          </Modal>
         </View>
       );
   }
 }
 
 export default BillingModal;
-
-
-
-var creditCardArray = [
-  {
-    id:'1',
-    name:'ABCDABCD ABCD JOHN',
-    last:'4242',
-    cardType: "visa"
-  },
-  {
-    id:'2',
-    name:'EFGHEFGH EFGH JOHN',
-    last:'3222',
-    cardType: "master"
-  },
-  {
-    id:'3',
-    name:'IJKLIJKL IJKL JOHN',
-    last:'0005',
-    cardType: "american-express"
-  },
-  {
-    id:'4',
-    name:'MNOPMNOP MNOP JOHN',
-    last:'5554',
-    cardType: "visa"
-  },
-  {
-    id:'5',
-    name:'QRSTQRST QRST JOHN',
-    last:'4444',
-    cardType: "master"
-  }
-]

@@ -20,5 +20,6 @@ const images = {
     productsinList:require('@images/list-with-dots.png'),
     addFriend:require('@images/addFriend.png'),
     cameraIcon:require('@images/camera.png'),
+    add:require('@images/add.png')
 }
 export default images

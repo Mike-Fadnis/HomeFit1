@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, ScrollView, TouchableOpacity } from "react-native";
+import { Text, View, ScrollView, TouchableOpacity,Dimensions } from "react-native";
 import { ButtonThree } from "../common";
 import ImageSlider from "react-native-image-slider";
 import { Container,Header,Title,Icon,Button,Left,Right,Body,Spinner} from "native-base";
@@ -7,13 +7,15 @@ import { Container,Header,Title,Icon,Button,Left,Right,Body,Spinner} from "nativ
 import styles from "./styles";
 import API from "@utils/ApiUtils";
 import {IMAGE_PATH} from "@common/global";
+const window = Dimensions.get("window");
 
 class ClientHome extends Component {
   constructor(props){
     super(props);
     this.state = {
       images:[],
-      spinner:true
+      spinner:true,
+      ifnoresponse: false
     };
   }
   componentWillMount(){
@@ -25,16 +27,12 @@ class ClientHome extends Component {
           if (response.status) {
             this.setState({images: response.data,spinner:false});
           } else {
-            this.setState({
-              spinner:false
-            });
-              alert("Error");
+            this.setState({spinner:false,ifnoresponse:true});
+
           }
         } else {
-          this.setState({
-            spinner:false
-          });
-          alert("Error");
+          this.setState({spinner:false,ifnoresponse:true});
+
         }
      });
    }
@@ -123,14 +121,11 @@ class ClientHome extends Component {
                            and all your supplement and equipment needs.
                        </Text>
                     </View>
-                    <View style={[styles.trainerSliderStyle,{height: 200}]}>
-                      {this.state.spinner == true ? (
-                        <Spinner size="large" color="black"/>
-                      )
-                        : (<ImageSlider autoPlayWithInterval={3000}
-                            images={this.state.images.map((album) => IMAGE_PATH + album.image) }/>
-                          )}
-                    </View>
+                    {this.state.spinner === true ? (<Spinner size="large" color="black"/>) : this.state.ifnoresponse ? (<View/>) : (
+                      <View style={[styles.trainerSliderStyle,{height: 200}]}>
+                        <ImageSlider autoPlayWithInterval={3000} images={this.state.images.map((album) => IMAGE_PATH + album.image) }/>
+                      </View>
+                    )}
                </View>
                <View style={styles.request}>
                    <ButtonThree style={styles.buttonStyle}>

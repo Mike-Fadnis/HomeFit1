@@ -1,5 +1,5 @@
 import React ,{ Component } from "react";
-import { View ,Text,FlatList,Modal, TouchableOpacity,Alert,Platform, Image } from "react-native";
+import { View ,Text,FlatList,Modal, TouchableOpacity,Alert,Platform, Image,ActivityIndicator } from "react-native";
 var ImagePicker = require("react-native-image-picker");
 import RNThumbnail from "react-native-thumbnail";
 import API from "@utils/ApiUtils";
@@ -13,12 +13,15 @@ class TrainersMedia extends Component{
     super(props);
     this.state = {
       avatarSource: "",
-      MediaData:[],
+      MediaData:this.props.Media,
       videoavatarSource:"",
       modalVisible:false,
       videoUrl:"",
       isModalVisible:false,
-      charges:""
+      userData:this.props.userData,
+      charges:"",
+      imageId:null,
+      spinner:false
     };
     this.onAddMedia = this.onAddMedia.bind(this);
     this.renderItem = this.renderItem.bind(this);
@@ -26,7 +29,23 @@ class TrainersMedia extends Component{
     this.onModalClose = this.onModalClose.bind(this);
   }
   componentWillMount(){
-    this.fetchVideoUploadCharges()
+    this.fetchVideoUploadCharges();
+  }
+  componentWillReceiveProps(newProps){
+    // alert(JSON.stringify("jdls"+JSON.stringify(newProps.Media)))
+    if (newProps.Media){
+      this.setState({
+        mediaType: newProps.Media
+      });
+    }
+    if (newProps.videopaymentConfirm) {
+      this.setState({
+        imageId: newProps.imageId
+      },()=>{
+        console.log("willreceiveimageID",this.state.imageId)
+        this.onVideo();
+      });
+    }
   }
   fetchVideoUploadCharges(){
     API.getVideoUploadCharges().then(async (response) => {
@@ -58,36 +77,49 @@ class TrainersMedia extends Component{
     console.log("itemquantity",item)
     return (
       <View>
-       {item.type === 'Video' ? (
-         <TouchableOpacity onPress={()=>this.onVideoIcon(item)} style={{margin:10,height:80,width:80,borderWidth:1,borderColor:"grey"}}>
-           <Image style={{width:80,height:80}} source={item.source}/>
-         </TouchableOpacity>
-       ):
-        <View style={{margin:10,height:80,width:80,borderWidth:1,borderColor:"grey"}}>
-          <Image style={{width:80,height:80}} source={item.source}/>
-        </View>
-       }
-        {item.type === "Video" ?
-          <View style={{marginTop:80 / 2,position:"absolute",width:30,height:30,alignSelf:"center"}}>
-            <Image source={Images.playIcon} style={{tintColor:"white"}}/>
+        {item.type === 'Video' ? (
+          <TouchableOpacity onPress={()=>this.onVideoIcon(item)} style={{margin:10,height:80,width:80,borderWidth:1,borderColor:"grey",borderWidth:1,borderColor:"grey",borderRadius:80 / 2}}>
+            <Image style={{width:80,height:80,borderWidth:1,borderColor:"grey",borderRadius:80 / 2}} source={item.source}/>
+          </TouchableOpacity>
+          ): item.type === 'Image' ?(
+          <View style={{margin:10,height:80,width:80,borderWidth:1,borderColor:"grey",borderWidth:1,borderColor:"grey",borderRadius:80 / 2}}>
+            <Image style={{width:80,height:80,borderWidth:1,borderColor:"grey",borderRadius:80 / 2}} source={item.source}/>
           </View>
-         : null}
-      </View>
+          ) :
+          <TouchableOpacity onPress={()=>this.onAddMedia(index)} style={{justifyContent:"center",margin:10,height:80,width:80,borderWidth:1,borderColor:"grey",borderRadius:80 / 2}}>
+          <Text style={{textAlign:"center",color:"grey"}}>+ Add {"\n"} photos/videos</Text>
+        </TouchableOpacity>
+        }
+        {item.type === "Video" ?
+            <View style={{marginTop:80 / 2,position:"absolute",width:30,height:30,alignSelf:"center"}}>
+              <Image source={Images.playIcon} style={{tintColor:"white"}}/>
+            </View>
+          : null
+        }
+       </View>
     )
   }
-  onAddMedia(){
+  onAddMedia(index){
     Alert.alert("Want to add Images/Videos", "What do you want to upload?", [
       {
         text: "Images",
         onPress: () => {
-          this.onImageUpload();
+          this.setState({
+            imageId: index
+          },()=>{
+            this.onImageUpload();
+          })
+
         }
       },
       {
         text: "Videos",
         onPress: () => {
-          //this.onVideo();
-          this.onModalOpen();
+          this.setState({
+            imageId: index
+          },()=>
+          {this.onModalOpen()}
+          )
         }
       },
       { text: "Cancel", onPress: () => console.log("cancel Pressed") }
@@ -138,8 +170,10 @@ class TrainersMedia extends Component{
               console.log("Thumbnail",result.path); // thumbnail path
               let thumbnailpath = { uri: result.path, isStatic: true }
               var record = {type: "Video", videoUrl: vidsource1,source:thumbnailpath}
-              data.push(record);
-              this.setState({MediaData : data});
+              // data.push(record);
+              // this.setState({MediaData : data});
+              console.log("indexId11111111",this.state.imageId)
+              this.props.onVideoUploding(record,this.state.imageId);
             })
 
           });
@@ -176,13 +210,26 @@ class TrainersMedia extends Component{
         } else {
           source = {uri: response.uri.replace("file://", ""), isStatic: true};
         }
-        this.setState({
-          avatarSource: source,
-          imageLoading:true,
-        },()=>{
-          var record = {type: "Image", source: source}
-          data.push(record);
-          this.setState({MediaData : data});
+        this.setState({spinner:true})
+        var base64 = "data:image/png;base64," + response.data;
+        var string = {"action":"trainers_upload_image","trainer_id":this.state.userData.id,"data":base64};
+        API.uploadImage(string).then(async (responseData) => {
+          if (responseData) {
+            if (responseData.status){
+              let source = { uri: responseData.imaage };
+              Alert.alert("Home Fit",responseData.message);
+              var record = {type: "Image", source: source}
+              this.setState({spinner:false})
+              this.props.onImageUploding(record,this.state.imageId);
+            }
+            else {
+              this.setState({spinner:false})
+              Alert.alert("HomeFit",responseData.message);
+            }
+          } else {
+            this.setState({spinner:false})
+            Alert.alert("Error","Error uploading image");
+          }
         });
       }
       });
@@ -193,7 +240,7 @@ class TrainersMedia extends Component{
 
   onDone(){
     this.setState({isModalVisible: false},()=>{
-      this.props.onPayment()
+      this.props.onPayment(this.state.imageId);
     })
   }
   render() {
@@ -202,16 +249,12 @@ class TrainersMedia extends Component{
       <View>
       <FlatList
         horizontal
-        inverted
          data={this.state.MediaData}
          extraData={this.state}
          keyExtractor={this._keyExtractor}
          renderItem={this.renderItem}
        />
       </View>
-        <TouchableOpacity onPress={this.onAddMedia} style={{justifyContent:"center",margin:10,height:80,width:80,borderWidth:1,borderColor:"grey",borderRadius:80 / 2}}>
-           <Text style={{textAlign:"center",color:"grey"}}>+ Add {"\n"} photos/videos</Text>
-         </TouchableOpacity>
          <Modal
             animationType="slide"
             transparent={false}
@@ -248,6 +291,13 @@ class TrainersMedia extends Component{
                </View>
             </View>
            </Modal>
+           {this.state.spinner === true ? (
+            <View style={styles.container_spinner}>
+              <View style={styles.spinnerView1}>
+                <ActivityIndicator size="large" color="black"/>
+              </View>
+            </View>
+          ) : null}
       </View>
     )
   }

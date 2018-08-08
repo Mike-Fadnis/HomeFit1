@@ -25,6 +25,8 @@ class Payment extends Component {
       spinner: false,
       isLoading:true,
       backFromPayment:this.props.navigation.getParam("backFromPayment"),
+      media:this.props.navigation.getParam("media"),
+      imageId:this.props.navigation.getParam("imageId"),
       userType:null,
       cardArray:[],
       keyVTrainer:this.props.navigation.getParam("keyVTrainer"),
@@ -37,7 +39,10 @@ class Payment extends Component {
   }
   componentWillMount(){
     AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
-      AsyncStorage.getItem("@getUserType:key", (err, user_Type) => {
+      if (err){
+
+      }
+      AsyncStorage.getItem("@getUserType:key", (error, user_Type) => {
           if (user_Type === "User"){
             this.setState({
               userType:0
@@ -104,12 +109,20 @@ class Payment extends Component {
           if (this.state.keyVTrainer){
             Alert.alert("Are you sure ?","you will continue with Payment",
               [
-                 {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                {text: "OK", onPress: () => this.props.navigation.navigate("ViewTrainer",{keyViewTrainer:"keyViewTrainer", getSelectedData:this.state.getSelectedData})},
+                {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                {text: "OK", onPress: ()=>this.props.navigation.navigate("ViewTrainer",{keyViewTrainer:"keyViewTrainer", getSelectedData:this.state.getSelectedData})},
               ],
               { cancelable: false }
             );
-          } else{
+          } else if (this.state.backFromPayment === "uploadVideoTrainer"){
+            Alert.alert("Are you sure ?","you will continue with Payment",
+            [
+              {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+              {text: "OK", onPress: ()=> this.props.navigation.navigate("TrainerPersonalPage",{backFromPayment:"ConfirmedPayment",media:this.state.media,imageId:this.state.imageId})},
+            ],
+            { cancelable: false }
+          );
+          } else {
             Alert.alert("HomeFit")
           }
         }
@@ -173,7 +186,15 @@ class Payment extends Component {
                     ],
                     { cancelable: false }
                   );
-                } else {
+                }else if (this.state.backFromPayment === "uploadVideoTrainer"){
+                  Alert.alert("Are you sure ?","you will continue with Payment",
+                  [
+                    {text: "OK", onPress: () => this.props.navigation.navigate("TrainerPersonalPage",{backFromPayment:"ConfirmedPayment",media:this.state.media,imageId:this.state.imageId})},
+                  ],
+                  { cancelable: false }
+                );
+                }
+                else {
                     Alert.alert(response.message,"");
                 }
               });
@@ -228,7 +249,7 @@ class Payment extends Component {
   }
   useNewCard(){
     this.setState({useNewCard: true,radioButton: false,itemId:"1"});
-  }  
+  }
   renderData = ({item,index}) => {
     var cardno = item.card_number.substr(item.card_number.length - 4);
     return (
@@ -303,7 +324,7 @@ class Payment extends Component {
                 </View>
                 )}
               </View>
-              <View style={{flex: 1,width: null,height: null,paddingVertical:25,pointerEvents:this.state.useNewCard ? 'none':'auto'}}>
+              <View style={{flex: 1,width: null,height: null,paddingVertical:25,pointerEvents:this.state.useNewCard ? 'none' : 'auto'}}>
                   <View style={styles.cardView}>
                     <CreditCardInput
                       requiresName

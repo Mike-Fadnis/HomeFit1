@@ -205,8 +205,13 @@ class SideBar extends Component {
   }
   onLogoutOk(){
     AsyncStorage.removeItem("@getUserData:key");
-    AsyncStorage.removeItem("@getUserType:key");
-    this.props.navigation.navigate("Landing");
+    AsyncStorage.removeItem("@getUserType:key");    
+    if (this.state.userType === "Trainer"){
+       this.props.navigation.navigate("ClientHome");
+    }
+    else {
+      this.props.navigation.navigate("Landing");
+    }
   }
   onClicking(data){
     if (data.name === "Logout"){
