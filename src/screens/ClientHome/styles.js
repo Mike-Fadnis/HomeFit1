@@ -1,3 +1,8 @@
+import {
+  Dimensions
+} from "react-native";
+const window = Dimensions.get("window");
+
 export default {
   container: {
     backgroundColor: "#fff"
@@ -61,9 +66,11 @@ export default {
     paddingBottom: 10
   },
   sessionSliderStyle: {
-    width: "100%",
-    height: 130,
-    //marginTop: 10
+    // width: "100%",
+    // height: 130,
+    //marginTop: 10,
+    width: window.width / 2.18,
+    height: window.height * 0.2
   },
   sessionsContainerStyle: {
     //textAlign : 'center',
@@ -78,11 +85,15 @@ export default {
     color: "#fff"
   },
   trainerSliderStyle: {
-    width: "95%",
-    height: 130,
-    marginTop: 10,
-    marginLeft: 10,
-    marginBottom: 10
+    // width: "95%",
+    // height: 130,
+    // marginTop: 10,
+    // marginLeft: 10,
+    // marginBottom: 10,
+    alignSelf:"center",
+    margin:5,
+    width: window.width / 1.05,
+    height: window.height * 0.2
   },
   onlineStore: {
     marginTop: 10,
@@ -98,20 +109,30 @@ export default {
     alignItems: "center",
     color: "#009FDB"
   },
+  checkOnlinestoreProductsSlider:{
+    alignSelf:"center",
+    margin:10,
+    width: window.width / 1.1,
+    height: window.height * 0.5
+  },
   book: {
     flexDirection: "row",
     marginTop: 10,
-    width: "100%",
+    width: window.width / 1,
+    backgroundColor: "#009FDB",
   },
   bookText: {
-    fontSize: 20,
-    width: "100%",
-    color: "#fff",
-    backgroundColor: "#009FDB",
-    textAlign: "center",
-    justifyContent: "center",
-    paddingBottom: 10,
-    paddingTop: 10
+    fontSize: 16,
+    fontWeight:"700",
+    color: "#fff"
+    // fontSize: 20,
+    // width: "100%",
+    // color: "#fff",
+    // backgroundColor: "#009FDB",
+    // textAlign: "center",
+    // justifyContent: "center",
+    // paddingBottom: 10,
+    // paddingTop: 10
   },
   trainerText: {
     color: "#fff",

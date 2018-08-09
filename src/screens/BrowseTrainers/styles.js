@@ -40,13 +40,13 @@ export default {
     paddingLeft: 5,
     paddingRight: 5,
     paddingBottom: 5,
-    fontSize: 12
+    fontSize: window.width / 25
   },
   descriptionLine3: {
-    paddingLeft: 10,
+    paddingLeft: 5,
     paddingRight: 5,
     paddingBottom: 5,
-    fontSize: 12
+    fontSize: window.width / 25
     //height:20
   },
   container_spinner: {

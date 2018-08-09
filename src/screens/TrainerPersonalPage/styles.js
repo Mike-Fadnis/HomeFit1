@@ -25,7 +25,6 @@ export default {
     backgroundColor: "#009FDB",
     color: "#fff",
     alignSelf: "center",
-    color: "#fff",
     textAlign: "center",
     fontSize: 14,
     fontWeight: "600",
@@ -36,7 +35,6 @@ export default {
     backgroundColor: "#009FDB",
     color: "#fff",
     alignSelf: "flex-start",
-    color: "#fff",
     fontSize: 14,
     fontWeight: "600",
     paddingTop: 10,
@@ -88,9 +86,10 @@ export default {
     shadowOpacity: 0.8,
   },
   sessionSliderStyle: {
-    width: "100%",
-    height: 130,
-    marginTop: 20
+    alignSelf:"center",
+    margin:10,
+    width: window.width / 1,
+    height: window.height * 0.25
   },
   hostLiveGrpSessionTextContainer: {
     marginTop: 10,
@@ -123,8 +122,7 @@ export default {
       width: 0,
       height: 2
     },
-    shadowOpacity: 0.8,
-
+    shadowOpacity: 0.8
   },
   book: {
     flexDirection: "row",
@@ -133,8 +131,13 @@ export default {
   },
   bookText: {
     fontSize: 20,
+    width: "100%",
     color: "#fff",
+    backgroundColor: "#009FDB",
     textAlign: "center",
+    justifyContent: "center",
+    paddingBottom: 10,
+    paddingTop: 10
   },
   avatarContainer: {
     borderColor: "#9B9B9B",
@@ -162,7 +165,16 @@ export default {
     bottom: 0,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(0,0,0,0.72)"
+    backgroundColor:'rgba(0,0,0,0.72)'
+  },
+  container_spinnerOne: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
   },
   spinnerView: {
     height: window.width / 3,
@@ -177,5 +189,47 @@ export default {
     backgroundColor: "#000000c4",
     justifyContent: "center",
     alignItems: "center"
+  },
+  addSpecialityView:{alignItems:"center", marginTop:10},
+  addSpecialityTextStyle:{fontSize:16, fontWeight:"700", color:"#009FDB",textDecorationLine:"underline",textDecorationColor:"#009FDB"},
+  specialityTextStyle:{fontSize:15, fontWeight:"500", color:"black",marginTop:10, textAlign:"center"},
+  textInputMainView:{flex:1,marginTop:10,flexDirection:"row"},
+  textInputView:{flex:0.9,alignItems:"center" },
+  textInputBorderView:{
+    flex:1,
+    backgroundColor: "#EDEEF0",
+    height: window.width / 7,
+    justifyContent:"center",
+    width:window.width / 1.25,
+    borderRadius:5,
+    shadowColor: "#000",
+    borderBottomColor: "#009FDB",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.8
+  },
+  addIconView:{flex:0.1,alignItems:"flex-start", justifyContent:"center"},
+  addIconStyle:{tintColor:"#009FDB", height:window.width / 17, width:window.width / 17},
+  spectilityListView:{
+    alignItems:"flex-start",
+    paddingLeft:10,
+    justifyContent:"center",
+    borderRadius:5
+  },
+  specialityContainerView:{
+    flex:1,
+    margin: 5,
+    backgroundColor: "#EDEEF0",
+    height: 50,
+    justifyContent:"center",
+    shadowColor: "#000",
+    borderBottomColor: "#009FDB",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.8
   }
 };

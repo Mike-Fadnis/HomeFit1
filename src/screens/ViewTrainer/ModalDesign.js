@@ -66,7 +66,7 @@ export default class ModalDesign extends Component {
         finalArray.push(rec);
         this.props.getDataObj(finalArray);
       } else {
-        alert("please select atleast one time slot");
+        this.props.onClose();
       }
   }
   onSingleSelection(item, index){
@@ -112,21 +112,20 @@ export default class ModalDesign extends Component {
               </TouchableOpacity>
             </View>
           )}
-
-
-      {this.state.forEmptyTimeSlot === true ? (
-        <View style={{marginTop:10,alignItems:"center"}}>
-          <Text > No Time Slots Available For The Selected Date</Text>
-        </View>
-      ) : (
-        <View style={{ flex: 1 }}>
-          <FlatList
-            data={this.state.timesData}
-            renderItem={this.renderData.bind(this)}
-            extraData={this.state}
-          />
-        </View>
-      )}
+          {this.state.forEmptyTimeSlot === true ? (
+            <View style={{marginTop:10,alignItems:"center"}}>
+              <Text > No Time Slots Available For The Selected Date</Text>
+            </View>
+          ) : (
+            <View style={{ flex: 1 }}>
+              <FlatList
+                data={this.state.timesData}
+                renderItem={this.renderData.bind(this)}
+                keyExtractor={(x, i) => x.time_slot}
+                extraData={this.state}
+              />
+            </View>
+          )}
       </View>
     );
   }

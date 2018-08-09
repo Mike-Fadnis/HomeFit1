@@ -9,7 +9,7 @@ import API from "@utils/ApiUtils";
 const _format = "YYYY-MM-DD";
 import ModalDesign from "./ModalDesign";
 
-const window = Dimensions.get('window');
+const window = Dimensions.get("window");
 class ViewTrainer extends Component {
   initialState = {}
   constructor(props) {
@@ -53,7 +53,6 @@ class ViewTrainer extends Component {
         if (this.state.keyViewTrainer === "keyViewTrainer"){
           console.log("userData",get_user);
           if (get_user){
-
             this.addingSlotsForUser(get_user);
           } else {
 
@@ -119,9 +118,7 @@ class ViewTrainer extends Component {
             if (res.date === _selectedDay) {
               this.onShow(res);
               this.state.finalSelectedDates.splice(i, 1);
-              this.setState({
-                finalSelectedDates: this.state.finalSelectedDates
-              });
+              this.setState({finalSelectedDates: this.state.finalSelectedDates});
             } else {
               this.setState({spinner: false});
               this.onModalOpen(true);
@@ -174,6 +171,7 @@ getTrainersData(){
     this.setState({isLoading:false});
    });
 }
+
 getAvailableSlots(){
   var Id = this.state.trainersList.item.id;
   this.setState({availableslotsspinner: true});
@@ -184,8 +182,15 @@ getAvailableSlots(){
         });
         var subdata = {};
         response.data.map((res,i)=>{
-          var date = moment(res.date).format(_format);
-          subdata[date] = {selected: true};
+          var date = moment(res.date).format(_format);          
+          var todayDate = new Date();
+          var formatedTodayDate = moment(todayDate).format("YYYY-MM-DD")
+          console.log("resDate: ", JSON.stringify(res.date), "momentDate:  ", JSON.stringify(formatedTodayDate) )
+          if (res.date < formatedTodayDate){
+            subdata[date] = {selected: true,selectedColor:"grey",disabled: true, disableTouchEvent: true}
+          } else {
+            subdata[date] = {selected: true};
+          }
         });
         this.setState({subdata:subdata,availableslotsspinner:false});
       } else {
@@ -195,6 +200,27 @@ getAvailableSlots(){
       Alert.alert("Error",error);
     });
 }
+// getAvailableSlots(){
+//   var Id = this.state.trainersList.item.id;
+//   this.setState({availableslotsspinner: true});
+//    API.getAvailableSlots(Id).then(async (response) => {
+//       if (response.status) {
+//         this.setState({slotsAlloted:response.data,},()=>{
+//           this.getNewResponse();
+//         });
+//         var subdata = {};
+//         response.data.map((res,i)=>{
+//           var date = moment(res.date).format(_format);
+//           subdata[date] = {selected: true};
+//         });
+//         this.setState({subdata:subdata,availableslotsspinner:false});
+//       } else {
+//           this.setState({noslots:true,availableslotsspinner:false,noslotsText:response.message});
+//       }
+//     }).catch((error)=>{
+//       Alert.alert("Error",error);
+//     });
+// }
 getNewResponse(){
   let count = 0;
 	let responseArray = this.state.slotsAlloted;

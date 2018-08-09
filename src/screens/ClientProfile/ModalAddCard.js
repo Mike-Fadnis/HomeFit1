@@ -171,7 +171,7 @@ export default class ModalAddCard extends Component {
                 </View>
                 <Button full style={styles.confirmButtonView}
                   onPress={this.addingCreditCard.bind(this)}>
-                    <Text style={styles.confirmButtonText}>CONFIRM PAYMENT</Text>
+                    <Text style={styles.confirmButtonText}>ADD CARD</Text>
                 </Button>
             </View>
           </Content>

@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { View, AsyncStorage, StyleSheet,Alert,Dimensions } from "react-native";
+import { View, AsyncStorage, StyleSheet,Alert,Dimensions,Image } from "react-native";
 import { Container,Content, Text, Footer,FooterTab } from "native-base";
 import ImageSlider from "react-native-image-slider";
 import { Button, Header } from "../common";
 import API from "@utils/ApiUtils";
 import {IMAGE_PATH} from "@common/global";
 
+const window = Dimensions.get("window");
 var PushNotification = require("react-native-push-notification");
 
 class Landing extends Component {
@@ -102,8 +103,13 @@ class Landing extends Component {
         <Content>
           <View>
             <View style={styles.sliderStyle}>
-              <ImageSlider autoPlayWithInterval={3000}
-              images={this.state.libraries.map((album) => IMAGE_PATH + album.image) }/>
+              <ImageSlider
+                  autoPlayWithInterval={3000}
+                  images={this.state.libraries}
+                  customSlide={({ index, item, style, width }) => (
+                      <Image key={index} source={{ uri: IMAGE_PATH + item.image }} style={{width: window.width / 1,height: window.height * 0.5}} />
+                  )}
+                />
             </View>
             <View style={styles.lowerContainer}>
               <View style={styles.cardStyle}>
@@ -128,16 +134,16 @@ class Landing extends Component {
 }
 export default Landing;
 
-const window = Dimensions.get("window");
 const styles = StyleSheet.create({
   container : {
     backgroundColor : "#fff"
   },
   sliderStyle : {
-      width: "100%",
-      height: window.height * 0.5 ,
+      width: window.width / 1,
+      height: window.height * 0.5,
       marginTop: 10,
-      margin:10
+      margin:10,
+      alignSelf:"center"
   },
   subTitle : {
       color : "#fff",

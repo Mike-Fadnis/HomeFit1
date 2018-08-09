@@ -276,7 +276,9 @@ onPicker(){
 getFeaturedProducts(){
   API.getFeaturedProducts().then(async (response) => {
     if (response){
-      this.setState({featuredProducts: response.data});
+      if(response.status){
+        this.setState({featuredProducts: response.data});
+      }
     } else {
         alert("Error getting product details | Check Network ");
     }

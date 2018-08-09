@@ -25,43 +25,43 @@ const windowSize = Dimensions.get("window");
 const friends = [
     {
         "name":"John",
-        "id":1,
+        "id":"1",
         "image":Images.noimage,
         "description":"description description description description"
     },
     {
         "name":"Mike",
-        "id":2,
+        "id":"2",
         "image":Images.noimage,
         "description":"description description description description"
     },
     {
         "name":"Millin",
-        "id":3,
+        "id":"3",
         "image":Images.noimage,
         "description":"description description description description"
     },
     {
         "name":"George",
-        "id":4,
+        "id":"4",
         "image":Images.noimage,
         "description":"description description description description"
     },
     {
         "name":"Friend",
-        "id":5,
+        "id":"5",
         "image":Images.noimage,
         "description":"description description description"
     },
     {
         "name":"Friend 1",
-        "id":6,
+        "id":"6",
         "image":Images.noimage,
         "description":"description description description"
     },
     {
         "name":"Friend 2",
-        "id":7,
+        "id":"7",
         "image":Images.noimage,
         "description":"description description description"
     }
@@ -145,10 +145,10 @@ class TrackFriends extends Component {
         });
         if (data1 === "true") {
         images.push(
-            <Image source={Images.checked} style={{height:20,width:20}} />
+            <Image key={item.id} source={Images.checked} style={{height:20,width:20}} />
         );
         } else {
-        images.push( <Image source={Images.addFriend} style={{height:20,width:20}} />);
+        images.push( <Image key={item.id} source={Images.addFriend} style={{height:20,width:20}} />);
         }
         return (
             <TouchableOpacity onPress={this.onUsername.bind(this,item,index)}  style={{flex:1,flexDirection:"row"}}>
@@ -225,10 +225,11 @@ class TrackFriends extends Component {
                     </CardSection>
                   </Card>
                   <FlatList
+                        keyExtractor={(x, i) => x.id}
                         renderItem={this.renderData.bind(this)}
                         data={this.state.friendsArray}
                         ItemSeparatorComponent={ () => <View style={{marginLeft:10,width:windowSize.width,height: 1.5, backgroundColor: "grey" } } /> }
-                        keyExtractor={(item, index) => item + index}
+                        
                     />
             </Content>
           )}

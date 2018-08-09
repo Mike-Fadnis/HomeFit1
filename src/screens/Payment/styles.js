@@ -62,5 +62,12 @@ export default {
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(242, 242, 242, 0.83)",
-  }
+  },
+  creditCardDetailsTextStyle:{marginLeft:10, fontSize:15, fontWeight:'700', marginTop:5},
+  creditCardTextBorderView:{height:40, backgroundColor:'#F0F0F0', borderColor:'lightgrey', borderWidth:1, justifyContent:'center', margin:10 },
+  creditCardDataText:{marginLeft:5, fontSize:15, fontWeight:'700'},
+  dataRowBorderView:{flex:1, backgroundColor:'white', borderColor:'#009FDB', borderWidth:2, margin:5, borderRadius:5},
+  cardNumberView:{flex:0.7, justifyContent:'center'},
+  cardIconView:{flex:0.3,alignItems:'flex-end', marginRight:5},
+  expiryDateView:{flex:0.5}
 };

@@ -78,10 +78,10 @@ renderData(item) {
         })
         if (data1 === 'true') {
           images.push(
-            <Image source={Images.checked} style={{height:20,width:20}} />
+            <Image key={item.item.id} source={Images.checked} style={{height:20,width:20}} />
           )
         } else {
-          images.push(<View/>)
+          images.push(<View key={item.item.id} />)
       }
     }
   return (
@@ -121,6 +121,7 @@ render() {
             data={this.state.specialtiesData}
             renderItem={this.renderData.bind(this)}
             extraData={this.state}
+            keyExtractor={(x, i) => x.id}
           />
         </View>
         )}

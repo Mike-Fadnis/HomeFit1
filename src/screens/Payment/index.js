@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { View, TouchableOpacity,Alert,AsyncStorage,ActivityIndicator,Dimensions,FlatList,Image } from "react-native";
 import { Container,Header,Title,Content,Text,Button,Icon,Left,Right,Body,Spinner,Item,Label,Input} from "native-base";
 import { CreditCardInput } from "react-native-credit-card-input";
+import Accordion from 'react-native-collapsible/Accordion';
+
 import styles from "./styles";
 import Images from "@theme/images/images";
 import API from "@utils/ApiUtils";
@@ -30,11 +32,10 @@ class Payment extends Component {
       userType:null,
       cardArray:[],
       keyVTrainer:this.props.navigation.getParam("keyVTrainer"),
-      //afterConfirmSucces:this.props.navigation.getParam("afterSucces"),
       getSelectedData:this.props.navigation.getParam("getSelectedData"),
       radioButton: false,
-      useNewCard: false
-
+      useNewCard: false,
+      nocardsText: ""
     };
   }
   componentWillMount(){
@@ -44,19 +45,13 @@ class Payment extends Component {
       }
       AsyncStorage.getItem("@getUserType:key", (error, user_Type) => {
           if (user_Type === "User"){
-            this.setState({
-              userType:0
-            });
+            this.setState({userType:0});
           }
           else {
-            this.setState({
-              userType:1
-            });
+            this.setState({userType:1});
           }
           var get_user = JSON.parse(getUserData);
-          this.setState({
-            userData:get_user
-          },()=>{
+          this.setState({userData:get_user},()=>{
             this.getCardsList(this.state.userData.id);
           });
        }).done();
@@ -68,8 +63,7 @@ class Payment extends Component {
         if (response.status === true){
           this.setState({cardArray:response.data,isLoading: false});
         } else {
-          this.setState({isLoading: false});
-          Alert.alert("Error","");
+          this.setState({isLoading: false,nocardsText:response.message,useNewCard:true});
         }
       } else {
         this.setState({isLoading: false});
@@ -78,26 +72,14 @@ class Payment extends Component {
     });
   }
   _onChange(values) {
-    this.setState({
-      user_cardDetails: values
-    },()=>{
+    this.setState({user_cardDetails: values},()=>{
       console.log("CREDITCARDDETAILS@@@@ ",this.state.user_cardDetails);
     });
   }
-  onRadioButtonPressed(item, index){
-    this.setState({itemId: index,useNewCard:false},()=>{
-      this.setState({radioButton: true});
-      // if (this.state.keyVTrainer){
-      //   Alert.alert("Are you sure ?"," Your Payment will be Done after ok pressed ",
-      //     [
-      //       {text: "OK", onPress: () => this.props.navigation.navigate("ViewTrainer",{keyViewTrainer:"keyViewTrainer", getSelectedData:this.state.getSelectedData})},
-      //     ],
-      //     { cancelable: false }
-      //   );
-      // } else {
-      //   console.log("skjgfjkhf");
-      // }
-    });
+  onRadioButtonPressed(index){
+      this.setState({itemId: index,useNewCard:false},()=>{
+        this.setState({radioButton: true});
+      });
   }
   onConfirmPayment() {
     if (this.state.useNewCard === false && this.state.radioButton === false){
@@ -280,6 +262,72 @@ class Payment extends Component {
       </TouchableOpacity>
     );
   }
+  _renderHeader(item, index) {
+     console.log("INDEXXAAQQWWW: ", index)
+      var cardno = item.card_number.substr(item.card_number.length - 4);
+    return (
+          <View style={[styles.rowView,{borderColor:this.state.itemId === index ? ("#34ace0") : ("#f9f9f9")}]}>
+          <View style={styles.mainRowView}>
+            {this.state.itemId === index ? (
+              <Image source={Images.success} style={styles.rowImageStyle} />
+            ) : (
+              <Image source={Images.emptyCircle} style={styles.rowImageStyle} />
+            )}
+          </View>
+        <View style={styles.cardView}>
+          {item.card_type === "master-card" ? (<Image source={Images.masterCard} style={styles.cardImgStyle} />) : item.card_type === "visa" ? (<Image source={Images.visaCard} style={styles.cardImgStyle} />) : (<Image source={Images.amexpCard} style={styles.cardImgStyle} />)}
+        </View>
+        <View style={styles.rowDataView}>
+          <Text numberOfLines={1} style={styles.cardHolderNameStyle}>{item.card_holder_name}</Text>
+          <View style={{flexDirection:"row"}}>
+            <Text> ....  ....  ....  </Text>
+            <Text>{cardno}</Text>
+          </View>
+        </View>
+        <View style={styles.rowTextView}>
+          <Text style={styles.rowTextStyle}>EXP. </Text>
+          <Text style={styles.rowTextStyle}>{item.expiry_date} </Text>
+        </View>
+        </View>
+    );
+  }
+
+  _renderContent(item) {
+    var formattedText = item.card_number.split(' ').join('');
+    formattedText = formattedText.match(new RegExp('.{1,4}', 'g')).join(' ');
+    return (
+      <View style={styles.dataRowBorderView}>
+        <Text style={styles.creditCardDetailsTextStyle}>{"Account Holder's Name"}</Text>
+        <View style={styles.creditCardTextBorderView}>
+          <Text style={styles.creditCardDataText}>{item.card_holder_name}</Text>
+        </View>
+        <Text style={styles.creditCardDetailsTextStyle}>{"Card Number"}</Text>
+        <View style={[styles.creditCardTextBorderView,{flexDirection:'row'}]}>
+        <View style={styles.cardNumberView}>
+          <Text style={styles.creditCardDataText}>{formattedText}</Text>
+        </View>
+        <View style={styles.cardIconView}>
+          {item.card_type === "master-card" ? (<Image source={Images.masterCard} style={styles.cardImgStyle} />) : item.card_type === "visa" ? (<Image source={Images.visaCard} style={styles.cardImgStyle} />) : (<Image source={Images.amexpCard} style={styles.cardImgStyle} />)}
+        </View>
+        </View>
+        <View style={{flexDirection:'row'}}>
+          <View style={styles.expiryDateView}>
+            <Text style={styles.creditCardDetailsTextStyle}>{"Expiry Date"}</Text>
+            <View style={styles.creditCardTextBorderView}>
+              <Text style={styles.creditCardDataText}>{item.expiry_date}</Text>
+            </View>
+          </View>
+          <View style={styles.expiryDateView}>
+            <Text style={styles.creditCardDetailsTextStyle}>{"CVC"}</Text>
+            <View style={styles.creditCardTextBorderView}>
+              <Text style={styles.creditCardDataText}>{item.cvc}</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   render() {
     return (
         <Container style={styles.container}>
@@ -298,33 +346,34 @@ class Payment extends Component {
               <View style={styles.contentView}>
                 {this.state.isLoading === true ? (
                   <Spinner size="large" color="black"/>
-                )
-                : (<View style={{flex:1}}>
-                    <FlatList
-                      data={this.state.cardArray}
-                      keyExtractor={(x, i) => x.id}
-                      extraData={this.state}
-                      renderItem={this.renderData.bind(this)}
-                      style={{backgroundColor:"#FFFFFF"}}
-                    />
-                    <TouchableOpacity onPress={this.useNewCard.bind(this)}>
-                      <View style={[styles.rowView,{borderColor:this.state.useNewCard === true ? ("#34ace0") : ("#f9f9f9")}]}>
-                        <View style={styles.mainRowView}>
-                        {this.state.useNewCard === true ? (
-                        <Image source={Images.success} style={styles.rowImageStyle} />
-                        ) : (
-                        <Image source={Images.emptyCircle} style={styles.rowImageStyle} />
-                        )}
-                        </View>
-                        <View style={styles.rowDataView}>
-                          <Text> use new card</Text>
-                        </View>
-                      </View>
-                    </TouchableOpacity>
+                ) : this.state.cardArray === [] || this.state.cardArray.length === 0 ? (
+                  <Text style={{textAlign:"center", marginTop:10, marginBottom:10,fontSize:16, fontWeight:"700"}}> {this.state.nocardsText} </Text>
+                ) : (<View style={{flex:1}}>
+                    <Accordion
+                        sections={this.state.cardArray}
+                        onChange={this.onRadioButtonPressed.bind(this)}
+                        underlayColor="white"
+                        renderHeader={this._renderHeader.bind(this)}
+                        renderContent={this._renderContent.bind(this)}
+                      />
                 </View>
                 )}
+              <TouchableOpacity onPress={this.useNewCard.bind(this)}>
+                <View style={[styles.rowView,{borderColor:this.state.useNewCard === true ? ("#34ace0") : ("#f9f9f9")}]}>
+                  <View style={styles.mainRowView}>
+                  {this.state.useNewCard === true ? (
+                  <Image source={Images.success} style={styles.rowImageStyle} />
+                  ) : (
+                  <Image source={Images.emptyCircle} style={styles.rowImageStyle} />
+                  )}
+                  </View>
+                  <View style={styles.rowDataView}>
+                    <Text> use new card</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
               </View>
-              <View style={{flex: 1,width: null,height: null,paddingVertical:25,pointerEvents:this.state.useNewCard ? 'none' : 'auto'}}>
+              <View style={{flex: 1,width: null,height: null,paddingVertical:25}}>
                   <View style={styles.cardView}>
                     <CreditCardInput
                       requiresName

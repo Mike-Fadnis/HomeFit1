@@ -86,7 +86,7 @@ class modalFlavourDesignComponent extends Component {
                         <List>
                             <FlatList
                                 data={this.state.newArray}
-                                keyExtractor={(x, i) => x.id}
+                                keyExtractor={(x, i) => x.flavour_id}
                                 extraData={this.state}
                                 renderItem={this.renderData.bind(this)}
                                 style={{backgroundColor:'#FFFFFF'}}

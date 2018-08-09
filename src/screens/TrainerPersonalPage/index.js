@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { View ,Modal,TouchableOpacity,Image, FlatList,AsyncStorage,Alert} from "react-native";
+import { View ,Modal,TouchableOpacity,Image,FlatList,AsyncStorage,Alert,Dimensions} from "react-native";
 import ImageSlider from "react-native-image-slider";
-import { Calendar,CalendarList } from "react-native-calendars";
+import { Calendar } from "react-native-calendars";
 import moment from "moment";
-import {Container,Header,Title,Content,Text,Icon,Footer,Button,FooterTab,Left,Right,Body,Spinner,Input} from "native-base";
+import {Container,Header,Title,Content,Text,Icon,Button,Left,Right,Body,Spinner,Input} from "native-base";
 var ImagePicker = require("react-native-image-picker");
 
 import { ButtonTwo, Card, CardSection } from "../common";
@@ -15,6 +15,7 @@ import API from "@utils/ApiUtils";
 import TrainersMedia from "./TrainersMedia";
 import SpecialtyModalDesign from "./specialtyModalDesign";
 
+const window = Dimensions.get("window");
 const _format = "YYYY-MM-DD";
 var options = {
   title: "Select Avatar",
@@ -46,7 +47,7 @@ class TrainerPersonalPage extends Component {
   specialtiesDataById:[],
   duplicateSpecialities:[],
   availableDatesss:[],
-  media:[0,1,2,3],
+  media:["0","1","2","3"],
   isLoading:true,
   sessionValue:true,
   sessionId:null,
@@ -63,6 +64,7 @@ class TrainerPersonalPage extends Component {
 async componentWillMount(){
   AsyncStorage.getItem("@getUserType:key", (err, type) => {
     if (err){
+      Alert.alert("HomeFit", "Unable to get User Type")
     }
     if (type === "Trainer"){
       AsyncStorage.getItem("@getUserData:key", (error, getUserData) => {
@@ -77,6 +79,25 @@ async componentWillMount(){
   });
  // this.getPushedSpecialityData();
 }
+// getAvailableSlots(){
+//   var Id = this.state.userData.id;
+//    API.getAvailableSlots(Id).then(async (response) => {
+//         console.log("Response",response.data);
+//         var subdata = {};
+//         if (response.status){
+//           this.setState({
+//             availableDatesss: response.data
+//           });
+//           response.data.map((res,i)=>{
+//             var date = moment(res.date).format(_format);
+//             subdata[date] = {selected: true};
+//           });
+//         this.setState({_markedDates:subdata});
+//         }
+//       }).catch((error)=>{
+//         console.log(error);
+//       });
+// }
 getAvailableSlots(){
   var Id = this.state.userData.id;
    API.getAvailableSlots(Id).then(async (response) => {
@@ -88,7 +109,14 @@ getAvailableSlots(){
           });
           response.data.map((res,i)=>{
             var date = moment(res.date).format(_format);
-            subdata[date] = {selected: true};
+            var todayDate = new Date();
+            var formatedTodayDate = moment(todayDate).format("YYYY-MM-DD")
+            console.log("resDate: ", JSON.stringify(res.date), "momentDate:  ", JSON.stringify(formatedTodayDate) )
+            if (res.date < formatedTodayDate){
+              subdata[date] = {selected: true,selectedColor:"grey",disabled: true, disableTouchEvent: true}
+            } else {
+              subdata[date] = {selected: true};
+            }
           });
         this.setState({_markedDates:subdata});
         }
@@ -96,6 +124,7 @@ getAvailableSlots(){
         console.log(error);
       });
 }
+
 onDaySelect = day => {
   console.log("avaialbledtae",this.state.availableDatesss);
   const _selectedDay = moment(day.dateString).format(_format);
@@ -103,7 +132,6 @@ onDaySelect = day => {
   this.onModalOpen(true);
   var times = [];
   if (this.state.availableDatesss.length > 0) {
-
     this.state.availableDatesss.map((res, i) => {
       if (res.date === _selectedDay) {
        times.push({"time":res.time_slot});
@@ -157,7 +185,7 @@ selectPhotoTapped() {
         if (responseData) {
           if (responseData.status){
             Alert.alert("Home Fit",responseData.message);
-            this.setState({avatarSource: { uri: responseData.imaage },spinner:false,})
+            this.setState({avatarSource: { uri: responseData.imaage },spinner:false,});
           }
           else {
             Alert.alert("HomeFit",responseData.message);
@@ -246,7 +274,7 @@ getSpecialitiesById(id) {
           { cancelable: false }
           );
 
-        })
+        });
       }
     } else {
       this.setState({isLoading: false});
@@ -259,61 +287,61 @@ onStartSession(){
     loading:true
   },()=>{
     API.startSession(this.state.userData.id).then(async (response) => {
-      if(response){
-        if(response.status=== true){
+      if (response){
+        if (response.status === true){
             this.setState({loading : false, sessionId:response.data},()=>{
-              Alert.alert(response.message,'');
+              Alert.alert(response.message,"");
             });
 
-        }else{
+        } else {
           this.setState({loading : false},()=>{
             Alert.alert(response.message,"");
           });
         }
-      }else{
+      } else {
         this.setState({loading : false},()=>{
           Alert.alert("HomeFit","Error");
         });
       }
-    })
-  })
+    });
+  });
 }
 onStopSession(){
   this.setState({sessionValue:true,loading:true},()=>{
     API.stopSession(this.state.sessionId).then(async (response) => {
-      if(response){
-        if(response.status=== true){
+      if (response){
+        if (response.status === true){
             this.setState({loading : false},()=>{
-              Alert.alert(response.message,'');
+              Alert.alert(response.message,"");
             });
-        }else{
+        } else {
           this.setState({loading : false},()=>{
-            Alert.alert(response.message,'');
+            Alert.alert(response.message,"");
           });
         }
-      }else{
+      } else {
         this.setState({loading : false},()=>{
           Alert.alert("HomeFit","Error");
         });
       }
-    })
-  })
+    });
+  });
 }
 onAddCustomSpeciality(){
   this.setState({
     addCustomeSpec:!this.state.addCustomeSpec
-  })
+  });
 }
 onChangeText = (text) => {
   this.setState({
     speciality:text
-  })
+  });
 }
 
 renderData(item){
   return (
-    <View style={{flex:1,margin: 5,backgroundColor: "#EDEEF0",height: 50,justifyContent:"center"}}>
-      <View style={{alignItems:"flex-start",paddingLeft:10,justifyContent:"center"}}>
+    <View style={styles.specialityContainerView}>
+      <View style={styles.spectilityListView}>
         <Text>{item.item.speciality}</Text>
       </View>
     </View>
@@ -381,23 +409,6 @@ render() {
                 VIEW OUR ONLINE STORE
             </ButtonTwo>
           </View>
-          <View style={{alignItems:'center', marginTop:10}}>
-          <TouchableOpacity onPress={this.onAddCustomSpeciality.bind(this)}>
-            <Text style={{fontSize:15, fontWeight:'500', color:"#009FDB",textDecorationLine:"underline",textDecorationColor:'#009FDB'}}>{"Do you want to add custom speciality"}</Text>
-          </TouchableOpacity>
-          </View>
-          {this.state.addCustomeSpec?(
-            <View style={{flex:1,marginTop:10,flexDirection:'row'}}>
-            <View style={{flex:0.8,alignItems:'center' }}>
-            <Input placeholder="Add Speciality" style={{height:30, width:250,borderWidth:1,borderColor:'grey', fontSize:14, borderRadius:5}} onChangeText={this.onChangeText} value={this.state.speciality}/>
-            </View>
-            <View style={{flex:0.2,alignItems:'flex-start', justifyContent:'center'}}>
-            <Image source={Images.add} style={{tintColor:"#009FDB", height:20, width:20}}/>
-            </View>
-          </View>)
-            :(null)
-          }
-
           <View style={{flex:0.5,marginTop:20}}>
             <TouchableOpacity style={styles.specailityView} onPress={this.onSpecialtyPressed.bind(this)}>
               <View style={{flex: 0.7,justifyContent: "center",padding: 10}}>
@@ -424,12 +435,40 @@ render() {
               data={this.state.selectedSpecialties}
               renderItem={this.renderData.bind(this)}
               extraData={this.state}
+              keyExtractor={(x, i) => x.id}
               />
           </View>
-          <View style={styles.buttonContainerStyle1}>
-            <View style={styles.sessionSliderStyle}>
-              <ImageSlider images={storeImages.map((album) => album.image) }/>
-            </View>
+          <View style={styles.addSpecialityView}>
+            <TouchableOpacity onPress={this.onAddCustomSpeciality.bind(this)}>
+              <Text style={styles.addSpecialityTextStyle}>{"Didn’t find your speciality?"}</Text>
+            </TouchableOpacity>
+          </View>
+          {this.state.addCustomeSpec?(
+            <View>
+              <Text style={styles.specialityTextStyle}>{"Please enter you speciality in the box below"}</Text>
+              <View style={styles.textInputMainView}>
+                <View style={styles.textInputView}>
+                  <View style={styles.textInputBorderView}>
+                    <Input placeholder="Add Speciality" style={{fontSize:16}} onChangeText={this.onChangeText} value={this.state.speciality}/>
+                  </View>
+                </View>
+                <View style={styles.addIconView}>
+                  <TouchableOpacity>
+                    <Image source={Images.add} style={styles.addIconStyle}/>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>)
+            : (null)
+          }
+          <View style={styles.sessionSliderStyle}>
+            <ImageSlider
+                autoPlayWithInterval={3000}
+                images={storeImages}
+                customSlide={({ index, item, style, width }) => (
+                    <Image key={index} source={{ uri: item.image }} style={{width: window.width / 1,height: window.height * 0.25}} />
+                )}
+              />
           </View>
         </View>
         <View style={styles.hostLiveGrpSession}>
@@ -438,29 +477,21 @@ render() {
             (<ButtonOne style={styles.buttonStyle} onPress={this.onStartSession.bind(this)}>
               LIVE GROUP SESSION START
             </ButtonOne>)
-            :(<ButtonOne style={styles.buttonStyle} onPress={this.onStopSession.bind(this)}>
+            : (<ButtonOne style={styles.buttonStyle} onPress={this.onStopSession.bind(this)}>
               LIVE GROUP SESSION STOP
               </ButtonOne>
             )}
           </View>
         </View>
         <View style={styles.hostLiveGrpSessionTextContainer}>
-          <Text>
-              (Host a free 15 minute session to attract more
-          </Text>
-          <Text>
-              clients nationally.)
-          </Text>
+          <Text>(Host a free 15 minute session to attract more</Text>
+          <Text>clients nationally.)</Text>
         </View>
         <View style={{ marginTop : 20}}>
           <Card>
             <CardSection style={ styles.totalClientsTextBox }>
-              <Text style={styles.totalClientsText}>
-                Total Clients Online :
-              </Text>
-              <Text style={styles.totalClientsTextTwo}>
-                356
-              </Text>
+              <Text style={styles.totalClientsText}>Total Clients Online :</Text>
+              <Text style={styles.totalClientsTextTwo}>356</Text>
             </CardSection>
           </Card>
         </View>
@@ -476,11 +507,11 @@ render() {
                   UPDATE AVAILABLE DATES
               </ButtonTwo>
             </View>*/}
-          <Button full transparent style={{backgroundColor: "#009FDB",}}>
-            <Text style={styles.bookText}>
-              JOIN NEXT UPCOMING TRAINING SESSION
-            </Text>
-          </Button>
+          <View transparent style={styles.book}>
+           <Text style={styles.bookText}>
+             JOIN NEXT UPCOMING TRAINING SESSION
+           </Text>
+         </View>
         </View>
         <Modal
           animationType="slide"
@@ -503,7 +534,6 @@ render() {
         </View>
       </View>
     ) : null}
-
     </Container>
   );
 }

@@ -325,7 +325,7 @@ class Cart extends React.Component < Props, State > {
                 <List>
                     <FlatList
                         data={this.state.cartItems}
-                        keyExtractor={(x, i) => x.id}
+                        keyExtractor={(x, i) =>i.toString()}
                         extraData={this.state}
                         renderItem={this.renderData.bind(this)}
                         style={{backgroundColor:'#FFFFFF'}}

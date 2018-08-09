@@ -20,7 +20,7 @@ class TrainersMedia extends Component{
       isModalVisible:false,
       userData:this.props.userData,
       charges:"",
-      imageId:null,
+      imageId:"",
       spinner:false
     };
     this.onAddMedia = this.onAddMedia.bind(this);
@@ -32,10 +32,9 @@ class TrainersMedia extends Component{
     this.fetchVideoUploadCharges();
   }
   componentWillReceiveProps(newProps){
-    // alert(JSON.stringify("jdls"+JSON.stringify(newProps.Media)))
     if (newProps.Media){
       this.setState({
-        mediaType: newProps.Media
+        MediaData: newProps.Media
       });
     }
     if (newProps.videopaymentConfirm) {
@@ -169,7 +168,7 @@ class TrainersMedia extends Component{
             RNThumbnail.get(response.uri).then((result) => {
               console.log("Thumbnail",result.path); // thumbnail path
               let thumbnailpath = { uri: result.path, isStatic: true }
-              var record = {type: "Video", videoUrl: vidsource1,source:thumbnailpath}
+              var record = {type: "Video", videoUrl: vidsource1,source:thumbnailpath,id:(this.state.imageId).toString()}
               // data.push(record);
               // this.setState({MediaData : data});
               console.log("indexId11111111",this.state.imageId)
@@ -218,7 +217,7 @@ class TrainersMedia extends Component{
             if (responseData.status){
               let source = { uri: responseData.imaage };
               Alert.alert("Home Fit",responseData.message);
-              var record = {type: "Image", source: source}
+              var record = {type: "Image", source: source,id:(this.state.imageId).toString()}
               this.setState({spinner:false})
               this.props.onImageUploding(record,this.state.imageId);
             }
@@ -251,7 +250,7 @@ class TrainersMedia extends Component{
         horizontal
          data={this.state.MediaData}
          extraData={this.state}
-         keyExtractor={this._keyExtractor}
+         keyExtractor={(x, i) =>typeof x === "object" ? x.id : x }
          renderItem={this.renderItem}
        />
       </View>
@@ -291,13 +290,13 @@ class TrainersMedia extends Component{
                </View>
             </View>
            </Modal>
-           {this.state.spinner === true ? (
-            <View style={styles.container_spinner}>
+            {this.state.spinner === true ? (
+            <View style={styles.container_spinnerOne}>
               <View style={styles.spinnerView1}>
                 <ActivityIndicator size="large" color="black"/>
               </View>
             </View>
-          ) : null}
+          ) : null }
       </View>
     )
   }

@@ -150,10 +150,10 @@ export default class CalendarModalOpenDesign extends Component {
     });
     if (data1 === "true") {
       images.push(
-          <Image source={Images.checked} style={{height:20,width:20}} />
+          <Image key={item.item} source={Images.checked} style={{height:20,width:20}} />
       );
     } else {
-      images.push(<View />);
+      images.push(<View key={item.item}/>);
     }
     return (
       <View style={{flexGrow: 1, flexDirection: "row", marginTop: 5, height: 55}}>
@@ -188,7 +188,7 @@ export default class CalendarModalOpenDesign extends Component {
             removeClippedSubviews={true}
             renderItem={this.renderData.bind(this)}
             extraData={this.state}
-            keyExtractor={(item, index) => item + index}
+            keyExtractor={(item, index) => item}
           />
         </View>
       </View>

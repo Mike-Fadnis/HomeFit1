@@ -36,12 +36,12 @@ class ClientProfile extends Component {
     AsyncStorage.getItem("@getUserData:key", (err, getUserData) => {
         var get_user = JSON.parse(getUserData);
         this.setState({userData:get_user},()=>{
-          this.getClientProdileDetails(this.state.userData.id);
+          this.getClientProfileDetails(this.state.userData.id);
         });
      }).done();
   }
-  getClientProdileDetails(id){
-    API.getClientProdileDetails(id).then(async (response) => {
+  getClientProfileDetails(id){
+    API.getClientProfileDetails(id).then(async (response) => {
       if (response) {
         if (response.status){
           this.setState({userName: response.data.user_name,avatarSource: { uri: response.data.profile_picture },phoneNumber:response.data.phone_number,spinner:false})

@@ -6,6 +6,9 @@ import { Card, CardSection } from "../common";
 import styles from "./styles";
 import moment from "moment";
 import API from "@utils/ApiUtils";
+import { YellowBox } from "react-native";
+YellowBox.ignoreWarnings(["Warning: isMounted(...) is deprecated", "Module RCTImageLoader"]);
+
 class BrowseTrainers extends Component {
   constructor(props){
     super(props);
@@ -229,8 +232,8 @@ class BrowseTrainers extends Component {
             }
           </View>
           <View style={styles.trainerDescription}>
-              <Text style={styles.descriptionLine}> Name: {item.item.name} </Text>
-              <Text style={styles.descriptionLine}> Rating: {rating}/10 Experience: {item.item.experience} years</Text>
+              <Text style={styles.descriptionLine}>Name: {item.item.name} </Text>
+              <Text style={styles.descriptionLine}>Rating: {rating}/10, Exp: {item.item.experience} years</Text>
               <View style={{flex: 1, flexDirection:'row'}}>
                 <Text style={styles.descriptionLine3}>
                     Specialities:
@@ -256,7 +259,7 @@ class BrowseTrainers extends Component {
                   </Text>
                 ):(
                   <Text style={[styles.descriptionLine3,{paddingLeft: 0}]}>
-                      {date},{time}
+                      {date}{"\n"}{time}
                   </Text>
                 )}
 
@@ -266,7 +269,7 @@ class BrowseTrainers extends Component {
     </Card>
     );
   }
-  _keyExtractor = (item, index) => item.id;
+  _keyExtractor = (item, index) => item.id || item.speciality_id;
   render() {
     let data = [{
        value: "Highest rated",

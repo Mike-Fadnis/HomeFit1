@@ -136,7 +136,7 @@ class TrainerFinancialDetails extends Component {
              ) :
             <FlatList
               data={this.state.cardsList}
-              keyExtractor={(x, i) => x.id}
+              keyExtractor={(x, i) => x.card_primary_id}
               extraData={this.state}
               renderItem={this.renderData.bind(this)}
               style={{backgroundColor:"#FFFFFF"}}
